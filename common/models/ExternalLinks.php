@@ -45,9 +45,9 @@ class ExternalLinks extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'acceptor' => 'Acceptor',
-            'anchor' => 'Anchor',
-            'audit_id' => 'Audit ID',
+            'acceptor' => 'Акцептор',
+            'anchor' => 'Анкор',
+            'audit_id' => 'Аудит ID',
         ];
     }
 

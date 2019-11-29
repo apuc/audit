@@ -1,24 +1,18 @@
 <?php
 
-namespace frontend\modules\audit\controllers;
+namespace frontend\modules\externallinks\controllers;
 
-use common\classes\Debug;
-use common\models\Dns;
-use common\models\ExternalLinks;
-use common\models\Url;
 use Yii;
-use common\models\Audit;
-use frontend\modules\audit\models\AuditSearch;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
+use common\models\ExternalLinks;
+use frontend\modules\externallinks\models\ExternallinksSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * AuditController implements the CRUD actions for Audit model.
+ * ExternallinksController implements the CRUD actions for ExternalLinks model.
  */
-class AuditController extends Controller
+class ExternallinksController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -26,16 +20,6 @@ class AuditController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'view', 'create'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -46,12 +30,12 @@ class AuditController extends Controller
     }
 
     /**
-     * Lists all Audit models.
+     * Lists all ExternalLinks models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new AuditSearch();
+        $searchModel = new ExternallinksSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -61,45 +45,26 @@ class AuditController extends Controller
     }
 
     /**
-     * Displays a single Audit model.
+     * Displays a single ExternalLinks model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $url_id = Audit::find()->select(['url_id'])->where(['id' => $id])->asArray()->all();
-        $site_id = Url::find()->select(['site_id'])->where(['id' => $url_id[0]['url_id']])->asArray()->all();
-
-        $dns = new ActiveDataProvider([
-            'query' => Dns::find()->where(['site_id' => $site_id[0]['site_id']]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
-
-        $externalLinks = new ActiveDataProvider([
-            'query' => ExternalLinks::find()->where(['audit_id' => $id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
-
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'externalLinks' => $externalLinks,
-            'dns' => $dns,
         ]);
     }
 
     /**
-     * Creates a new Audit model.
+     * Creates a new ExternalLinks model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Audit();
+        $model = new ExternalLinks();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -111,7 +76,7 @@ class AuditController extends Controller
     }
 
     /**
-     * Updates an existing Audit model.
+     * Updates an existing ExternalLinks model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -131,7 +96,7 @@ class AuditController extends Controller
     }
 
     /**
-     * Deletes an existing Audit model.
+     * Deletes an existing ExternalLinks model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -145,15 +110,15 @@ class AuditController extends Controller
     }
 
     /**
-     * Finds the Audit model based on its primary key value.
+     * Finds the ExternalLinks model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Audit the loaded model
+     * @return ExternalLinks the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Audit::findOne($id)) !== null) {
+        if (($model = ExternalLinks::findOne($id)) !== null) {
             return $model;
         }
 

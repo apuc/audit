@@ -2,16 +2,15 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $searchModel frontend\modules\url\models\UrlSearch */
+/* @var $searchModel frontend\modules\externallinks\models\ExternallinksSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Urls';
+$this->title = 'Внешние ссылки';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="url-index">
+<div class="external-links-index">
 
     <p>
         <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
@@ -25,17 +24,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            [
-                'attribute' => 'url',
-                'value' => function ($data) {
-                    return Html::a(
-                        $data->url,
-                        Url::to(['/audit/audit?AuditSearch[url]=' . $data->url])
-                    );
-                },
-                'format' => 'raw',
-            ],
-            'site.name',
+            'acceptor:url',
+            'anchor',
+            'audit_id',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

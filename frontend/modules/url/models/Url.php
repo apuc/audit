@@ -53,8 +53,9 @@ class Url extends \common\models\Url
 
     public static function addSite($domain)
     {
+        $cutedDomain = self::cutDomain($domain);
         $whois = Whois::create();
-        $info = $whois->loadDomainInfo($domain);
+        $info = $whois->loadDomainInfo($cutedDomain);
 
         $creationDate = $info->getCreationDate();
         $expirationDate = $info->getExpirationDate();
@@ -62,7 +63,7 @@ class Url extends \common\models\Url
         $states = $info->getStates();
 
         $site = new Site();
-        $site->name = $domain;
+        $site->name = $cutedDomain;
         $site->creation_date = $creationDate;
         $site->expiration_date = $expirationDate;
         $site->registrar = $registrar;
@@ -86,7 +87,8 @@ class Url extends \common\models\Url
 
     public static function addDns($domain, $site_id)
     {
-        $records = dns_get_record($domain);
+        $cutedDomain = self::cutDomain($domain);
+        $records = dns_get_record($cutedDomain);
 
         foreach ($records as $record) {
             $dns = new Dns();
@@ -108,18 +110,19 @@ class Url extends \common\models\Url
     {
         $startTime = microtime(1);
         $client = new GuzzleHttp\Client();
+
         $res = $client->request('GET', $domain);
         $endTime = microtime(1);
 
         $google = Search::check($domain, 'google');
-        //$yandex = Search::check($value, 'ya');
+        $yandex = Search::check($domain, 'ya');
 
         $audit = new Audit();
         $audit->server_response_code = (string)$res->getStatusCode();
         $audit->size = strlen($res->getBody());
         $audit->loading_time = round(($endTime - $startTime) * 1000);
         $audit->google_indexing = $google ? 1 : null;
-        // $audit->yandex_indexing = $yandex ? 1 : null;
+        $audit->yandex_indexing = $yandex ? 1 : null;
         $audit->url_id = $url_id;
         $audit->save();
 
@@ -142,6 +145,7 @@ class Url extends \common\models\Url
         }
 
         $host_path_array = array();
+        $anchor_array = array();
         foreach ($links as $link) {
             if (self::isExist(parse_url($link->getAttribute('href')), 'host')) {
                 $clean_url = str_replace(array("http://", "https://", "www."), "",
@@ -149,20 +153,34 @@ class Url extends \common\models\Url
                 if ($clean_url != $url) {
                     if (self::isExist(parse_url($link->getAttribute('href')), 'path')) {
                         $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
-                        array_push($host_path_array, $host_path);
+                        if (!in_array($host_path, $host_path_array)) {
+                            array_push($host_path_array, $host_path);
+                            array_push($anchor_array, $link->nodeValue);
+                        }
                     } else {
-                        array_push($host_path_array, $clean_url);
+                        if (!in_array($clean_url, $host_path_array)) {
+                            array_push($host_path_array, $clean_url);
+                            array_push($anchor_array, $link->nodeValue);
+                        }
                     }
-
                 }
             }
         }
 
-        foreach ($host_path_array as $value) {
+        for ($i=0; $i<count($host_path_array); $i++) {
             $ext_links = new ExternalLinks();
-            $ext_links->acceptor = $value;
+            $ext_links->acceptor = $host_path_array[$i];
+            $ext_links->anchor = $anchor_array[$i];
             $ext_links->audit_id = $audit_id;
             $ext_links->save();
         }
+    }
+
+    public static function cutDomain($domain)
+    {
+        $cutedDomain = explode('/', $domain);
+        $cutedDomain = $cutedDomain[0];
+
+        return $cutedDomain;
     }
 }

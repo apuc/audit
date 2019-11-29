@@ -79,7 +79,7 @@ class Audit extends \yii\db\ActiveRecord
             'created_at' => 'Дата мониторинга',
             'url_id' => 'Url ID',
             'google_indexing' => 'Индексация Google',
-            'yandex_indexing' => 'Индексация Яндекс'
+            'yandex_indexing' => 'Индексация Яндекс',
         ];
     }
 

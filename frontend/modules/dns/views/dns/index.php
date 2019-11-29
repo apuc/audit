@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\dns\models\DnsSearch */
@@ -24,12 +25,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
+            [
+                'attribute' => 'site.name',
+                'value' => function ($data) {
+                    return Html::a(
+                        \frontend\modules\dns\models\Dns::getSiteName($data->id),
+                        Url::to(['/audit/audit?AuditSearch[url]=' . \frontend\modules\dns\models\Dns::getSiteName($data->id)])
+                    );
+                },
+                'format' => 'raw',
+            ],
             'class',
             'ttl',
             'type',
             'target',
             'ip',
-            'site.name',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

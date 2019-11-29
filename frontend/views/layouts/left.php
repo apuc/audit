@@ -37,6 +37,12 @@
                         'active' => \Yii::$app->controller->id == 'audit',
                     ],
                     [
+                        'label' => 'Внешние ссылки',
+                        'icon' => 'files-o',
+                        'url' => ['/externallinks/externallinks'],
+                        'active' => \Yii::$app->controller->id == 'externallinks',
+                    ],
+                    [
                         'label' => 'Пользователи',
                         'icon' => 'files-o',
                         'url' => ['/user/user'],

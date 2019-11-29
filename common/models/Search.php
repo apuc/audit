@@ -9,6 +9,7 @@
 namespace common\models;
 
 use common\classes\Debug;
+use common\classes\UserAgentArray;
 use Yii;
 
 class Search
@@ -39,7 +40,6 @@ class Search
         $res = $this->parse('https://yandex.ru/search/', [
             'text' => 'url:' . $link,
         ]);
-        var_dump($res);
 
         $document = \phpQuery::newDocument($res);
         $count = $document->find('.serp-adv__found')->count();
@@ -76,17 +76,9 @@ class Search
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($curl, CURLOPT_USERAGENT,
-            'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36');
+        curl_setopt($curl, CURLOPT_USERAGENT, UserAgentArray::getRandom());
         curl_setopt($curl, CURLOPT_COOKIEJAR, Yii::getAlias('@frontend/web/cookie.txt'));
         curl_setopt($curl, CURLOPT_COOKIEFILE, Yii::getAlias('@frontend/web/cookie.txt'));
-        curl_setopt($curl, CURLOPT_PROXY, '176.99.110.224:8081');
-        curl_setopt($curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
-
-//        if (curl_exec($curl) === false) {
-//            echo curl_error($curl);
-//            die();
-//        }
 
         return curl_exec($curl);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -23,8 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'name',
+            [
+                'attribute' => 'name',
+                'value' => function ($data) {
+                    return Html::a(
+                        $data->name,
+                        Url::to(['/audit/audit?AuditSearch[url]=' . $data->name])
+                    );
+                },
+                'format' => 'raw',
+            ],
             'registrar',
             'states',
             'creation_date:datetime',

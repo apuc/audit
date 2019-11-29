@@ -65,5 +65,8 @@ return [
         'audit' => [
             'class' => 'frontend\modules\audit\Audit',
         ],
+        'externallinks' => [
+            'class' => 'frontend\modules\externallinks\Externallinks',
+        ],
     ],
 ];

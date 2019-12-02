@@ -3,6 +3,10 @@ body {
     height: 100%;
 }
 
+td {
+    white-space:normal !important;
+}
+
 .wrap {
     min-height: 100%;
     height: auto;

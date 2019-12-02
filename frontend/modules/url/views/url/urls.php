@@ -17,7 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'urls-form']); ?>
 
-            <?= $form->field($model, 'urls')->textarea(['rows' => 10]) ?>
+            <p>Введите URL сайтов. Каждый URL с новой строки.</p>
+            <?= $form->field($model, 'urls')->textarea(['rows' => 20]) ?>
 
             <div class="form-group">
                 <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary', 'name' => 'urls-button']) ?>

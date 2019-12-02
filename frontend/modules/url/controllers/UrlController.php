@@ -2,10 +2,6 @@
 
 namespace frontend\modules\url\controllers;
 
-use common\classes\Debug;
-use common\models\Audit;
-use common\models\Dns;
-use common\models\Site;
 use frontend\modules\url\models\UrlForm;
 use Yii;
 use frontend\modules\url\models\Url;
@@ -14,7 +10,6 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use GuzzleHttp;
 
 /**
  * UrlController implements the CRUD actions for Url model.
@@ -76,32 +71,34 @@ class UrlController extends Controller
             $urls = array();
             foreach ($explode_urls as $explode_url) {
                 $trim_url = trim($explode_url);
-                if($trim_url) {
+                if ($trim_url) {
                     array_push($urls, $trim_url);
                 }
             }
 
-            $site_array = Site::find()->all();
+            $url_array = Url::find()->all();
 
-            $site = array();
-            foreach ($site_array as $value) {
-                array_push($site, $value->name);
+            $url = array();
+            foreach ($url_array as $value) {
+                array_push($url, $value->url);
             }
 
-            if ($site_array) {
-                $urls_uintersect = array_uintersect($urls, $site, "strcasecmp");
-                if($urls_uintersect) {
+            if ($url_array) {
+                $urls_uintersect = array_uintersect($urls, $url, "strcasecmp");
+                if ($urls_uintersect) {
                     Url::updateAudit($urls_uintersect);
                 } else {
-                    $urls_diff = array_diff($urls, $site);
+                    $urls_diff = array_diff($urls, $url);
                     URL::insertData($urls_diff);
                 }
             } else {
                 URL::insertData($urls);
             }
-            return $this->render('urls_view', [
-                'urls' => $urls,
-            ]);
+
+            Yii::$app->session->setFlash(
+                'success', "Данные сохранены. Был проведен аудит " . count($urls) . " url.");
+            return $this->redirect('audit/audit');
+
         } else {
             return $this->render('urls', [
                 'model' => $model,

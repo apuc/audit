@@ -14,9 +14,9 @@ class Site extends \common\models\Site
         parent::init();
     }
 
-    public static function getUrlID($id)
+    public static function getUrlName($id)
     {
-        $url_id = Url::find()->select(['id'])->where(['site_id' => $id])->asArray()->all();
-        return $url_id[0]['id'];
+        $url = Url::find()->where(['site_id' => $id])->asArray()->all()[0]['url'];
+        return $url;
     }
 }

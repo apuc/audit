@@ -8,6 +8,7 @@ use yii\widgets\DetailView;
 /* @var $model common\models\Audit */
 /* @var $externalLinks yii\data\ActiveDataProvider */
 /* @var $dns yii\data\ActiveDataProvider */
+/* @var $site yii\data\ActiveDataProvider */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Аудит', 'url' => ['index']];
@@ -41,13 +42,27 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <h2>Данные домена</h2>
+    <?= GridView::widget([
+        'dataProvider' => $site,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            'name',
+            'registrar',
+            'states',
+            'creation_date:datetime',
+            'expiration_date:datetime',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
     <h2>DNS</h2>
     <?= GridView::widget([
         'dataProvider' => $dns,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'site.name',
             'class',
             'ttl',
             'type',

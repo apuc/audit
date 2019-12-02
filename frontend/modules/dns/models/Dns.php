@@ -20,10 +20,10 @@ class Dns extends \common\models\Dns
        return $url_id[0]['id'];
     }
 
-    public static function getSiteName($id)
+    public static function getUrlName($id)
     {
-        $site_id = Dns::find()->select(['site_id'])->where(['id' => $id])->asArray()->all();
-        $site_name = Site::find()->select(['name'])->where(['id' => $site_id[0]['site_id']])->asArray()->all();
-        return $site_name[0]['name'];
+        $site_id = Dns::find()->where(['id' => $id])->asArray()->all()[0]['site_id'];
+        $url_name = Url::find()->where(['site_id' => $site_id])->asArray()->all()[0]['url'];
+        return $url_name;
     }
 }

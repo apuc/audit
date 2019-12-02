@@ -6,6 +6,7 @@ use common\classes\Debug;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Url;
+use common\models\Site;
 use Yii;
 use common\models\Audit;
 use frontend\modules\audit\models\AuditSearch;
@@ -68,11 +69,11 @@ class AuditController extends Controller
      */
     public function actionView($id)
     {
-        $url_id = Audit::find()->select(['url_id'])->where(['id' => $id])->asArray()->all();
-        $site_id = Url::find()->select(['site_id'])->where(['id' => $url_id[0]['url_id']])->asArray()->all();
+        $url_id = Audit::find()->where(['id' => $id])->asArray()->all()[0]['url_id'];
+        $site_id = Url::find()->where(['id' => $url_id])->asArray()->all()[0]['site_id'];
 
         $dns = new ActiveDataProvider([
-            'query' => Dns::find()->where(['site_id' => $site_id[0]['site_id']]),
+            'query' => Dns::find()->where(['site_id' => $site_id]),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -85,10 +86,18 @@ class AuditController extends Controller
             ],
         ]);
 
+        $site = new ActiveDataProvider([
+            'query' => Site::find()->where(['id' => $site_id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'externalLinks' => $externalLinks,
             'dns' => $dns,
+            'site' => $site,
         ]);
     }
 

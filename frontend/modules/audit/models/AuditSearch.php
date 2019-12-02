@@ -74,9 +74,9 @@ class AuditSearch extends Audit
             'url_id' => $this->url_id,
             'google_indexing' => $this->google_indexing,
             'yandex_indexing' => $this->yandex_indexing,
-            'url.url' => $this->url,
+            //'url.url' => $this->url,
         ]);
-
+        $query->andFilterWhere(['like', 'url.url', $this->url]);
         $query->andFilterWhere(['like', 'server_response_code', $this->server_response_code]);
 
         return $dataProvider;

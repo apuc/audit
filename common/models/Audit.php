@@ -74,8 +74,8 @@ class Audit extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'server_response_code' => 'Код ответа сервера',
-            'size' => 'Размер',
-            'loading_time' => 'Время загрузки',
+            'size' => 'Размер (байт)',
+            'loading_time' => 'Время загрузки (мс)',
             'created_at' => 'Дата мониторинга',
             'url_id' => 'Url ID',
             'google_indexing' => 'Индексация Google',

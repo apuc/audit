@@ -3,6 +3,7 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use \frontend\modules\site\models\Site;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
@@ -29,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($data) {
                     return Html::a(
                         $data->name,
-                        Url::to(['/audit/audit?AuditSearch[url]=' . $data->name])
+                        Url::to(['/audit/audit?AuditSearch[url]=' .  Site::getUrlName($data->id)])
                     );
                 },
                 'format' => 'raw',

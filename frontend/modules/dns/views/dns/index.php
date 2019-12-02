@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'site.name',
                 'value' => function ($data) {
                     return Html::a(
-                        \frontend\modules\dns\models\Dns::getSiteName($data->id),
-                        Url::to(['/audit/audit?AuditSearch[url]=' . \frontend\modules\dns\models\Dns::getSiteName($data->id)])
+                        \frontend\modules\dns\models\Dns::getUrlName($data->id),
+                        Url::to(['/audit/audit?AuditSearch[url]=' . \frontend\modules\dns\models\Dns::getUrlName($data->id)])
                     );
                 },
                 'format' => 'raw',

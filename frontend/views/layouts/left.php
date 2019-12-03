@@ -48,6 +48,12 @@
                         'url' => ['/user/user'],
                         'active' => \Yii::$app->controller->id == 'user',
                     ],
+                    [
+                        'label' => 'Инструкция',
+                        'icon' => 'files-o',
+                        'url' => ['/site/info'],
+                        'active' => \Yii::$app->controller->id == 'site',
+                    ],
                 ],
             ]
         ) ?>

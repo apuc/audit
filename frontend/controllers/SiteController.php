@@ -78,6 +78,16 @@ class SiteController extends Controller
     }
 
     /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionInfo()
+    {
+        return $this->render('info');
+    }
+
+    /**
      * Logs in a user.
      *
      * @return mixed

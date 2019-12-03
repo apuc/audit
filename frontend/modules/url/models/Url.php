@@ -21,6 +21,7 @@ class Url extends \common\models\Url
     public static function insertData($urls)
     {
         foreach ($urls as $value) {
+            //$content = self::makeScreen($value, __DIR__ . '/screen.jpg', false);
             $site_id = self::addSite($value);
             $url_id = self::addUrl($value, $site_id);
             self::addDns($value, $site_id);
@@ -32,6 +33,7 @@ class Url extends \common\models\Url
     public static function updateAudit($urls)
     {
         foreach ($urls as $value) {
+            //$content = self::makeScreen($value, __DIR__ . '/screen.jpg', false);
             $url = \common\models\Url::find()->where(['url' => $value])->all();
             $audit_id = self::addAudit($value, $url[0]['id']);
             self::addExternalLinks($value, $url[0]['url'], $audit_id);
@@ -182,5 +184,49 @@ class Url extends \common\models\Url
         $cutedDomain = $cutedDomain[0];
 
         return $cutedDomain;
+    }
+
+    public static function makeScreen($url, $save_to, $mobile = true) {
+        $query = http_build_query(array_filter([
+            'strategy' => $mobile ? 'mobile' : null,
+            'screenshot' => 'true',
+            'url' => $url
+        ]));
+        $api_url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?{$query}";
+
+        $result = json_decode(file_get_contents($api_url), true);
+
+        $screen_data = str_replace(
+            ['_', '-', ' ', 'data:image/jpeg;base64,'],
+            ['/', '+', '+', ''],
+            $result['screenshot']['data']
+        );
+
+        return file_put_contents($save_to, base64_decode($screen_data));
+    }
+
+    public static function formattingUrl($urls){
+        $separated_urls = str_replace(array("\r\n", "\r", "\n"), ",", $urls);
+        $clean_urls = str_replace(array("http://", "https://", "www."), "", $separated_urls);
+        $exploded_urls = explode(",", $clean_urls);
+
+        $formatting_urls = array();
+        foreach ($exploded_urls as $exploded_url) {
+            $trim_url = trim($exploded_url);
+            if ($trim_url) {
+                array_push($formatting_urls, $trim_url);
+            }
+        }
+        return $formatting_urls;
+    }
+
+    public static function allUrlArray()
+    {
+        $all_url = Url::find()->all();
+        $all_url_array = array();
+        foreach ($all_url as $value) {
+            array_push($all_url_array, $value->url);
+        }
+        return $all_url_array;
     }
 }

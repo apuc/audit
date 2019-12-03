@@ -2,14 +2,14 @@
 
 namespace frontend\modules\url\controllers;
 
-use frontend\modules\url\models\UrlForm;
 use Yii;
-use frontend\modules\url\models\Url;
-use frontend\modules\url\models\UrlSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
+use frontend\modules\url\models\Url;
+use frontend\modules\url\models\UrlForm;
+use frontend\modules\url\models\UrlSearch;
 
 /**
  * UrlController implements the CRUD actions for Url model.
@@ -64,39 +64,23 @@ class UrlController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
-            $urls_arr = str_replace(array("\r\n", "\r", "\n"), ",", $model->urls);
-            $clean_urls = str_replace(array("http://", "https://", "www."), "", $urls_arr);
-            $explode_urls = explode(",", $clean_urls);
+            $formatting_urls = Url::formattingUrl($model->urls);
+            $all_url_array = Url::allUrlArray();
 
-            $urls = array();
-            foreach ($explode_urls as $explode_url) {
-                $trim_url = trim($explode_url);
-                if ($trim_url) {
-                    array_push($urls, $trim_url);
-                }
-            }
-
-            $url_array = Url::find()->all();
-
-            $url = array();
-            foreach ($url_array as $value) {
-                array_push($url, $value->url);
-            }
-
-            if ($url_array) {
-                $urls_uintersect = array_uintersect($urls, $url, "strcasecmp");
+            if ($all_url_array) {
+                $urls_uintersect = array_uintersect($formatting_urls, $all_url_array, "strcasecmp");
                 if ($urls_uintersect) {
                     Url::updateAudit($urls_uintersect);
                 } else {
-                    $urls_diff = array_diff($urls, $url);
+                    $urls_diff = array_diff($formatting_urls, $all_url_array);
                     URL::insertData($urls_diff);
                 }
             } else {
-                URL::insertData($urls);
+                URL::insertData($formatting_urls);
             }
 
             Yii::$app->session->setFlash(
-                'success', "Данные сохранены. Был проведен аудит " . count($urls) . " url.");
+                'success', "Данные сохранены. Был проведен аудит " . count($formatting_urls) . " url.");
             return $this->redirect('audit/audit');
 
         } else {

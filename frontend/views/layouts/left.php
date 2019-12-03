@@ -48,15 +48,6 @@
                         'url' => ['/user/user'],
                         'active' => \Yii::$app->controller->id == 'user',
                     ],
-                    [
-                        'label' => 'Инструменты',
-                        'icon' => 'gears',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
-                            ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
-                        ],
-                    ],
                 ],
             ]
         ) ?>

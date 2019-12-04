@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property int $url_id
  * @property int $google_indexing
  * @property int $yandex_indexing
+ * @property boolean $check_search
  *
  * @property Url $url
  */
@@ -62,7 +63,7 @@ class Audit extends \yii\db\ActiveRecord
                 'targetClass' => Url::className(),
                 'targetAttribute' => ['url_id' => 'id']
             ],
-            [['google_indexing', 'yandex_indexing'], 'safe']
+            [['google_indexing', 'yandex_indexing', 'check_search'], 'safe']
         ];
     }
 
@@ -80,6 +81,7 @@ class Audit extends \yii\db\ActiveRecord
             'url_id' => 'Url ID',
             'google_indexing' => 'Индексация Google',
             'yandex_indexing' => 'Индексация Яндекс',
+            'check_search' => 'Флаг индексации',
         ];
     }
 

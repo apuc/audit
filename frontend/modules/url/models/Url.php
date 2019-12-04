@@ -8,8 +8,10 @@ use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Search;
 use common\models\Site;
+use Yii;
 use GuzzleHttp;
 use Iodev\Whois\Whois;
+use Exception;
 
 class Url extends \common\models\Url
 {
@@ -18,61 +20,120 @@ class Url extends \common\models\Url
         parent::init();
     }
 
-    public static function insertData($urls)
+    public static function formData($urls)
     {
-        foreach ($urls as $value) {
-            //$content = self::makeScreen($value, __DIR__ . '/screen.jpg', false);
-            $site_id = self::addSite($value);
-            $url_id = self::addUrl($value, $site_id);
-            self::addDns($value, $site_id);
-            $audit_id = self::addAudit($value, $url_id);
-            self::addExternalLinks($value, $value, $audit_id);
-        }
-    }
+        $data_array = array();
+        $all_url_array = Url::allUrlArray();
+        $all_site_array = Url::allSiteArray();
 
-    public static function updateAudit($urls)
-    {
         foreach ($urls as $value) {
-            //$content = self::makeScreen($value, __DIR__ . '/screen.jpg', false);
-            $url = \common\models\Url::find()->where(['url' => $value])->all();
-            $audit_id = self::addAudit($value, $url[0]['id']);
-            self::addExternalLinks($value, $url[0]['url'], $audit_id);
-        }
-    }
-
-    public static function isExist($array, $key)
-    {
-        $isExist = 0;
-        while (current($array)) {
-            if (key($array) == $key) {
-                $isExist = 1;
-                break;
+            $data = new DataForm();
+            $data->setSite($value);
+            $data->setSiteUrl($value);
+            foreach ($all_site_array as $all_site_value) {
+                if ($all_site_value == $data->getSite()) {
+                    $data->setSiteExist(1);
+                }
             }
-            next($array);
+            foreach ($all_url_array as $all_url_value) {
+                if ($all_url_value == $data->getSiteUrl()) {
+                    $data->setUrlExist(1);
+                }
+            }
+            array_push($data_array, $data);
         }
-        return $isExist;
+        return $data_array;
+    }
+
+    public static function addData($data_array, $report)
+    {
+        foreach ($data_array as $data) {
+            if ($data->isSiteExist() && $data->isUrlExist()) {
+                self::updateData($data, $report);
+            }
+            elseif($data->isSiteExist() && !$data->isUrlExist()) {
+                self::insertAndUpdateData($data, $report);
+            } else {
+                self::insertData($data, $report);
+            }
+        }
+        return true;
+    }
+
+    public static function insertData($data, $report)
+    {
+        try {
+            $site_id = self::addSite($data->getSite());
+
+            $url_id = self::addUrl($data->getSiteUrl(), $site_id);
+            self::addDns($data->getSite(), $site_id);
+
+            $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+
+            if ($server_response == 200) {
+                self::addExternalLinks($data->getSiteUrl(), $audit_id);
+            }
+
+            $report->newSite++;
+            $report->newUrl++;
+            $report->newAudit++;
+        } catch (Exception $e) {
+            $report->errorsUrl++;
+            array_push($report->errorUrlArray, $data->getSiteUrl());
+        }
+    }
+
+    public static function insertAndUpdateData($data, $report)
+    {
+        $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
+        $url_id = self::addUrl($data->getSiteUrl(), $site_id);
+
+        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+
+        if ($server_response == 200) {
+            self::addExternalLinks($data->getSiteUrl(), $audit_id);
+        }
+
+        $report->newUrl++;
+        $report->newAudit++;
+    }
+
+    public static function updateData($data, $report)
+    {
+        $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
+        $url_id = Url::find()->where(['url' => $data->getSiteUrl()])->asArray()->all()[0]['id'];
+
+        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+        self::addExternalLinks($data->getSiteUrl(), $audit_id);
+
+        $report->newAudit++;
     }
 
     public static function addSite($domain)
     {
-        $cutedDomain = self::cutDomain($domain);
         $whois = Whois::create();
-        $info = $whois->loadDomainInfo($cutedDomain);
+        $info = $whois->loadDomainInfo($domain);
 
-        $creationDate = $info->getCreationDate();
-        $expirationDate = $info->getExpirationDate();
-        $registrar = $info->getRegistrar();
-        $states = $info->getStates();
+        if ($info) {
+            $creationDate = $info->getCreationDate();
+            $expirationDate = $info->getExpirationDate();
+            $registrar = $info->getRegistrar();
+            $states = $info->getStates();
 
-        $site = new Site();
-        $site->name = $cutedDomain;
-        $site->creation_date = $creationDate;
-        $site->expiration_date = $expirationDate;
-        $site->registrar = $registrar;
-        $site->states = implode(", ", $states);
-        $site->save();
+            $site = new Site();
+            $site->name = $domain;
+            $site->creation_date = $creationDate;
+            $site->expiration_date = $expirationDate;
+            $site->registrar = $registrar;
+            $site->states = implode(", ", $states);
+            $site->save();
 
-        return $site->id;
+            return $site->id;
+        } else {
+            return null;
+        }
     }
 
     public static function addUrl($domain, $site_id)
@@ -89,8 +150,7 @@ class Url extends \common\models\Url
 
     public static function addDns($domain, $site_id)
     {
-        $cutedDomain = self::cutDomain($domain);
-        $records = dns_get_record($cutedDomain);
+        $records = dns_get_record($domain);
 
         foreach ($records as $record) {
             $dns = new Dns();
@@ -110,28 +170,29 @@ class Url extends \common\models\Url
 
     public static function addAudit($domain, $url_id)
     {
-        $startTime = microtime(1);
-        $client = new GuzzleHttp\Client();
+        try {
+            $startTime = microtime(1);
+            $client = new GuzzleHttp\Client();
+            $res = $client->request('GET', $domain);
+            $endTime = microtime(1);
 
-        $res = $client->request('GET', $domain);
-        $endTime = microtime(1);
-
-        $google = Search::check($domain, 'google');
-        $yandex = Search::check($domain, 'ya');
-
-        $audit = new Audit();
-        $audit->server_response_code = (string)$res->getStatusCode();
-        $audit->size = strlen($res->getBody());
-        $audit->loading_time = round(($endTime - $startTime) * 1000);
-        $audit->google_indexing = $google ? 1 : null;
-        $audit->yandex_indexing = $yandex ? 1 : null;
-        $audit->url_id = $url_id;
-        $audit->save();
-
+            $audit = new Audit();
+            $audit->server_response_code = (string)$res->getStatusCode();
+            $audit->size = strlen($res->getBody());
+            $audit->loading_time = round(($endTime - $startTime) * 1000);
+            $audit->check_search = 0;
+            $audit->url_id = $url_id;
+            $audit->save();
+        } catch (Exception $e) {
+            $audit = new Audit();
+            $audit->server_response_code = (string)$e->getCode();
+            $audit->url_id = $url_id;
+            $audit->save();
+        }
         return $audit->id;
     }
 
-    public static function addExternalLinks($domain, $url, $audit_id)
+    public static function addExternalLinks($domain, $audit_id)
     {
         $client = new GuzzleHttp\Client();
         $res = $client->request('GET', $domain);
@@ -152,7 +213,7 @@ class Url extends \common\models\Url
             if (self::isExist(parse_url($link->getAttribute('href')), 'host')) {
                 $clean_url = str_replace(array("http://", "https://", "www."), "",
                     parse_url($link->getAttribute('href'))['host']);
-                if ($clean_url != $url) {
+                if ($clean_url != $domain) {
                     if (self::isExist(parse_url($link->getAttribute('href')), 'path')) {
                         $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
                         if (!in_array($host_path, $host_path_array)) {
@@ -169,7 +230,7 @@ class Url extends \common\models\Url
             }
         }
 
-        for ($i=0; $i<count($host_path_array); $i++) {
+        for ($i = 0; $i < count($host_path_array); $i++) {
             $ext_links = new ExternalLinks();
             $ext_links->acceptor = $host_path_array[$i];
             $ext_links->anchor = $anchor_array[$i];
@@ -178,34 +239,21 @@ class Url extends \common\models\Url
         }
     }
 
-    public static function cutDomain($domain)
+    public static function isExist($array, $key)
     {
-        $cutedDomain = explode('/', $domain);
-        $cutedDomain = $cutedDomain[0];
-
-        return $cutedDomain;
+        $isExist = 0;
+        while (current($array)) {
+            if (key($array) == $key) {
+                $isExist = 1;
+                break;
+            }
+            next($array);
+        }
+        return $isExist;
     }
 
-    public static function makeScreen($url, $save_to, $mobile = true) {
-        $query = http_build_query(array_filter([
-            'strategy' => $mobile ? 'mobile' : null,
-            'screenshot' => 'true',
-            'url' => $url
-        ]));
-        $api_url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?{$query}";
-
-        $result = json_decode(file_get_contents($api_url), true);
-
-        $screen_data = str_replace(
-            ['_', '-', ' ', 'data:image/jpeg;base64,'],
-            ['/', '+', '+', ''],
-            $result['screenshot']['data']
-        );
-
-        return file_put_contents($save_to, base64_decode($screen_data));
-    }
-
-    public static function formattingUrl($urls){
+    public static function formattingUrl($urls)
+    {
         $separated_urls = str_replace(array("\r\n", "\r", "\n"), ",", $urls);
         $clean_urls = str_replace(array("http://", "https://", "www."), "", $separated_urls);
         $exploded_urls = explode(",", $clean_urls);
@@ -228,5 +276,35 @@ class Url extends \common\models\Url
             array_push($all_url_array, $value->url);
         }
         return $all_url_array;
+    }
+
+    public static function allSiteArray()
+    {
+        $all_site = Site::find()->all();
+        $all_site_array = array();
+        foreach ($all_site as $value) {
+            array_push($all_site_array, $value->name);
+        }
+        return $all_site_array;
+    }
+
+    public static function makeScreen($url, $save_to, $mobile = true)
+    {
+        $query = http_build_query(array_filter([
+            'strategy' => $mobile ? 'mobile' : null,
+            'screenshot' => 'true',
+            'url' => $url
+        ]));
+        $api_url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?{$query}";
+
+        $result = json_decode(file_get_contents($api_url), true);
+
+        $screen_data = str_replace(
+            ['_', '-', ' ', 'data:image/jpeg;base64,'],
+            ['/', '+', '+', ''],
+            $result['screenshot']['data']
+        );
+
+        return file_put_contents($save_to, base64_decode($screen_data));
     }
 }

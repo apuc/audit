@@ -2,6 +2,8 @@
 
 namespace frontend\modules\url\controllers;
 
+use common\classes\Debug;
+use frontend\modules\url\models\ReportForm;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -10,6 +12,7 @@ use yii\web\NotFoundHttpException;
 use frontend\modules\url\models\Url;
 use frontend\modules\url\models\UrlForm;
 use frontend\modules\url\models\UrlSearch;
+use frontend\modules\url\models\DataForm;
 
 /**
  * UrlController implements the CRUD actions for Url model.
@@ -63,111 +66,111 @@ class UrlController extends Controller
         $model = new UrlForm();
 
         if ($model->load(Yii::$app->request->post())) {
-
             $formatting_urls = Url::formattingUrl($model->urls);
-            $all_url_array = Url::allUrlArray();
-
-            if ($all_url_array) {
-                $urls_uintersect = array_uintersect($formatting_urls, $all_url_array, "strcasecmp");
-                if ($urls_uintersect) {
-                    Url::updateAudit($urls_uintersect);
-                } else {
-                    $urls_diff = array_diff($formatting_urls, $all_url_array);
-                    URL::insertData($urls_diff);
-                }
-            } else {
-                URL::insertData($formatting_urls);
-            }
+            $data_array = Url::formData($formatting_urls);
+            $report = new ReportForm();
+            Url::addData($data_array, $report);
 
             Yii::$app->session->setFlash(
-                'success', "Данные сохранены. Был проведен аудит " . count($formatting_urls) . " url.");
+                'success',
+                "<br> Добавлено новых доменов: " . $report->newSite . "<br>" .
+                "Добавлено новых url: " . $report->newUrl . "<br>" .
+                "Проведено аудитов: " . $report->newAudit . "<br>" .
+                "Ошибки: ". $report->errorsUrl . "<br>" .
+                "Мониторинг для этих сайтов не проведен: " . implode(", ", $report->errorUrlArray) . "<br>"
+            );
+
             return $this->redirect('audit/audit');
 
         } else {
-            return $this->render('urls', [
-                'model' => $model,
-            ]);
+            return $this->render('urls', ['model' => $model]);
+
         }
     }
 
-    /**
-     * Displays a single Url model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+/**
+ * Displays a single Url model.
+ * @param integer $id
+ * @return mixed
+ * @throws NotFoundHttpException if the model cannot be found
+ */
+public
+function actionView($id)
+{
+    return $this->render('view', [
+        'model' => $this->findModel($id),
+    ]);
+}
+
+/**
+ * Creates a new Url model.
+ * If creation is successful, the browser will be redirected to the 'view' page.
+ * @return mixed
+ */
+public
+function actionCreate()
+{
+    $model = new Url();
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    /**
-     * Creates a new Url model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Url();
+    return $this->render('create', [
+        'model' => $model,
+    ]);
+}
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+/**
+ * Updates an existing Url model.
+ * If update is successful, the browser will be redirected to the 'view' page.
+ * @param integer $id
+ * @return mixed
+ * @throws NotFoundHttpException if the model cannot be found
+ */
+public
+function actionUpdate($id)
+{
+    $model = $this->findModel($id);
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    /**
-     * Updates an existing Url model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
+    return $this->render('update', [
+        'model' => $model,
+    ]);
+}
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+/**
+ * Deletes an existing Url model.
+ * If deletion is successful, the browser will be redirected to the 'index' page.
+ * @param integer $id
+ * @return mixed
+ * @throws NotFoundHttpException if the model cannot be found
+ */
+public
+function actionDelete($id)
+{
+    $this->findModel($id)->delete();
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+    return $this->redirect(['index']);
+}
+
+/**
+ * Finds the Url model based on its primary key value.
+ * If the model is not found, a 404 HTTP exception will be thrown.
+ * @param integer $id
+ * @return Url the loaded model
+ * @throws NotFoundHttpException if the model cannot be found
+ */
+protected
+function findModel($id)
+{
+    if (($model = Url::findOne($id)) !== null) {
+        return $model;
     }
 
-    /**
-     * Deletes an existing Url model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Url model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Url the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Url::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
+    throw new NotFoundHttpException('The requested page does not exist.');
+}
 }

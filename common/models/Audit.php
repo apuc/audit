@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property int $url_id
  * @property int $google_indexing
  * @property int $yandex_indexing
+ * @property int $check_search
  *
  * @property Url $url
  */
@@ -89,5 +90,12 @@ class Audit extends \yii\db\ActiveRecord
     public function getUrl()
     {
         return $this->hasOne(Url::className(), ['id' => 'url_id']);
+    }
+
+    /**
+     * @return array|ActiveRecord|null
+     */
+    static public function getOneAudit(){
+        return Audit::find()->where(['check_search' => null])->one();
     }
 }

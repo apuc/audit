@@ -95,7 +95,7 @@ class Audit extends \yii\db\ActiveRecord
     /**
      * @return array|ActiveRecord|null
      */
-    static public function getOneAudit(){
+    static public function getNotCheckedAudit(){
         return Audit::find()->where(['check_search' => null])->one();
     }
 }

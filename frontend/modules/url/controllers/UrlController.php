@@ -71,14 +71,25 @@ class UrlController extends Controller
             $report = new ReportForm();
             Url::addData($data_array, $report);
 
-            Yii::$app->session->setFlash(
-                'success',
-                "<br> Добавлено новых доменов: " . $report->newSite . "<br>" .
-                "Добавлено новых url: " . $report->newUrl . "<br>" .
-                "Проведено аудитов: " . $report->newAudit . "<br>" .
-                "Ошибки: ". $report->errorsUrl . "<br>" .
-                "Мониторинг для этих сайтов не проведен: " . implode(", ", $report->errorUrlArray) . "<br>"
-            );
+            if($report->errorsUrl != 0) {
+                Yii::$app->session->setFlash(
+                    'success',
+                    "<br> Добавлено новых доменов: " . $report->newSite . "<br>" .
+                    "Добавлено новых url: " . $report->newUrl . "<br>" .
+                    "Проведено аудитов: " . $report->newAudit . "<br>" .
+                    "Ошибки: ". $report->errorsUrl . "<br>" .
+                    "Мониторинг для этих сайтов не проведен: " . implode(", ", $report->errorUrlArray) . "<br>"
+                );
+            } else {
+                Yii::$app->session->setFlash(
+                    'success',
+                    "<br> Добавлено новых доменов: " . $report->newSite . "<br>" .
+                    "Добавлено новых url: " . $report->newUrl . "<br>" .
+                    "Проведено аудитов: " . $report->newAudit . "<br>" .
+                    "Ошибки: ". $report->errorsUrl . "<br>"
+                );
+            }
+
 
             return $this->redirect('audit/audit');
 

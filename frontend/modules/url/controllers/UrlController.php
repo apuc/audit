@@ -89,8 +89,7 @@ class UrlController extends Controller
                     "Ошибки: ". $report->errorsUrl . "<br>"
                 );
             }
-
-
+            
             return $this->redirect('audit/audit');
 
         } else {

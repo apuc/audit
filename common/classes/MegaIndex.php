@@ -64,7 +64,7 @@ class MegaIndex
      */
     private function setApiKey($data)
     {
-        $this->apiKey = isset($data['apiKey']) ? $data['apiKey'] : \Yii::$app->params['apiKey'];
+        $this->apiKey = isset($data['apiKey']) ? $data['apiKey'] : \Yii::$app->params['MegaIndexApiKey'];
     }
 
     /**
@@ -128,5 +128,5 @@ class MegaIndex
     {
         return (new self($data));
     }
-    
+
 }

@@ -30,7 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <h2>Аудит</h2>
-    <?= DetailView::widget([
+    <?
+    if($model->screenshot)
+    echo DetailView::widget([
         'model' => $model,
         'attributes' => [
             'url.url',
@@ -48,7 +50,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
         ],
-    ]) ?>
+    ]);
+    else
+        echo DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'url.url',
+                'server_response_code',
+                'size',
+                'loading_time',
+                'created_at:datetime',
+                'google_indexing:boolean',
+                'yandex_indexing:boolean',
+            ],
+        ]);
+    ?>
 
     <h2>Данные домена</h2>
     <?= GridView::widget([

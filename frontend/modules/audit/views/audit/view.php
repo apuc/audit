@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Audit */
@@ -39,6 +40,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at:datetime',
             'google_indexing:boolean',
             'yandex_indexing:boolean',
+            [
+                'attribute' => 'Скриншот',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . $model->screenshot), 'width' => '300px']);
+                }
+            ],
         ],
     ]) ?>
 

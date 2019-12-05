@@ -12,6 +12,8 @@ use Yii;
 use GuzzleHttp;
 use Iodev\Whois\Whois;
 use Exception;
+use yii\db\Expression;
+use DateTime;
 
 class Url extends \common\models\Url
 {
@@ -62,6 +64,9 @@ class Url extends \common\models\Url
 
     public static function insertData($data, $report)
     {
+        $server_response = 0;
+        $server_response_code = 0;
+
         try {
             $site_id = self::addSite($data->getSite());
 
@@ -69,9 +74,14 @@ class Url extends \common\models\Url
             self::addDns($data->getSite(), $site_id);
 
             $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+            if($audit_id) {
+                $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+            }
+            if($server_response) {
+                $server_response_code = $server_response[0]['server_response_code'];
+            }
 
-            if ($server_response == 200) {
+            if ($server_response_code == 200) {
                 self::addExternalLinks($data->getSiteUrl(), $audit_id);
             }
 
@@ -86,13 +96,21 @@ class Url extends \common\models\Url
 
     public static function insertAndUpdateData($data, $report)
     {
+        $server_response = 0;
+        $server_response_code = 0;
+
         $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
         $url_id = self::addUrl($data->getSiteUrl(), $site_id);
 
         $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+        if($audit_id) {
+            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+        }
+        if($server_response) {
+            $server_response_code = $server_response[0]['server_response_code'];
+        }
 
-        if ($server_response == 200) {
+        if ($server_response_code == 200) {
             self::addExternalLinks($data->getSiteUrl(), $audit_id);
         }
 
@@ -102,13 +120,20 @@ class Url extends \common\models\Url
 
     public static function updateData($data, $report)
     {
+        $server_response = 0;
+        $server_response_code = 0;
         $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
         $url_id = Url::find()->where(['url' => $data->getSiteUrl()])->asArray()->all()[0]['id'];
 
         $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+        if($audit_id) {
+            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+        }
+        if($server_response) {
+            $server_response_code = $server_response[0]['server_response_code'];
+        }
 
-        if ($server_response == 200) {
+        if ($server_response_code == 200) {
             self::addExternalLinks($data->getSiteUrl(), $audit_id);
         }
 
@@ -175,6 +200,11 @@ class Url extends \common\models\Url
     public static function addAudit($domain, $url_id)
     {
         try {
+            $date = new DateTime();
+            $file_name = $date->getTimestamp() . '.jpg';
+            $path = Yii::getAlias('@frontend/web/screenshots/') . $file_name;
+            $content = self::makeScreen('https://' . $domain, $path, false);
+
             $startTime = microtime(1);
             $client = new GuzzleHttp\Client();
             $res = $client->request('GET', $domain);
@@ -185,9 +215,12 @@ class Url extends \common\models\Url
             $audit->size = strlen($res->getBody());
             $audit->loading_time = round(($endTime - $startTime) * 1000);
             $audit->check_search = 0;
+            $audit->screenshot = $file_name;
             $audit->url_id = $url_id;
             $audit->save();
+           // Debug::dd($audit->errors);
         } catch (Exception $e) {
+           // Debug::dd($e->getMessage());
             $audit = new Audit();
             $audit->server_response_code = (string)$e->getCode();
             $audit->url_id = $url_id;

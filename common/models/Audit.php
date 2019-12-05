@@ -16,11 +16,13 @@ use yii\db\Expression;
  * @property int|null $loading_time
  * @property int $created_at
  * @property int $url_id
- * @property int $google_indexing
- * @property int $yandex_indexing
- * @property boolean $check_search
+ * @property bool|null $google_indexing
+ * @property bool|null $yandex_indexing
+ * @property bool|null $check_search
+ * @property string|null $screenshot
  *
  * @property Url $url
+ * @property ExternalLinks[] $externalLinks
  */
 class Audit extends \yii\db\ActiveRecord
 {
@@ -55,15 +57,10 @@ class Audit extends \yii\db\ActiveRecord
         return [
             [['size', 'loading_time', 'created_at', 'url_id'], 'integer'],
             [['url_id'], 'required'],
+            [['google_indexing', 'yandex_indexing', 'check_search'], 'boolean'],
             [['server_response_code'], 'string', 'max' => 100],
-            [
-                ['url_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Url::className(),
-                'targetAttribute' => ['url_id' => 'id']
-            ],
-            [['google_indexing', 'yandex_indexing', 'check_search'], 'safe']
+            [['screenshot'], 'string', 'max' => 255],
+            [['url_id'], 'exist', 'skipOnError' => true, 'targetClass' => Url::className(), 'targetAttribute' => ['url_id' => 'id']],
         ];
     }
 
@@ -73,6 +70,7 @@ class Audit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+
             'id' => 'ID',
             'server_response_code' => 'Код ответа сервера',
             'size' => 'Размер (байт)',
@@ -82,6 +80,7 @@ class Audit extends \yii\db\ActiveRecord
             'google_indexing' => 'Индексация Google',
             'yandex_indexing' => 'Индексация Яндекс',
             'check_search' => 'Флаг индексации',
+            'screenshot' => 'Скриншот',
         ];
     }
 
@@ -91,5 +90,13 @@ class Audit extends \yii\db\ActiveRecord
     public function getUrl()
     {
         return $this->hasOne(Url::className(), ['id' => 'url_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExternalLinks()
+    {
+        return $this->hasMany(ExternalLinks::className(), ['audit_id' => 'id']);
     }
 }

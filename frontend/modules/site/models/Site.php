@@ -16,7 +16,9 @@ class Site extends \common\models\Site
 
     public static function getUrlName($id)
     {
-        $url = Url::find()->where(['site_id' => $id])->asArray()->all()[0]['url'];
-        return $url;
+        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
+        if($url) {
+            return $url[0]['url'];
+        }
     }
 }

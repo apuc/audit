@@ -16,14 +16,20 @@ class Audit extends \common\models\Audit
 
     public static function getUrlID($id)
     {
-        $url_id = Audit::find()->where(['id' => $id])->asArray()->all()[0]['url_id'];
-        return $url_id;
+        $url_id = Audit::find()->where(['id' => $id])->asArray()->all();
+        if($url_id) {
+            return $url_id[0]['url_id'];
+        }
     }
 
     public static function getUrlName($id)
     {
-        $url_id = Audit::find()->where(['id' => $id])->asArray()->all()[0]['url_id'];
-        $url = Url::find()->where(['id' => $url_id])->asArray()->all()[0]['url'];
-        return $url;
+        $url_id = Audit::find()->where(['id' => $id])->asArray()->all();
+        if($url_id) {
+            $url = Url::find()->where(['id' => $url_id[0]['url_id']])->asArray()->all();
+            if($url) {
+                return $url[0]['url'];
+            }
+        }
     }
 }

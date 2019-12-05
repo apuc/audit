@@ -106,7 +106,11 @@ class Url extends \common\models\Url
         $url_id = Url::find()->where(['url' => $data->getSiteUrl()])->asArray()->all()[0]['id'];
 
         $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-        self::addExternalLinks($data->getSiteUrl(), $audit_id);
+        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all()[0]['server_response_code'];
+
+        if ($server_response == 200) {
+            self::addExternalLinks($data->getSiteUrl(), $audit_id);
+        }
 
         $report->newAudit++;
     }

@@ -11,14 +11,15 @@ use common\models\Site;
  */
 class SiteSearch extends Site
 {
+    public $dns;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'creation_date', 'expiration_date'], 'integer'],
-            [['name', 'registrar', 'states'], 'safe'],
+            [['id', 'creation_date', 'expiration_date', 'theme_id'], 'integer'],
+            [['name', 'registrar', 'states', 'dns'], 'safe'],
         ];
     }
 
@@ -61,6 +62,7 @@ class SiteSearch extends Site
             'id' => $this->id,
             'creation_date' => $this->creation_date,
             'expiration_date' => $this->expiration_date,
+            'theme_id' => $this->theme_id,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])

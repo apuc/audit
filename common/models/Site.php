@@ -9,10 +9,13 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property string|null $registrar
- * @property string|null $states
  * @property int|null $creation_date
  * @property int|null $expiration_date
+ * @property string|null $registrar
+ * @property string|null $states
+ * @property int|null $theme_id
+ *
+ * @property Theme $theme
  *
  * @property Dns[] $dns
  * @property Url[] $urls
@@ -34,8 +37,9 @@ class Site extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['creation_date', 'expiration_date'], 'integer'],
-            [['name', 'registrar', 'states'], 'string', 'max' => 255],
+            [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
+            [['name'], 'string', 'max' => 100],
+            [['registrar', 'states'], 'string', 'max' => 255],
         ];
     }
 
@@ -51,6 +55,7 @@ class Site extends \yii\db\ActiveRecord
             'states' => 'Состояния',
             'creation_date' => 'Дата создания',
             'expiration_date' => 'Дата истечения срока',
+            'theme_id' => 'Тема',
         ];
     }
 

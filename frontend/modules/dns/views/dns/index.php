@@ -13,10 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="dns-index">
 
-    <p>
-<!--        --><?//= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([

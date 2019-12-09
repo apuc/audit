@@ -22,6 +22,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'expiration_date')->textInput() ?>
 
+    <?= $form->field($model, 'theme_id')->dropDownList(
+        \yii\helpers\ArrayHelper::map(common\models\Theme::find()->all(), 'id', 'name'),
+        ['prompt' => '...']
+    ) ?>
+
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>

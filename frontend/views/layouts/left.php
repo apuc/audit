@@ -43,6 +43,12 @@
                         'active' => \Yii::$app->controller->id == 'externallinks',
                     ],
                     [
+                        'label' => 'Темы сайтов',
+                        'icon' => 'files-o',
+                        'url' => ['/theme/theme'],
+                        'active' => \Yii::$app->controller->id == 'theme',
+                    ],
+                    [
                         'label' => 'Пользователи',
                         'icon' => 'files-o',
                         'url' => ['/user/user'],

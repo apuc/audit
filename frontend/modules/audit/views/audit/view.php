@@ -30,28 +30,29 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <h2>Аудит</h2>
-    <?
-    if($model->screenshot)
-    echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'url.url',
-            'server_response_code',
-            'size',
-            'loading_time',
-            'created_at:datetime',
-            'google_indexing:boolean',
-            'yandex_indexing:boolean',
-            [
-                'attribute' => 'Скриншот',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . $model->screenshot), 'width' => '300px']);
-                }
+    <?php
+    if($model->screenshot) {
+        echo DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'url.url',
+                'server_response_code',
+                'size',
+                'loading_time',
+                'created_at:datetime',
+                'google_indexing:boolean',
+                'yandex_indexing:boolean',
+                [
+                    'attribute' => 'Скриншот',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . $model->screenshot), 'width' => '300px']);
+                    }
+                ],
             ],
-        ],
-    ]);
-    else
+        ]);
+    }
+    else {
         echo DetailView::widget([
             'model' => $model,
             'attributes' => [
@@ -64,6 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'yandex_indexing:boolean',
             ],
         ]);
+    }
     ?>
 
     <h2>Данные домена</h2>

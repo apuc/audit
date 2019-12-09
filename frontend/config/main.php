@@ -68,5 +68,8 @@ return [
         'externallinks' => [
             'class' => 'frontend\modules\externallinks\Externallinks',
         ],
+        'theme' => [
+            'class' => 'frontend\modules\theme\Theme',
+        ],
     ],
 ];

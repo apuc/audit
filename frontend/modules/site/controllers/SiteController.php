@@ -2,6 +2,7 @@
 
 namespace frontend\modules\site\controllers;
 
+use common\classes\Debug;
 use Yii;
 use common\models\Site;
 use frontend\modules\site\models\SiteSearch;
@@ -98,10 +99,50 @@ class SiteController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Comment
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionComment($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('comment', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Theme
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionTheme($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('theme', [
             'model' => $model,
         ]);
     }

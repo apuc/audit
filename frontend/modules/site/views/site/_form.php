@@ -27,6 +27,8 @@ use yii\widgets\ActiveForm;
         ['prompt' => '...']
     ) ?>
 
+    <?= $form->field($model, 'comment')->textInput() ?>
+
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>

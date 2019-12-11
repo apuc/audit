@@ -8,6 +8,7 @@ use common\classes\Debug;
 use common\models\Audit;
 use common\models\Dns;
 use common\models\ExternalLinks;
+use common\models\Theme;
 use common\models\Url;
 use GuzzleHttp;
 
@@ -158,9 +159,22 @@ class Site extends \common\models\Site
        return implode("<br>", $external_links_array);
     }
 
-    public function getTheme($id)
+    public static function getTheme($id)
     {
+        $site = Site::find()->where(['id' => $id])->asArray()->all();
+        if($site) {
+            $theme_id = $site[0]['theme_id'];
+        }
+        $theme = Theme::find()->where(['id' => $theme_id])->asArray()->all();
+        if($theme) {
+            return $theme[0]['name'];
+        }
+    }
 
+    public static function getComment($id)
+    {
+        $site = Site::findOne(['id' => $id]);
+        return $site->comment;
     }
 
 }

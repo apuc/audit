@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \frontend\modules\site\models\Site;
+use \common\models\Theme;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
@@ -27,7 +28,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'Иконка',
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{show} {update}',
+                'buttons' => [
+                    'show' => function ($data) {
+                        return Html::a(
+                            "<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
+                            ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]
+                        );
+                    },
+                ],
+            ],
+            [
+                'attribute' => '',
                 'value' => function ($data) {
                     return Site::getIcon($data->name);
                 },
@@ -45,15 +58,25 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'Дата создания и истечения срока',
                 'value' => function ($data) {
-                    return Site::getDate($data->id, 'creation_date') . " - " . Site::getDate($data->id, 'expiration_date');
+                    return Site::getDate($data->id, 'creation_date') . "<br>" . Site::getDate($data->id, 'expiration_date');
                 },
+                'format' => 'raw',
             ],
-
+//            [
+//                'attribute' => ' Тема',
+//                'value' => function ($data) {
+//                    return Site::getTheme($data->id);
+//                },
+//                'format' => 'raw',
+//            ],
             [
-                'attribute' => 'Target',
+                'attribute' => ' Тема',
                 'value' => function ($data) {
-                    return Site::getTarget($data->id);
-                },
+                        return Html::a(
+                            Site::getTheme($data->id),
+                            ['/domain/site/theme', 'id' => $data->id]
+                        );
+                    },
                 'format' => 'raw',
             ],
             [
@@ -70,13 +93,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'Размер',
+                'attribute' => 'Размер (байт)',
                 'value' => function ($data) {
                     return Site::getAudit($data->id, 'size');
                 },
             ],
             [
-                'attribute' => 'Время загрузки',
+                'attribute' => 'Время загрузки (мс)',
                 'value' => function ($data) {
                     return Site::getAudit($data->id, 'loading_time');
                 },
@@ -93,18 +116,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Site::getAudit($data->id, 'yandex_indexing');
                 },
             ],
-//            [
-//                'class' => 'yii\grid\ActionColumn',
-//                'template' => '{comment}',
-//                'buttons' => [
-//                    'comment' => function ($data) {
-//                        return Html::a(
-//                            "Комментарий",
-//                            ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]
-//                        );
-//                    },
-//                ],
-//            ],
+            [
+                'attribute' => ' Комментарий',
+                'value' => function ($data) {
+                        return Html::a(
+                            Site::getComment($data->id),
+                            ['/domain/site/comment', 'id' => $data->id]
+                        );
+                    },
+                'format' => 'raw',
+
+            ],
             [
                 'attribute' => 'Внешние ссылки',
                 'value' => function ($data) {
@@ -112,20 +134,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'format' => 'raw',
             ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{show} {update}',
-                'buttons' => [
-                    'show' => function ($data) {
-                        return Html::a(
-                            "Подробнее",
-                            ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]
-                        );
-                    },
-                ],
-            ],
         ],
+//        'tableOptions' =>['style' => 'width: 100%;'],
     ]); ?>
 
+    <?php
+//    $js = <<<JS
+//    $('#comment').on('click', function(){
+//        alert('Работает!');
+//        return false;
+//    });
+//JS;
+//
+//    $this->registerJs($js);
+    ?>
 
 </div>

@@ -14,8 +14,7 @@ use Yii;
  * @property string|null $registrar
  * @property string|null $states
  * @property int|null $theme_id
- *
- * @property Theme $theme
+ * @property string|null $comment
  *
  * @property Dns[] $dns
  * @property Url[] $urls
@@ -39,7 +38,7 @@ class Site extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
-            [['registrar', 'states'], 'string', 'max' => 255],
+            [['registrar', 'states', 'comment'], 'string', 'max' => 255],
         ];
     }
 
@@ -56,6 +55,7 @@ class Site extends \yii\db\ActiveRecord
             'creation_date' => 'Дата создания',
             'expiration_date' => 'Дата истечения срока',
             'theme_id' => 'Тема',
+            'comment' => 'Комментарий',
         ];
     }
 

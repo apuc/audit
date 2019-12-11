@@ -6,9 +6,9 @@ namespace frontend\modules\site\models;
 
 use yii\base\Model;
 
-class CommentForm extends Model
+class ThemeForm extends  Model
 {
-    public $comment;
+    public $theme;
 
     /**
      * {@inheritdoc}
@@ -16,7 +16,7 @@ class CommentForm extends Model
     public function rules()
     {
         return [
-            ['comment', 'safe'],
+            ['theme', 'safe'],
         ];
     }
 }

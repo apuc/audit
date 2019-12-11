@@ -17,7 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'comment-form']); ?>
 
-            <p>Комментарий:</p>
             <?= $form->field($model, 'comment')->textarea(['rows' => 20]) ?>
 
             <div class="form-group">

@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m191126_112025_dns
  */
-class m191126_112025_dns extends Migration
+class m191126_112027_dns extends Migration
 {
     /**
      * {@inheritdoc}
@@ -20,6 +20,7 @@ class m191126_112025_dns extends Migration
             'ttl' =>$this->integer(),
             'type'=> $this->string(10),
             'target'=> $this->string(255),
+            'ip' => $this->string(),
             'site_id'=> 'integer NOT NULL REFERENCES site(id)'
         ], $tableOptions);
     }

@@ -3,6 +3,7 @@
 namespace frontend\modules\site\controllers;
 
 use common\classes\Debug;
+use common\models\Theme;
 use Yii;
 use common\models\Site;
 use frontend\modules\site\models\SiteSearch;
@@ -49,10 +50,12 @@ class SiteController extends Controller
     {
         $searchModel = new SiteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $theme = Theme::find()->asArray()->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'theme' => $theme,
         ]);
     }
 

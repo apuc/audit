@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Class m191120_095657_url
+ * Class m191120_095658_audit
  */
-class m191120_095657_url extends Migration
+class m191120_095660_audit extends Migration
 {
     /**
      * {@inheritdoc}
@@ -18,11 +18,17 @@ class m191120_095657_url extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('url', [
+        $this->createTable('audit', [
             'id' => $this->primaryKey(),
-            'url' => $this->string(255)->notNull(),
-            'dns' =>$this->string(255),
-            'site_id'=> 'integer NOT NULL REFERENCES site(id)'
+            'server_response_code' => $this->string(100),
+            'size' => $this->integer(),
+            'loading_time' => $this->integer(),
+            'created_at' => $this->integer()->notNull(),
+            'google_indexing' => $this->boolean(),
+            'yandex_indexing' => $this->boolean(),
+            'check_search' => $this->boolean(),
+            'screenshot' => $this->string(),
+            'url_id'=>'integer NOT NULL REFERENCES url(id)'
         ], $tableOptions);
     }
 
@@ -31,7 +37,7 @@ class m191120_095657_url extends Migration
      */
     public function safeDown()
     {
-        echo "m191120_095657_url cannot be reverted.\n";
+        echo "m191120_095658_audit cannot be reverted.\n";
 
         return false;
     }
@@ -45,7 +51,7 @@ class m191120_095657_url extends Migration
 
     public function down()
     {
-        echo "m191120_095657_url cannot be reverted.\n";
+        echo "m191120_095658_audit cannot be reverted.\n";
 
         return false;
     }

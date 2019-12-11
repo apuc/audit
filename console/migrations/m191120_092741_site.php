@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m191120_092739_site
  */
-class m191120_092739_site extends Migration
+class m191120_092741_site extends Migration
 {
     /**
      * {@inheritdoc}
@@ -21,6 +21,12 @@ class m191120_092739_site extends Migration
         $this->createTable('site', [
             'id' => $this->primaryKey(),
             'name' => $this->string(100)->notNull(),
+            'creation_date' => $this->integer(),
+            'expiration_date' => $this->integer(),
+            'registrar' => $this->string(),
+            'states' => $this->string(),
+            'comment' => $this->string(),
+            'theme_id'=>'integer REFERENCES theme(id)'
         ], $tableOptions);
     }
 

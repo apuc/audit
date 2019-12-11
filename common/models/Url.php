@@ -9,7 +9,6 @@ use Yii;
  *
  * @property int $id
  * @property string $url
- * @property string|null $dns
  * @property int $site_id
  * @property string|null $ip
  *
@@ -34,7 +33,7 @@ class Url extends \yii\db\ActiveRecord
         return [
             [['url', 'site_id'], 'required'],
             [['site_id'], 'integer'],
-            [['url', 'dns', 'ip'], 'string', 'max' => 255],
+            [['url', 'ip'], 'string', 'max' => 255],
             [['site_id'], 'exist', 'skipOnError' => true, 'targetClass' => Site::className(), 'targetAttribute' => ['site_id' => 'id']],
         ];
     }
@@ -47,7 +46,6 @@ class Url extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'url' => 'Url',
-            'dns' => 'Dns',
             'site_id' => 'Домен',
             'ip' => 'IP',
         ];

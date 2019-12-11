@@ -13,10 +13,11 @@ use Yii;
  * @property int|null $expiration_date
  * @property string|null $registrar
  * @property string|null $states
- * @property int|null $theme_id
  * @property string|null $comment
+ * @property int|null $theme_id
  *
  * @property Dns[] $dns
+ * @property Theme $theme
  * @property Url[] $urls
  */
 class Site extends \yii\db\ActiveRecord
@@ -39,6 +40,7 @@ class Site extends \yii\db\ActiveRecord
             [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
             [['registrar', 'states', 'comment'], 'string', 'max' => 255],
+            [['theme_id'], 'exist', 'skipOnError' => true, 'targetClass' => Theme::className(), 'targetAttribute' => ['theme_id' => 'id']],
         ];
     }
 
@@ -50,12 +52,12 @@ class Site extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Домен',
-            'registrar' => 'Регистратор',
-            'states' => 'Состояния',
             'creation_date' => 'Дата создания',
             'expiration_date' => 'Дата истечения срока',
-            'theme_id' => 'Тема',
+            'registrar' => 'Регистратор',
+            'states' => 'Состояния',
             'comment' => 'Комментарий',
+            'theme_id' => 'Тема',
         ];
     }
 
@@ -65,6 +67,14 @@ class Site extends \yii\db\ActiveRecord
     public function getDns()
     {
         return $this->hasMany(Dns::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTheme()
+    {
+        return $this->hasOne(Theme::className(), ['id' => 'theme_id']);
     }
 
     /**

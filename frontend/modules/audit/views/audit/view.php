@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\helpers\Url;
+use frontend\modules\site\models\Site;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Audit */
@@ -78,6 +79,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'states',
             'creation_date:datetime',
             'expiration_date:datetime',
+            [
+                'attribute' => ' Тема',
+                'value' => function ($data) {
+                    return Site::getTheme($data->id);
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => ' Комментарий',
+                'value' => function ($data) {
+                    return Site::getComment($data->id);
+                 },
+                'format' => 'raw',
+
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

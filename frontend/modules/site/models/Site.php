@@ -159,7 +159,7 @@ class Site extends \common\models\Site
        return implode("<br>", $external_links_array);
     }
 
-    public static function getTheme($id)
+    public static function getThemeCustom($id)
     {
         $site = Site::find()->where(['id' => $id])->asArray()->all();
         if($site) {

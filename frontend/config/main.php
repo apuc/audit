@@ -71,5 +71,8 @@ return [
         'theme' => [
             'class' => 'frontend\modules\theme\Theme',
         ],
+        'api' => [
+            'class' => 'frontend\modules\api\Api',
+        ],
     ],
 ];

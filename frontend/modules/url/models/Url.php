@@ -89,6 +89,7 @@ class Url extends \common\models\Url
             $report->newUrl++;
             $report->newAudit++;
         } catch (Exception $e) {
+            Debug::dd($e->getMessage());
             $report->errorsUrl++;
             array_push($report->errorUrlArray, $data->getSiteUrl());
         }

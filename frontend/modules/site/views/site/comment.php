@@ -7,9 +7,20 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
+use yii\bootstrap\Modal;
 
 $this->title = 'Коментарий';
 $this->params['breadcrumbs'][] = $this->title;
+
+Modal::begin([
+    'header' => '<h2>Hello world</h2>',
+    'toggleButton' => ['label' => 'click me'],
+    'footer' => 'Низ окна',
+]);
+
+echo 'Say hello...';
+
+Modal::end();
 ?>
 <div class="site-contact">
 

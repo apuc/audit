@@ -11,7 +11,7 @@ use common\models\Site;
  */
 class SiteSearch extends Site
 {
-    public $dns;
+    public $theme;
     /**
      * {@inheritdoc}
      */
@@ -19,7 +19,7 @@ class SiteSearch extends Site
     {
         return [
             [['id', 'creation_date', 'expiration_date', 'theme_id'], 'integer'],
-            [['name', 'registrar', 'states', 'dns'], 'safe'],
+            [['name', 'registrar', 'states', 'theme'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class SiteSearch extends Site
      */
     public function search($params)
     {
-        $query = Site::find();
+        $query = Site::find()->leftJoin('theme', 'site.theme_id = theme.id')->with('theme');;
 
         // add conditions that should always apply here
 
@@ -68,6 +68,7 @@ class SiteSearch extends Site
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'registrar', $this->registrar])
             ->andFilterWhere(['like', 'states', $this->states]);
+        $query->andFilterWhere(['like', 'theme.name', $this->theme]);
 
         return $dataProvider;
     }

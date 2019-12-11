@@ -18,7 +18,7 @@ class UrlSearch extends Url
     {
         return [
             [['id', 'site_id'], 'integer'],
-            [['url', 'dns'], 'safe'],
+            [['url'], 'safe'],
         ];
     }
 
@@ -62,8 +62,7 @@ class UrlSearch extends Url
             'site_id' => $this->site_id,
         ]);
 
-        $query->andFilterWhere(['like', 'url', $this->url])
-            ->andFilterWhere(['like', 'dns', $this->dns]);
+        $query->andFilterWhere(['like', 'url', $this->url]);
 
         return $dataProvider;
     }

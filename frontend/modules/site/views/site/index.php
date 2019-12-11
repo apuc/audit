@@ -6,6 +6,12 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use \frontend\modules\site\models\Site;
 use \common\models\Theme;
+use yii\bootstrap\Modal;
+use dosamigos\editable\Editable;
+use yii\widgets\ActiveForm;
+
+/* @var $form yii\bootstrap\ActiveForm */
+/* @var $theme */
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
@@ -62,21 +68,34 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'format' => 'raw',
             ],
-//            [
-//                'attribute' => ' Тема',
-//                'value' => function ($data) {
-//                    return Site::getTheme($data->id);
-//                },
-//                'format' => 'raw',
-//            ],
             [
-                'attribute' => ' Тема',
+                'attribute' => 'theme.name',
                 'value' => function ($data) {
-                        return Html::a(
-                            Site::getTheme($data->id),
-                            ['/domain/site/theme', 'id' => $data->id]
-                        );
+                    if(Site::getThemeCustom($data->id) == "")
+                        $value = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><br>';
+                    else
+                        $value = Site::getThemeCustom($data->id);
+                       return Editable::widget( [
+                           'name' => 'theme',
+                           'value' => $value,
+                           'url' => '/api/api/theme',
+                           'type' => 'select2',
+                           'mode' => 'pop',
+                           'clientOptions' => [
+                               'placement' => 'right',
+                               'pk' => $data->id,
+                               'select2' => [
+                                   'width' => '124px'
+                               ],
+                               'source' => Theme::getSource(),
+                           ]
+                       ]);
                     },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'theme',
+                    ['class' => 'form-control']
+                ),
                 'format' => 'raw',
             ],
             [
@@ -117,15 +136,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => ' Комментарий',
+                'attribute' => 'Комментарий',
                 'value' => function ($data) {
-                        return Html::a(
-                            Site::getComment($data->id),
-                            ['/domain/site/comment', 'id' => $data->id]
-                        );
-                    },
+                    if(Site::getComment($data->id) == "")
+                        $value = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><br>';
+                    else
+                        $value = Site::getComment($data->id);
+                    return Editable::widget( [
+                        'name' => 'comment',
+                        'value' => $value,
+                        'url' => '/api/api/comment',
+                        'type' => 'textarea',
+                        'mode' => 'pop',
+                        'clientOptions' => [
+                            'placement' => 'right',
+                            'pk' => $data->id,
+                            'textarea' => [
+                                'width' => '124px'
+                            ],
+//                            'class' => 'custom-row',
+                        ]
+                    ]);
+                },
                 'format' => 'raw',
-
             ],
             [
                 'attribute' => 'Внешние ссылки',
@@ -139,14 +172,14 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
     <?php
-//    $js = <<<JS
-//    $('#comment').on('click', function(){
-//        alert('Работает!');
-//        return false;
-//    });
-//JS;
-//
-//    $this->registerJs($js);
+    $js = <<<JS
+    $('.comment').on('click', function(){
+        alert('Работает!');
+        return false;
+    });
+JS;
+
+    $this->registerJs($js);
     ?>
 
 </div>

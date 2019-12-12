@@ -74,5 +74,8 @@ return [
         'api' => [
             'class' => 'frontend\modules\api\Api',
         ],
+        'comments' => [
+            'class' => 'frontend\modules\comments\Comments',
+        ],
     ],
 ];

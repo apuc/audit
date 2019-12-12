@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%external_links}}`.
  */
-class m191120_131257_create_external_links_table extends Migration
+class m191212_080429_create_external_links_table extends Migration
 {
     /**
      * {@inheritdoc}

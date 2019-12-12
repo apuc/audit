@@ -1,5 +1,6 @@
 <?php
 
+use frontend\modules\externallinks\models\Externallinks;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -11,6 +12,8 @@ use frontend\modules\site\models\Site;
 /* @var $externalLinks yii\data\ActiveDataProvider */
 /* @var $dns yii\data\ActiveDataProvider */
 /* @var $site yii\data\ActiveDataProvider */
+/* @var $audit yii\data\ActiveDataProvider */
+/* @var $searchModel frontend\modules\externallinks\models\ExternallinksSearch */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Аудит', 'url' => ['index']];
@@ -30,45 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <h2>Аудит</h2>
-    <?php
-    if($model->screenshot) {
-        echo DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'url.url',
-                'server_response_code',
-                'size',
-                'loading_time',
-                'created_at:datetime',
-                'google_indexing:boolean',
-                'yandex_indexing:boolean',
-                [
-                    'attribute' => 'Скриншот',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . $model->screenshot), 'width' => '300px']);
-                    }
-                ],
-            ],
-        ]);
-    }
-    else {
-        echo DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'url.url',
-                'server_response_code',
-                'size',
-                'loading_time',
-                'created_at:datetime',
-                'google_indexing:boolean',
-                'yandex_indexing:boolean',
-            ],
-        ]);
-    }
-    ?>
-
     <h2>Данные домена</h2>
     <?= GridView::widget([
         'dataProvider' => $site,
@@ -77,23 +41,64 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'registrar',
             'states',
-            'creation_date:datetime',
-            'expiration_date:datetime',
+            'creation_date:date',
+            'expiration_date:date',
             [
                 'attribute' => ' Тема',
                 'value' => function ($data) {
-                    return Site::getTheme($data->id);
+                    return Site::getThemeCustom($data->id);
                 },
                 'format' => 'raw',
             ],
-            [
-                'attribute' => ' Комментарий',
-                'value' => function ($data) {
-                    return Site::getComment($data->id);
-                 },
-                'format' => 'raw',
 
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+    <h2>Аудит</h2>
+    <?= GridView::widget([
+        'dataProvider' => $audit,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'url.url',
+            'server_response_code',
+            'size',
+            'loading_time',
+            'created_at:date',
+            'google_indexing:boolean',
+            'yandex_indexing:boolean',
+            [
+                'attribute' => 'Скриншот',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . $model->screenshot), 'width' => '300px']);
+                }
             ],
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+    <h2>Внешние ссылки</h2>
+    <?= GridView::widget([
+        'dataProvider' => $externalLinks,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+//            [
+//                'attribute' => 'acceptor',
+//                'value' => function ($data) {
+//                    return ExternalLinks::getLinks($data->id);
+//                },
+//                'filter' => Html::activeTextInput(
+//                    $searchModel,
+//                    'acceptor',
+//                    ['class' => 'form-control']
+//                ),
+//                'format' => 'raw',
+//            ],
+            'acceptor',
+            'anchor',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
@@ -110,19 +115,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'type',
             'target',
             'ip',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-    <h2>Внешние ссылки</h2>
-    <?= GridView::widget([
-        'dataProvider' => $externalLinks,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'acceptor',
-            'anchor',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

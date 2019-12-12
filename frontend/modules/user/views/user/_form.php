@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email') ?>
 
-<!--    --><?//= $form->field($model, 'password')->passwordInput() ?>
-
     <?= $form->field($model, 'status')->textInput() ?>
 
 

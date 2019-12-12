@@ -3,6 +3,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\models\Comments;
 use frontend\modules\site\models\Site;
 use Yii;
 use common\classes\Debug;
@@ -42,17 +43,20 @@ class ApiController extends Controller
     public function actionComment()
     {
         if(Yii::$app->request->isAjax) {
-            $data = str_replace('comment', "", Yii::$app->request->post());
 
-            $site_id_encoded = stristr(implode($data), 'aTo');
-            $comment = implode(str_replace($site_id_encoded, "", $data));
-            $site_id_decoded = base64_decode($site_id_encoded);
-            $site_id = str_replace(array("i:", ";"), "", $site_id_decoded);
+            $add_comment = new Comments();
+            $add_comment->site_id = $_POST['site_id'];
+            $add_comment->owner_id = Yii::$app->user->id;
+            $add_comment->destination_id = $_POST['destination_id'];
+            $add_comment->comment = $_POST['comment'];
+            $add_comment->save();
 
-            if (($site = \common\models\Site::findOne($site_id)) !== null) {
-                $site->comment = $comment;
-                $site->save();
-            }
+//            $data = str_replace('comment', "", Yii::$app->request->post());
+//            $site_id_encoded = stristr(implode($data), 'aTo');
+//            $comment = implode(str_replace($site_id_encoded, "", $data));
+//            $site_id_decoded = base64_decode($site_id_encoded);
+//            $site_id = str_replace(array("i:", ";"), "", $site_id_decoded);
+//
         }
     }
 }

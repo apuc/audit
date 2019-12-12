@@ -19,28 +19,22 @@
                         'active' => \Yii::$app->controller->id == 'site',
                     ],
                     [
-                        'label' => 'URL',
-                        'icon' => 'files-o',
-                        'url' => ['/url/url'],
-                        'active' => \Yii::$app->controller->id == 'url',
-                    ],
-                    [
-                        'label' => 'DNS',
-                        'icon' => 'files-o',
-                        'url' => ['/dns/dns'],
-                        'active' => \Yii::$app->controller->id == 'dns',
-                    ],
-                    [
                         'label' => 'Аудит',
                         'icon' => 'files-o',
                         'url' => ['/audit/audit'],
                         'active' => \Yii::$app->controller->id == 'audit',
                     ],
                     [
-                        'label' => 'Внешние ссылки',
+                        'label' => 'Комментарии',
                         'icon' => 'files-o',
-                        'url' => ['/externallinks/externallinks'],
-                        'active' => \Yii::$app->controller->id == 'externallinks',
+                        'url' => ['/comments/comments'],
+                        'active' => \Yii::$app->controller->id == 'comments',
+                    ],
+                    [
+                        'label' => 'URL',
+                        'icon' => 'files-o',
+                        'url' => ['/url/url'],
+                        'active' => \Yii::$app->controller->id == 'url',
                     ],
                     [
                         'label' => 'Темы сайтов',

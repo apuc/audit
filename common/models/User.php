@@ -226,4 +226,14 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+    public static function getSource()
+    {
+        $model = self::find()->all();
+        $res = [];
+        foreach ($model as $item){
+            $res[] = ['id' => $item->id, 'text' => $item->username];
+        }
+        return $res;
+    }
 }

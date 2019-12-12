@@ -3,18 +3,16 @@
 use yii\db\Migration;
 
 /**
- * Class m191126_112025_dns
+ * Handles the creation of table `{{%dns}}`.
  */
-class m191126_112027_dns extends Migration
+class m191212_080537_create_dns_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $tableOptions = null;
-
-        $this->createTable('dns', [
+        $this->createTable('{{%dns}}', [
             'id' => $this->primaryKey(),
             'class' => $this->string(10),
             'ttl' =>$this->integer(),
@@ -22,7 +20,7 @@ class m191126_112027_dns extends Migration
             'target'=> $this->string(255),
             'ip' => $this->string(),
             'site_id'=> 'integer NOT NULL REFERENCES site(id)'
-        ], $tableOptions);
+        ]);
     }
 
     /**
@@ -30,23 +28,6 @@ class m191126_112027_dns extends Migration
      */
     public function safeDown()
     {
-        echo "m191126_112025_dns cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('{{%dns}}');
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m191126_112025_dns cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

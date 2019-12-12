@@ -13,7 +13,6 @@ use Yii;
  * @property int|null $expiration_date
  * @property string|null $registrar
  * @property string|null $states
- * @property string|null $comment
  * @property int|null $theme_id
  *
  * @property Dns[] $dns
@@ -39,7 +38,7 @@ class Site extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
-            [['registrar', 'states', 'comment'], 'string', 'max' => 255],
+            [['registrar', 'states'], 'string', 'max' => 255],
             [['theme_id'], 'exist', 'skipOnError' => true, 'targetClass' => Theme::className(), 'targetAttribute' => ['theme_id' => 'id']],
         ];
     }
@@ -56,7 +55,6 @@ class Site extends \yii\db\ActiveRecord
             'expiration_date' => 'Дата истечения срока',
             'registrar' => 'Регистратор',
             'states' => 'Состояния',
-            'comment' => 'Комментарий',
             'theme_id' => 'Тема',
         ];
     }

@@ -1,14 +1,14 @@
 <?php
 
-use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \frontend\modules\site\models\Site;
 use \common\models\Theme;
-use yii\bootstrap\Modal;
+use \common\models\Comments;
+use \common\models\User;
 use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
+use yii\widgets\DetailView;
 
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $theme */
@@ -17,14 +17,12 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+/* @var $model common\models\Comments */
+
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-index">
-
-    <p>
-        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -137,28 +135,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'Комментарий',
-                'value' => function ($data) {
-                    if(Site::getComment($data->id) == "")
-                        $value = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><br>';
-                    else
-                        $value = Site::getComment($data->id);
-                    return Editable::widget( [
-                        'name' => 'comment',
-                        'value' => $value,
-                        'url' => '/api/api/comment',
-                        'type' => 'textarea',
-                        'mode' => 'pop',
-                        'clientOptions' => [
-                            'placement' => 'right',
-                            'pk' => $data->id,
-                            'textarea' => [
-                                'width' => '124px'
-                            ],
-//                            'class' => 'custom-row',
-                        ]
-                    ]);
-                },
                 'format' => 'raw',
+                'value' => function ($data) {
+                    return  '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="'.
+                        $data->id.'" class="comment"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Добавить комментарий</a>'
+                        . "<br>" .
+                        Html::a("<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span> Посмотреть комментарии к сайту",
+                            ['/comments/comments/?CommentsSearch[site_id]='.$data->id]
+                        );
+                },
             ],
             [
                 'attribute' => 'Внешние ссылки',
@@ -171,15 +156,70 @@ $this->params['breadcrumbs'][] = $this->title;
 //        'tableOptions' =>['style' => 'width: 100%;'],
     ]); ?>
 
-    <?php
-    $js = <<<JS
-    $('.comment').on('click', function(){
-        alert('Работает!');
-        return false;
+</div>
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-site-id="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Комментарий</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php $form = ActiveForm::begin();
+                $model = new Comments();?>
+
+                <?= $form->field($model, 'destination_id')->dropDownList(
+                    \yii\helpers\ArrayHelper::map(common\models\User::find()->all(), 'id', 'username'),
+                    ['prompt' => '...']
+                ) ?>
+
+                <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+
+                <div class="form-group">
+                    <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjax', 'data-dismiss' => "modal"]) ?>
+                </div>
+
+                <?php ActiveForm::end(); ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<?php
+$js = <<<JS
+ $('.comment').on('click', function(){
+     let site_id = $(this).data("id");
+     $("#exampleModal").attr("data-site-id", site_id);
+ });
+
+    $('#commentAjax').on('click', function(){
+        let comment = document.getElementById('comments-comment').value;
+        let destination_id = document.getElementById('comments-destination_id').value;
+        let site_id = document.getElementById('exampleModal').getAttribute("data-site-id");
+        $.ajax({
+            url: '/api/api/comment',
+            type: 'POST',
+            data: {
+                comment:comment,
+                destination_id:destination_id,
+                site_id:site_id
+            },
+            success: function(res){
+                console.log(res);
+            },
+            error: function(){
+                alert('Error!');
+            }
+        });
     });
 JS;
 
-    $this->registerJs($js);
-    ?>
-
-</div>
+$this->registerJs($js);
+?>

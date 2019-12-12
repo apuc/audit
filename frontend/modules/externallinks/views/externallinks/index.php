@@ -12,10 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="external-links-index">
 
-    <p>
-<!--        --><?//= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([

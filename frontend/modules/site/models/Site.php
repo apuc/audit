@@ -118,6 +118,7 @@ class Site extends \common\models\Site
     {
        $audit_id = self::getAudit($id, 'id');
        $external_links = ExternalLinks::find()->where(['audit_id' => $audit_id])->all();
+
        $external_links_array = array();
 
        foreach ($external_links as $value) {

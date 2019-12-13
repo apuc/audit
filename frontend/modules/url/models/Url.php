@@ -245,13 +245,15 @@ class Url extends \common\models\Url
             array_push($site, $value->name);
         }
 
+        $cuted_domain = stristr($domain, '/', true);
+
         $host_path_array = array();
         $anchor_array = array();
         foreach ($links as $link) {
             if (self::isExist(parse_url($link->getAttribute('href')), 'host')) {
                 $clean_url = str_replace(array("http://", "https://", "www."), "",
                     parse_url($link->getAttribute('href'))['host']);
-                if ($clean_url != $domain) {
+                if ($clean_url != $cuted_domain) {
                     if (self::isExist(parse_url($link->getAttribute('href')), 'path')) {
                         $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
                         if (!in_array($host_path, $host_path_array)) {

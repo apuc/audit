@@ -3,14 +3,17 @@
 
 namespace frontend\modules\site\models;
 
-
 use common\classes\Debug;
 use common\models\Audit;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Theme;
 use common\models\Url;
+use DOMDocument;
 use GuzzleHttp;
+use http\Env\Request;
+
+//use GuzzleHttp\Psr7\Request;
 
 class Site extends \common\models\Site
 {
@@ -29,7 +32,13 @@ class Site extends \common\models\Site
 
     public static function getIcon($url)
     {
-        return "<img src='https://" . $url . "/favicon.ico'>";
+        try {
+            $client = new GuzzleHttp\Client();
+            $client->request('GET', 'https://' . $url . '/favicon.ico');
+            return "<img src='https://" . $url . "/favicon.ico'>";
+        } catch (\Exception $e) {
+            return "<img src='http://www.google.com/s2/favicons?domain=www." . $url . "'";
+        }
     }
 
     public static function getDate($id, $key)
@@ -39,44 +48,7 @@ class Site extends \common\models\Site
             $day = idate('d', $site[0][$key]);
             $month = idate('m', $site[0][$key]);
             $year = idate('Y', $site[0][$key]);
-//            switch ($month) {
-//                case 1:
-//                    $month = 'января';
-//                    break;
-//                case 2:
-//                    $month = 'февраля';
-//                    break;
-//                case 3:
-//                    $month = 'марта';
-//                    break;
-//                case 4:
-//                    $month = 'апреля';
-//                    break;
-//                case 5:
-//                    $month = 'мая';
-//                    break;
-//                case 6:
-//                    $month = 'июня';
-//                    break;
-//                case 7:
-//                    $month = 'июля';
-//                    break;
-//                case 8:
-//                    $month = 'августа';
-//                    break;
-//                case 9:
-//                    $month = 'сентября';
-//                    break;
-//                case 10:
-//                    $month = 'октября';
-//                    break;
-//                case 11:
-//                    $month = 'ноября';
-//                    break;
-//                case 12:
-//                    $month = 'декабря';
-//                    break;
-//            }
+
             return $day.".".$month.".".$year;
         }
     }

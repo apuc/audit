@@ -160,8 +160,6 @@ class Url extends \common\models\Url
             $site->states = implode(", ", $states);
             $site->save();
 
-
-
             return $site->id;
         } else {
             return null;

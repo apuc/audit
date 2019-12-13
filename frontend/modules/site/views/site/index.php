@@ -138,10 +138,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($data) {
                     return  '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="'.
-                        $data->id.'" class="comment"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Добавить комментарий</a>'
+                        $data->id.'" class="comment" title="Добавить комментарий"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>'
                         . "<br>" .
-                        Html::a("<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span> Посмотреть комментарии к сайту",
-                            ['/comments/comments/?CommentsSearch[site_id]='.$data->id]
+                        Html::a("<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
+                            ['/comments/comments/?CommentsSearch[site_id]='.$data->id],
+                            ['title' => 'Посмотреть комментарии к сайту']
                         );
                 },
             ],

@@ -147,10 +147,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'Внешние ссылки',
+                'format' => 'raw',
                 'value' => function ($data) {
                     return Site::getExternalLinks($data->id);
                 },
-                'format' => 'raw',
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'external_links',
+                    ['class' => 'form-control']
+                ),
             ],
         ],
 //        'tableOptions' =>['style' => 'width: 100%;'],

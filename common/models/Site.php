@@ -82,4 +82,5 @@ class Site extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Url::className(), ['site_id' => 'id']);
     }
+
 }

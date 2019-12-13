@@ -2,6 +2,7 @@
 
 namespace frontend\modules\site\models;
 
+use common\classes\Debug;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Site;
@@ -12,6 +13,7 @@ use common\models\Site;
 class SiteSearch extends Site
 {
     public $theme;
+    public $external_links;
     /**
      * {@inheritdoc}
      */
@@ -19,7 +21,7 @@ class SiteSearch extends Site
     {
         return [
             [['id', 'creation_date', 'expiration_date', 'theme_id'], 'integer'],
-            [['name', 'registrar', 'states', 'theme'], 'safe'],
+            [['name', 'registrar', 'states', 'theme', 'external_links'], 'safe'],
         ];
     }
 
@@ -41,7 +43,12 @@ class SiteSearch extends Site
      */
     public function search($params)
     {
-        $query = Site::find()->leftJoin('theme', 'site.theme_id = theme.id')->with('theme');;
+        $query = Site::find()
+            ->leftJoin('theme', 'site.theme_id = theme.id')
+            ->leftJoin('url', 'site.id = url.site_id')
+            ->leftJoin('audit', 'url.id = audit.url_id')
+            ->leftJoin('external_links', 'audit.id = external_links.audit_id')
+            ->with('theme');
 
         // add conditions that should always apply here
 
@@ -69,6 +76,7 @@ class SiteSearch extends Site
             ->andFilterWhere(['like', 'registrar', $this->registrar])
             ->andFilterWhere(['like', 'states', $this->states]);
         $query->andFilterWhere(['like', 'theme.name', $this->theme]);
+        $query->andFilterWhere(['like', 'external_links.acceptor', $this->external_links]);
 
         return $dataProvider;
     }

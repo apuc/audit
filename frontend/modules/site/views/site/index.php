@@ -150,7 +150,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Внешние ссылки',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Site::getExternalLinks($data->id);
+                    return '<div class="custom-grid-view">' . Site::getExternalLinks($data->id) . '</div>';
                 },
                 'filter' => Html::activeTextInput(
                     $searchModel,

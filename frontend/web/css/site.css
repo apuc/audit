@@ -85,6 +85,10 @@ a.desc:after {
     min-width: 50px;
 }
 
+.custom-grid-view {
+
+}
+
 .hint-block {
     display: block;
     margin-top: 5px;

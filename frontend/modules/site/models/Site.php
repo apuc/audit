@@ -123,9 +123,9 @@ class Site extends \common\models\Site
 
        foreach ($external_links as $value) {
            if(trim($value->anchor) != "") {
-               array_push($external_links_array, $value->acceptor . " - " . trim($value->anchor));
+               array_push($external_links_array, '<b>'.$value->acceptor.'</b> - ' . trim($value->anchor));
            } else {
-               array_push($external_links_array, $value->acceptor . " - анкор не задан");
+               array_push($external_links_array, '<b>'.$value->acceptor.'</b> - анкор не задан');
            }
        }
 

@@ -5,10 +5,8 @@ use yii\grid\GridView;
 use \frontend\modules\site\models\Site;
 use \common\models\Theme;
 use \common\models\Comments;
-use \common\models\User;
 use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
-use yii\widgets\DetailView;
 
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $theme */
@@ -32,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-//         "id" => "grid",
+         "id" => "grid",
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -49,9 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\CheckboxColumn',
-//                'checkboxOptions' => function ($model, $key, $index, $column) {
-//                    return ['value' => $model->id];
-//                }
             ],
             [
                 'attribute' => '',
@@ -71,8 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Регистратор',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getRegistrar($data->id, 0)
-                        . '" class="custom-grid-view">' . Site::getRegistrar($data->id, 1) . '</div';
+                        . Site::getRegistrar($data->id, 0) . '" class="custom-grid-view">'
+                        . Site::getRegistrar($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -80,8 +75,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Состояния',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getStates($data->id, 0)
-                        . '" class="custom-grid-view">' . Site::getStates($data->id, 1) . '</div';
+                        . Site::getStates($data->id, 0) . '" class="custom-grid-view">'
+                        . Site::getStates($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -133,8 +128,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'IP',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getIp($data->id, 0)
-                        . '" class="custom-grid-view">' . Site::getIp($data->id, 1) . '</div';
+                        . Site::getIp($data->id, 0) . '" class="custom-grid-view">'
+                        . Site::getIp($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -142,8 +137,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'DNS',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getDnsServer($data->id, 0)
-                        . '" class="custom-grid-view">' . Site::getDnsServer($data->id, 1) . '</div';
+                        . Site::getDnsServer($data->id, 0) . '" class="custom-grid-view">'
+                        . Site::getDnsServer($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -181,9 +176,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Комментарий',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return  '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="'.
-                        $data->id.'" class="comment" title="Добавить комментарий"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>'
-                        . "<br>" .
+                    return  '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="'. $data->id
+                        .'" class="comment" title="Добавить комментарий"><span class="glyphicon glyphicon-pencil" 
+                            aria-hidden="true"></span></a>' . "<br>" .
                         Html::a("<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
                             ['/comments/comments/?CommentsSearch[site_id]='.$data->id],
                             ['title' => 'Посмотреть комментарии к сайту']
@@ -194,7 +189,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Акцептор',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.Site::getAcceptor($data->id, 0).'" class="custom-grid-view">' . Site::getAcceptor($data->id, 1) . '</div>';
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getAcceptor($data->id, 0)  . '" class="custom-grid-view">'
+                        . Site::getAcceptor($data->id, 1) . '</div>';
                 },
                 'filter' => Html::activeTextInput(
                     $searchModel,
@@ -206,19 +203,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Анкор',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.Site::getAnchor($data->id, 0).'" class="custom-grid-view">' . Site::getAnchor($data->id, 1) . '</div>';
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getAnchor($data->id, 0) . '" class="custom-grid-view">'
+                        . Site::getAnchor($data->id, 1) . '</div>';
                 },
             ],
         ],
-//        'tableOptions' =>['style' => 'width: 100%;'],
     ]); ?>
 
 </div>
-<!-- Button trigger modal -->
 
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-site-id="">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true" data-site-id="">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -239,7 +235,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
                 <div class="form-group">
-                    <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjax', 'data-dismiss' => "modal"]) ?>
+                    <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjax',
+                        'data-dismiss' => "modal"]) ?>
                 </div>
 
                 <?php ActiveForm::end(); ?>
@@ -251,7 +248,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
 $('.indexing').on('click', function(){
-    let keys = $('#w0').yiiGridView('getSelectedRows');
+    let keys = $('#grid').yiiGridView('getSelectedRows');
         $.ajax({
             url: '/api/api/indexing',
             type: 'POST',
@@ -293,6 +290,5 @@ $('.indexing').on('click', function(){
         });
     });
 JS;
-
 $this->registerJs($js);
 ?>

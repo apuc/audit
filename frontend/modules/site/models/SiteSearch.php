@@ -49,6 +49,7 @@ class SiteSearch extends Site
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
             ->groupBy('site.name')
+            ->orderBy('audit.created_at desc')
             ->with('theme');
 
         // add conditions that should always apply here

@@ -3,6 +3,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\classes\Debug;
 use common\models\Comments;
 use Yii;
 use yii\web\Controller;
@@ -52,7 +53,7 @@ class ApiController extends Controller
     public function actionIndexing()
     {
         if(Yii::$app->request->isAjax) {
-            echo Yii::$app->request->post();
+            var_dump(Yii::$app->request->post());
         }
     }
 }

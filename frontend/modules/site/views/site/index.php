@@ -27,10 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-         "id" => "grid",
+//         "id" => "grid",
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -229,11 +231,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
 $('.indexing').on('click', function(){
-    let keys = $('#grid').yiiGridView('getSelectedRows');
+    let keys = $('#w0').yiiGridView('getSelectedRows');
         $.ajax({
             url: '/api/api/indexing',
             type: 'POST',
-            dataType: 'json',
             data: {
                 keys:keys
             },

@@ -7,6 +7,10 @@ td {
     white-space:normal !important;
 }
 
+div {
+    word-wrap: break-word;
+}
+
 .wrap {
     min-height: 100%;
     height: auto;
@@ -75,6 +79,11 @@ a.desc:after {
 .sort-ordinal a.desc:after {
     content: "\e156";
 }
+.grid-view {
+    overflow-x: scroll;
+    display: flex;
+    flex-direction: column;
+}
 
 .grid-view td {
     white-space: nowrap;
@@ -86,7 +95,9 @@ a.desc:after {
 }
 
 .custom-grid-view {
-
+    height: 40px;
+    overflow-y: auto;
+    white-space: nowrap;
 }
 
 .hint-block {

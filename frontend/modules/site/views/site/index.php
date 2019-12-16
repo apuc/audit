@@ -21,6 +21,7 @@ use yii\widgets\DetailView;
 
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="site-index">
 
@@ -29,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+         "id" => "grid",
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -42,6 +44,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         );
                     },
                 ],
+            ],
+            [
+                'class' => 'yii\grid\CheckboxColumn',
+//                'checkboxOptions' => function ($model, $key, $index, $column) {
+//                    return ['value' => $model->id];
+//                }
             ],
             [
                 'attribute' => '',
@@ -60,9 +68,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'registrar',
             'states',
             [
-                'attribute' => 'Дата создания и истечения срока',
+                'attribute' => 'Дата создания',
                 'value' => function ($data) {
-                    return Site::getDate($data->id, 'creation_date') . "<br>" . Site::getDate($data->id, 'expiration_date');
+                    return Site::getDate($data->id, 'creation_date');
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'Дней до окончания регистрации',
+                'value' => function ($data) {
+                    return Site::getDaysLeft($data->id);
                 },
                 'format' => 'raw',
             ],
@@ -100,6 +115,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'IP',
                 'value' => function ($data) {
                     return Site::getIp($data->id);
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'DNS',
+                'value' => function ($data) {
+                    return Site::getDnsServer($data->id);
                 },
                 'format' => 'raw',
             ],
@@ -147,16 +169,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'Внешние ссылки',
+                'attribute' => 'Акцептор',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return '<div class="custom-grid-view">' . Site::getExternalLinks($data->id) . '</div>';
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.Site::getAcceptor($data->id, 0).'" class="custom-grid-view">' . Site::getAcceptor($data->id, 1) . '</div>';
                 },
                 'filter' => Html::activeTextInput(
                     $searchModel,
                     'external_links',
                     ['class' => 'form-control']
                 ),
+            ],
+            [
+                'attribute' => 'Анкор',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.Site::getAnchor($data->id, 0).'" class="custom-grid-view">' . Site::getAnchor($data->id, 1) . '</div>';
+                },
             ],
         ],
 //        'tableOptions' =>['style' => 'width: 100%;'],
@@ -197,9 +226,26 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-
 <?php
 $js = <<<JS
+$('.indexing').on('click', function(){
+    let keys = $('#grid').yiiGridView('getSelectedRows');
+        $.ajax({
+            url: '/api/api/indexing',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                keys:keys
+            },
+            success: function(res){
+                console.log(res);
+            },
+            error: function(){
+                alert('Error!');
+            }
+        });
+    });
+
  $('.comment').on('click', function(){
      let site_id = $(this).data("id");
      $("#exampleModal").attr("data-site-id", site_id);

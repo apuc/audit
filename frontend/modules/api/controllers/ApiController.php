@@ -4,11 +4,8 @@
 namespace frontend\modules\api\controllers;
 
 use common\models\Comments;
-use frontend\modules\site\models\Site;
 use Yii;
-use common\classes\Debug;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 
 class ApiController extends Controller
@@ -43,20 +40,19 @@ class ApiController extends Controller
     public function actionComment()
     {
         if(Yii::$app->request->isAjax) {
-
             $add_comment = new Comments();
             $add_comment->site_id = $_POST['site_id'];
             $add_comment->owner_id = Yii::$app->user->id;
             $add_comment->destination_id = $_POST['destination_id'];
             $add_comment->comment = $_POST['comment'];
             $add_comment->save();
+        }
+    }
 
-//            $data = str_replace('comment', "", Yii::$app->request->post());
-//            $site_id_encoded = stristr(implode($data), 'aTo');
-//            $comment = implode(str_replace($site_id_encoded, "", $data));
-//            $site_id_decoded = base64_decode($site_id_encoded);
-//            $site_id = str_replace(array("i:", ";"), "", $site_id_decoded);
-//
+    public function actionIndexing()
+    {
+        if(Yii::$app->request->isAjax) {
+            echo Yii::$app->request->post();
         }
     }
 }

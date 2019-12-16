@@ -48,6 +48,7 @@ class SiteSearch extends Site
             ->leftJoin('url', 'site.id = url.site_id')
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
+            ->groupBy('site.name')
             ->with('theme');
 
         // add conditions that should always apply here

@@ -77,7 +77,39 @@ class Site extends \common\models\Site
         return implode("<br>", $target_array);
     }
 
-    public static function getIp($id)
+    public static function getRegistrar($id, $fl)
+    {
+        $site = \common\models\Site::findOne(['id' => $id]);
+        $arr = array();
+
+        if($site) {
+            $arr =  explode(", ", $site->registrar);
+        }
+        if($fl) {
+            return implode("<br>", $arr);
+        } else {
+            return implode("\n", $arr);
+        }
+
+    }
+
+    public static function getStates($id, $fl)
+    {
+        $site = \common\models\Site::findOne(['id' => $id]);
+        $arr = array();
+
+        if($site) {
+            $arr =  explode(", ", $site->states);
+        }
+        if($fl) {
+            return implode("<br>", $arr);
+        } else {
+            return implode("\n", $arr);
+        }
+
+    }
+
+    public static function getIp($id, $fl)
     {
         $ip = Dns::find()->where(['site_id'=>$id])->all();
         $ip_array = array();
@@ -87,11 +119,14 @@ class Site extends \common\models\Site
                 array_push($ip_array, $value->ip);
             }
         }
-
-        return implode("<br>", $ip_array);
+        if($fl) {
+            return implode("<br>", $ip_array);
+        } else {
+            return implode("\n", $ip_array);
+        }
     }
 
-    public static function getDnsServer($id)
+    public static function getDnsServer($id, $fl)
     {
         $dns = Dns::find()->where(['site_id'=>$id])->all();
         $dns_array = array();
@@ -101,8 +136,11 @@ class Site extends \common\models\Site
                 array_push($dns_array, $value->target);
             }
         }
-
-        return implode("<br>", $dns_array);
+        if($fl) {
+            return implode("<br>", $dns_array);
+        } else {
+            return implode("\n", $dns_array);
+        }
     }
 
     public static function getAudit($id, $key)

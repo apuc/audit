@@ -67,8 +67,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'format' => 'raw',
             ],
-            'registrar',
-            'states',
+            [
+                'attribute' => 'Регистратор',
+                'value' => function ($data) {
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getRegistrar($data->id, 0)
+                        . '" class="custom-grid-view">' . Site::getRegistrar($data->id, 1) . '</div';
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'Состояния',
+                'value' => function ($data) {
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getStates($data->id, 0)
+                        . '" class="custom-grid-view">' . Site::getStates($data->id, 1) . '</div';
+                },
+                'format' => 'raw',
+            ],
             [
                 'attribute' => 'Дата создания',
                 'value' => function ($data) {
@@ -116,14 +132,18 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'IP',
                 'value' => function ($data) {
-                    return Site::getIp($data->id);
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getIp($data->id, 0)
+                        . '" class="custom-grid-view">' . Site::getIp($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'DNS',
                 'value' => function ($data) {
-                    return Site::getDnsServer($data->id);
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . Site::getDnsServer($data->id, 0)
+                        . '" class="custom-grid-view">' . Site::getDnsServer($data->id, 1) . '</div';
                 },
                 'format' => 'raw',
             ],

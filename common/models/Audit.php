@@ -99,4 +99,11 @@ class Audit extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ExternalLinks::className(), ['audit_id' => 'id']);
     }
+
+    /**
+     * @return array|ActiveRecord|null
+     */
+    static public function getNotCheckedAudit(){
+        return Audit::find()->where(['check_search' => null])->one();
+    }
 }

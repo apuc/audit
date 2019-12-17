@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\user\models\UserSearch */
@@ -13,9 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-index">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
     <?= Html::button('Выдать доступ', ['class' => 'btn btn-primary access']) ?>
 
-    <?= GridView::widget([
+    <?php
+    Pjax::begin(['id' => 'accessPjax']);
+    echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'id' => 'grid',
@@ -30,7 +34,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
-    ]); ?>
+    ]);
+    Pjax::end();
+    ?>
 
 </div>
 
@@ -45,7 +51,7 @@ $('.access').on('click', function(){
                 keys:keys
             },
             success: function(res) {
-                alert('Перезагрузите страницу, чтобы увидеть изменения.');
+                $.pjax.reload({container:"#accessPjax"});
             },
             error: function() {
                 alert('Error!');

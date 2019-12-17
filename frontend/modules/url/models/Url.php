@@ -144,6 +144,10 @@ class Url extends \common\models\Url
 
     public static function addSite($domain)
     {
+        $host_names = explode(".", $domain);
+        $bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
+        $domain  =$bottom_host_name;
+
         $whois = Whois::create();
         $info = $whois->loadDomainInfo($domain);
 

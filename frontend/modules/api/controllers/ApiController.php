@@ -4,8 +4,12 @@
 namespace frontend\modules\api\controllers;
 
 use common\classes\Debug;
+use common\classes\UserAgentArray;
+use common\models\Audit;
 use common\models\Comments;
+use common\models\Search;
 use common\models\User;
+use common\models\Url;
 use Yii;
 use yii\web\Controller;
 
@@ -54,7 +58,26 @@ class ApiController extends Controller
     public function actionIndexing()
     {
         if(Yii::$app->request->isAjax) {
-            var_dump(Yii::$app->request->post());
+            $keys = Yii::$app->request->post();
+
+            if($keys) {
+                foreach ($keys['keys'] as $key) {
+                    $url = Url::findOne(['site_id' => $key]);
+                    if($url) {
+                        $audit = Audit::find()
+                            ->where(['url_id' => $url->id, 'check_search' => 0])
+                            ->orderBy('created_at desc')
+                            ->one();
+                        if($audit) {
+                            $result = Search::check($url->url);
+                            $result['ya'] ? $audit->yandex_indexing = 1 : false;
+                            $result['google'] ? $audit->google_indexing = 1 : false;
+                            $audit->check_search = 1;
+                            $audit->save();
+                        }
+                    }
+                }
+            }
         }
     }
 

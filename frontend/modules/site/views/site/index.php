@@ -7,6 +7,7 @@ use \common\models\Theme;
 use \common\models\Comments;
 use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $theme */
@@ -27,7 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
 
-    <?= GridView::widget([
+    <?php
+    Pjax::begin(['id' => 'sitePjax']);
+    echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'id' => 'grid',
@@ -207,7 +210,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
         ],
-    ]); ?>
+    ]);
+    Pjax::end();
+    ?>
 
 </div>
 
@@ -254,7 +259,7 @@ $('.indexing').on('click', function(){
                 keys:keys
             },
             success: function(res){
-                console.log(res);
+                $.pjax.reload({container:"#sitePjax"});
             },
             error: function(){
                 alert('Error!');
@@ -280,7 +285,7 @@ $('.indexing').on('click', function(){
                 site_id:site_id
             },
             success: function(res){
-                console.log(res);
+                 console.log(res);
             },
             error: function(){
                 alert('Error!');

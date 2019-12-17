@@ -46,7 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => ' Тема',
                 'value' => function ($data) {
-                    return Site::getThemeCustom($data->id);
+                    if($data->theme) {
+                        return $data->theme->name;
+                    } else {
+                        return null;
+                    }
+
                 },
                 'format' => 'raw',
             ],
@@ -85,18 +90,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            [
-//                'attribute' => 'acceptor',
-//                'value' => function ($data) {
-//                    return ExternalLinks::getLinks($data->id);
-//                },
-//                'filter' => Html::activeTextInput(
-//                    $searchModel,
-//                    'acceptor',
-//                    ['class' => 'form-control']
-//                ),
-//                'format' => 'raw',
-//            ],
             'acceptor',
             'anchor',
 

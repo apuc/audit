@@ -7,10 +7,6 @@ td {
     white-space:normal !important;
 }
 
-div {
-    word-wrap: break-word;
-}
-
 .wrap {
     min-height: 100%;
     height: auto;
@@ -97,6 +93,7 @@ a.desc:after {
 .custom-grid-view {
     height: 40px;
     overflow-y: auto;
+    word-wrap: break-word;
     white-space: nowrap;
 }
 

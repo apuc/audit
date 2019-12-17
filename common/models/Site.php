@@ -80,7 +80,7 @@ class Site extends \yii\db\ActiveRecord
      */
     public function getUrls()
     {
-        return $this->hasMany(Url::className(), ['site_id' => 'id']);
+        return $this->hasMany(Url::className(), ['site_id' => 'id'])
+            ->with('audits');
     }
-
 }

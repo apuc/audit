@@ -50,12 +50,10 @@ class SiteController extends Controller
     {
         $searchModel = new SiteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $theme = Theme::find()->asArray()->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'theme' => $theme,
         ]);
     }
 

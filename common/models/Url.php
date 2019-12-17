@@ -56,7 +56,8 @@ class Url extends \yii\db\ActiveRecord
      */
     public function getAudits()
     {
-        return $this->hasMany(Audit::className(), ['url_id' => 'id']);
+        return $this->hasMany(Audit::className(), ['url_id' => 'id'])
+            ->with('externalLinks');
     }
 
     /**

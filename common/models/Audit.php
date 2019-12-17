@@ -20,6 +20,7 @@ use yii\db\Expression;
  * @property bool|null $yandex_indexing
  * @property bool|null $check_search
  * @property string|null $screenshot
+ * @property string|null $icon
  *
  * @property Url $url
  * @property ExternalLinks[] $externalLinks
@@ -59,7 +60,7 @@ class Audit extends \yii\db\ActiveRecord
             [['url_id'], 'required'],
             [['google_indexing', 'yandex_indexing', 'check_search'], 'boolean'],
             [['server_response_code'], 'string', 'max' => 100],
-            [['screenshot'], 'string', 'max' => 255],
+            [['screenshot', 'icon'], 'string', 'max' => 255],
             [['url_id'], 'exist', 'skipOnError' => true, 'targetClass' => Url::className(), 'targetAttribute' => ['url_id' => 'id']],
         ];
     }
@@ -81,6 +82,7 @@ class Audit extends \yii\db\ActiveRecord
             'yandex_indexing' => 'Индексация Яндекс',
             'check_search' => 'Флаг индексации',
             'screenshot' => 'Скриншот',
+            'icon' => 'Иконка'
         ];
     }
 

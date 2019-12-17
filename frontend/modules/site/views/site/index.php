@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \frontend\modules\site\models\Site;
@@ -8,6 +9,7 @@ use \common\models\Comments;
 use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
+use \common\classes\Debug;
 
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $theme */
@@ -51,10 +53,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\CheckboxColumn'],
             [
                 'attribute' => '',
-                'value' => function ($data) {
-                    return Site::getIcon($data->name);
-                },
                 'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::tag('img', null, ['src' => Url::to('@web/icons/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                }
             ],
             [
                 'attribute' => 'name',
@@ -67,8 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Регистратор',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getRegistrar($data->id, 0) . '" class="custom-grid-view">'
-                        . Site::getRegistrar($data->id, 1) . '</div';
+                        . Site::getRegistrar($data, 0) . '" class="custom-grid-view">'
+                        . Site::getRegistrar($data, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -76,32 +78,35 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Состояния',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getStates($data->id, 0) . '" class="custom-grid-view">'
-                        . Site::getStates($data->id, 1) . '</div';
+                        . Site::getStates($data, 0) . '" class="custom-grid-view">'
+                        . Site::getStates($data, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'Дата создания',
                 'value' => function ($data) {
-                    return Site::getDate($data->id, 'creation_date');
+                    return Site::getDate($data->creation_date);
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'Дней до окончания регистрации',
                 'value' => function ($data) {
-                    return Site::getDaysLeft($data->id);
+                    return Site::getDaysLeft($data->expiration_date);
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'theme.name',
                 'value' => function ($data) {
-                    if(Site::getThemeCustom($data->id) == "")
+
+                    if(!$data->theme) {
                         $value = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><br>';
-                    else
-                        $value = Site::getThemeCustom($data->id);
+                    } else {
+                        $value = $data->theme->name;
+                    }
+
                        return Editable::widget( [
                            'name' => 'theme',
                            'value' => $value,
@@ -129,8 +134,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'IP',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getIp($data->id, 0) . '" class="custom-grid-view">'
-                        . Site::getIp($data->id, 1) . '</div';
+                        . Site::getIp($data, 0) . '" class="custom-grid-view">'
+                        . Site::getIp($data, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -138,39 +143,39 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'DNS',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getDnsServer($data->id, 0) . '" class="custom-grid-view">'
-                        . Site::getDnsServer($data->id, 1) . '</div';
+                        . Site::getDnsServer($data, 0) . '" class="custom-grid-view">'
+                        . Site::getDnsServer($data, 1) . '</div';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'Код ответа сервера',
                 'value' => function ($data) {
-                    return Site::getAudit($data->id, 'server_response_code');
+                    return Site::getAudit($data, 'server_response_code');
                 },
             ],
             [
                 'attribute' => 'Размер (байт)',
                 'value' => function ($data) {
-                    return Site::getAudit($data->id, 'size');
+                    return Site::getAudit($data, 'size');
                 },
             ],
             [
                 'attribute' => 'Время загрузки (мс)',
                 'value' => function ($data) {
-                    return Site::getAudit($data->id, 'loading_time');
+                    return Site::getAudit($data, 'loading_time');
                 },
             ],
             [
                 'attribute' => 'Индексация Google',
                 'value' => function ($data) {
-                    return Site::getAudit($data->id, 'google_indexing');
+                    return Site::getAudit($data, 'google_indexing');
                 },
             ],
             [
                 'attribute' => 'Индексация Яндекс',
                 'value' => function ($data) {
-                    return Site::getAudit($data->id, 'yandex_indexing');
+                    return Site::getAudit($data, 'yandex_indexing');
                 },
             ],
             [
@@ -191,8 +196,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getAcceptor($data->id, 0)  . '" class="custom-grid-view">'
-                        . Site::getAcceptor($data->id, 1) . '</div>';
+                        . Site::getAcceptor($data, 0)  . '" class="custom-grid-view">'
+                        . Site::getAcceptor($data, 1) . '</div>';
                 },
                 'filter' => Html::activeTextInput(
                     $searchModel,
@@ -205,8 +210,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getAnchor($data->id, 0) . '" class="custom-grid-view">'
-                        . Site::getAnchor($data->id, 1) . '</div>';
+                        . Site::getAnchor($data, 0) . '" class="custom-grid-view">'
+                        . Site::getAnchor($data, 1) . '</div>';
                 },
             ],
         ],

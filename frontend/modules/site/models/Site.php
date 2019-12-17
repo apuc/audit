@@ -22,32 +22,31 @@ class Site extends \common\models\Site
         parent::init();
     }
 
-    public static function getUrlName($id)
+//    public static function getUrlName($id)
+//    {
+//        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
+//        if($url) {
+//            return $url[0]['url'];
+//        }
+//    }
+
+    public static function getIcon($data)
     {
-        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
-        if($url) {
-            return $url[0]['url'];
-        }
+//        try {
+//            $client = new GuzzleHttp\Client();
+//            $client->request('GET', 'https://' . $url . '/favicon.ico');
+//            return "<img src='https://" . $url . "/favicon.ico'>";
+//        } catch (\Exception $e) {
+//            return "<img src='http://www.google.com/s2/favicons?domain=www." . $url . "'";
+//        }
     }
 
-    public static function getIcon($url)
+    public static function getDate($date, $fl=0)
     {
-        try {
-            $client = new GuzzleHttp\Client();
-            $client->request('GET', 'https://' . $url . '/favicon.ico');
-            return "<img src='https://" . $url . "/favicon.ico'>";
-        } catch (\Exception $e) {
-            return "<img src='http://www.google.com/s2/favicons?domain=www." . $url . "'";
-        }
-    }
-
-    public static function getDate($id, $key, $fl=0)
-    {
-        $site = \common\models\Site::find()->where(['id' => $id])->asArray()->all();
-        if($site) {
-            $day = idate('d', $site[0][$key]);
-            $month = idate('m', $site[0][$key]);
-            $year = idate('Y', $site[0][$key]);
+        if($date) {
+            $day = idate('d', $date);
+            $month = idate('m', $date);
+            $year = idate('Y', $date);
 
             if(!$fl) {
                 return $day.".".$month.".".$year;
@@ -57,64 +56,38 @@ class Site extends \common\models\Site
         }
     }
 
-    public static function getDaysLeft($id) {
+    public static function getDaysLeft($date) {
         $now = time();
-        $expiration_date = self::getDate($id, 'expiration_date', 1);
+        $expiration_date = self::getDate($date, 1);
         return floor(($expiration_date-$now)/ (60 * 60 * 24));
     }
 
-    public static function getTarget($id)
+    public static function getRegistrar($data, $fl)
     {
-        $dns = Dns::find()->where(['site_id'=>$id])->all();
-        $target_array = array();
+        $arr =  explode(", ", $data->registrar);
 
-        foreach($dns as $value) {
-            if($value->target) {
-                array_push($target_array, $value->target);
-            }
-        }
-
-        return implode("<br>", $target_array);
-    }
-
-    public static function getRegistrar($id, $fl)
-    {
-        $site = \common\models\Site::findOne(['id' => $id]);
-        $arr = array();
-
-        if($site) {
-            $arr =  explode(", ", $site->registrar);
-        }
         if($fl) {
             return implode("<br>", $arr);
         } else {
             return implode("\n", $arr);
         }
-
     }
 
-    public static function getStates($id, $fl)
+    public static function getStates($data, $fl)
     {
-        $site = \common\models\Site::findOne(['id' => $id]);
-        $arr = array();
+        $arr =  explode(", ", $data->states);
 
-        if($site) {
-            $arr =  explode(", ", $site->states);
-        }
         if($fl) {
             return implode("<br>", $arr);
         } else {
             return implode("\n", $arr);
         }
-
     }
 
-    public static function getIp($id, $fl)
+    public static function getIp($data, $fl)
     {
-        $ip = Dns::find()->where(['site_id'=>$id])->all();
         $ip_array = array();
-
-        foreach($ip as $value) {
+        foreach($data->dns as $value) {
             if($value->ip) {
                 array_push($ip_array, $value->ip);
             }
@@ -126,12 +99,11 @@ class Site extends \common\models\Site
         }
     }
 
-    public static function getDnsServer($id, $fl)
+    public static function getDnsServer($data, $fl)
     {
-        $dns = Dns::find()->where(['site_id'=>$id])->all();
         $dns_array = array();
 
-        foreach($dns as $value) {
+        foreach($data->dns as $value) {
             if($value->target) {
                 array_push($dns_array, $value->target);
             }
@@ -143,130 +115,70 @@ class Site extends \common\models\Site
         }
     }
 
-    public static function getAudit($id, $key)
+    public static function getAudit($data, $key="size")
     {
-        $audit_response = 0;
-        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
-        if($url) {
-            $url_id =  $url[0]['id'];
+        $result = 0;
+        foreach ($data->urls[0]->audits as $value) {
+            $result = $value->$key;
         }
-
-        $audit = Audit::find()->where(['url_id'=>$url_id])->orderBy('created_at desc')->limit(1)->asArray()->all();
-        if($audit) {
-            $audit_response = $audit[0][$key];
-        }
-
-        return $audit_response;
+        return $result;
     }
 
     public static function getAuditID($model, $key)
     {
         $id = str_replace("=", "", stristr($model, '='));
-        $audit_response = 0;
-        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
-        if($url) {
-            $url_id =  $url[0]['id'];
-        }
-
-        $audit = Audit::find()->where(['url_id'=>$url_id])->orderBy('created_at desc')->limit(1)->asArray()->all();
-        if($audit) {
-            $audit_response = $audit[0][$key];
-        }
-
-        return $audit_response;
-    }
-
-    public static function getExternalLinks($id)
-    {
-       $audit_id = self::getAudit($id, 'id');
-       $external_links = ExternalLinks::find()->where(['audit_id' => $audit_id])->all();
-
-       $external_links_array = array();
-
-       foreach ($external_links as $value) {
-           //$val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $value->anchor));
-           $val = trim(self::clearstr($value->anchor));
-
-           if(!empty($val)) {
-               array_push($external_links_array, '<b>'.$value->acceptor.'</b> - ' . $value->anchor);
-           } else {
-               array_push($external_links_array, '<b>'.$value->acceptor.'</b> - анкор не задан');
-           }
-       }
-
-       return implode("<br>", $external_links_array);
-    }
-
-    public static function getAcceptor($id, $fl)
-    {
-        $audit_id = self::getAudit($id, 'id');
-        $external_links = ExternalLinks::find()->where(['audit_id' => $audit_id])->all();
-        $external_links_array = array();
-
-        if($external_links) {
-            foreach ($external_links as $value) {
-                array_push($external_links_array, $value->acceptor);
-            }
-        }
-        if($fl) {
-            return implode("<br>", $external_links_array);
-        } else {
-            return implode("\n", $external_links_array);
-        }
-    }
-
-    public static function getAnchor($id, $fl)
-    {
-        $audit_id = self::getAudit($id, 'id');
-        $external_links = ExternalLinks::find()->where(['audit_id' => $audit_id])->all();
-
-        $external_links_array = array();
-
-        if($external_links) {
-            foreach ($external_links as $value) {
-
-
-                $val = trim(self::clearstr($value->anchor));
-                $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
-
-                if(!empty($val)) {
-                    array_push($external_links_array, $val);
-                } else {
-                    array_push($external_links_array, ' - анкор не задан');
-                }
-            }
-        }
-
-        if($fl) {
-            return implode("<br>", $external_links_array);
-        } else {
-            return implode("\n", $external_links_array);
-        }
-    }
-
-    public static function getThemeCustom($id)
-    {
-        $site = Site::find()->where(['id' => $id])->asArray()->all();
-        if($site) {
-            $theme_id = $site[0]['theme_id'];
-        }
-        $theme = Theme::find()->where(['id' => $theme_id])->asArray()->all();
-        if($theme) {
-            return $theme[0]['name'];
-        }
-    }
-
-    public static function getComment($id)
-    {
         $site = Site::findOne(['id' => $id]);
-        return $site->comment;
+        $audit_id = 0;
+
+        if($site) {
+            foreach ($site->urls[0]->audits as $value) {
+                $audit_id = $value->id;
+            }
+        }
+        return $audit_id;
+    }
+
+    public static function getAcceptor($data, $fl)
+    {
+        $external_links_array = array();
+
+        foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+            array_push($external_links_array, $value->acceptor);
+        }
+
+        if($fl) {
+            return implode("<br>", $external_links_array);
+        } else {
+            return implode("\n", $external_links_array);
+        }
+    }
+
+    public static function getAnchor($data, $fl)
+    {
+        $external_links_array = array();
+
+        foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+            $val = trim(self::clearstr($value->anchor));
+            $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
+
+            if(!empty($val)) {
+                array_push($external_links_array, $val);
+            } else {
+                array_push($external_links_array, ' - анкор не задан');
+            }
+        }
+
+        if($fl) {
+            return implode("<br>", $external_links_array);
+        } else {
+            return implode("\n", $external_links_array);
+        }
     }
 
     /**
      * Функция была взята с php.net
      **/
     public static function utf8_str_split($str) {
-        // place each character of the string into and array
         $split=1;
         $array = array();
         for ( $i=0; $i < strlen( $str ); ){

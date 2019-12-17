@@ -142,32 +142,42 @@ class Url extends \common\models\Url
         $report->newAudit++;
     }
 
+    public static function createSite($info, $domain)
+    {
+        $creationDate = $info->getCreationDate();
+        $expirationDate = $info->getExpirationDate();
+        $registrar = $info->getRegistrar();
+        $states = $info->getStates();
+
+        $site = new Site();
+        $site->name = $domain;
+        $site->creation_date = $creationDate;
+        $site->expiration_date = $expirationDate;
+        $site->registrar = $registrar;
+        $site->states = implode(", ", $states);
+        $site->save();
+
+        return $site->id;
+    }
+
     public static function addSite($domain)
     {
-        $host_names = explode(".", $domain);
-        $bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
-        $domain  =$bottom_host_name;
-
         $whois = Whois::create();
         $info = $whois->loadDomainInfo($domain);
 
         if ($info) {
-            $creationDate = $info->getCreationDate();
-            $expirationDate = $info->getExpirationDate();
-            $registrar = $info->getRegistrar();
-            $states = $info->getStates();
-
-            $site = new Site();
-            $site->name = $domain;
-            $site->creation_date = $creationDate;
-            $site->expiration_date = $expirationDate;
-            $site->registrar = $registrar;
-            $site->states = implode(", ", $states);
-            $site->save();
-
-            return $site->id;
+           return self::createSite($info, $domain);
         } else {
-            return null;
+            $host_names = explode(".", $domain);
+            $bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
+            $domain  = $bottom_host_name;
+            try {
+                $info = $whois->loadDomainInfo($domain);
+                return self::createSite($info, $domain);
+            } catch (Exception $e) {
+                return null;
+            }
+
         }
     }
 
@@ -209,7 +219,9 @@ class Url extends \common\models\Url
             $date = new DateTime();
             $file_name = $date->getTimestamp() . '.jpg';
             $path = Yii::getAlias('@frontend/web/screenshots/') . $file_name;
-            $content = self::makeScreen('https://' . $domain, $path, false);
+            $icon_path = Yii::getAlias('@frontend/web/icons/') . $file_name;
+            self::makeScreen('https://' . $domain, $path, false);
+            copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
 
             $startTime = microtime(1);
             $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom()]);
@@ -222,6 +234,7 @@ class Url extends \common\models\Url
             $audit->loading_time = round(($endTime - $startTime) * 1000);
             $audit->check_search = 0;
             $audit->screenshot = $file_name;
+            $audit->icon = $file_name;
             $audit->url_id = $url_id;
             $audit->save();
            //Debug::dd($audit->errors);

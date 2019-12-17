@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-         "id" => "grid",
+        'id' => 'grid',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -45,9 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
             ],
-            [
-                'class' => 'yii\grid\CheckboxColumn',
-            ],
+            ['class' => 'yii\grid\CheckboxColumn'],
             [
                 'attribute' => '',
                 'value' => function ($data) {

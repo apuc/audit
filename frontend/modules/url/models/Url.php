@@ -3,6 +3,7 @@
 namespace frontend\modules\url\models;
 
 use common\classes\Debug;
+use common\classes\UserAgentArray;
 use common\models\Audit;
 use common\models\Dns;
 use common\models\ExternalLinks;
@@ -207,7 +208,7 @@ class Url extends \common\models\Url
             $content = self::makeScreen('https://' . $domain, $path, false);
 
             $startTime = microtime(1);
-            $client = new GuzzleHttp\Client();
+            $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom()]);
             $res = $client->request('GET', $domain);
             $endTime = microtime(1);
 
@@ -219,7 +220,7 @@ class Url extends \common\models\Url
             $audit->screenshot = $file_name;
             $audit->url_id = $url_id;
             $audit->save();
-           // Debug::dd($audit->errors);
+           //Debug::dd($audit->errors);
         } catch (Exception $e) {
            // Debug::dd($e->getMessage());
             $audit = new Audit();
@@ -232,7 +233,7 @@ class Url extends \common\models\Url
 
     public static function addExternalLinks($domain, $audit_id)
     {
-        $client = new GuzzleHttp\Client();
+        $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom()]);
         $res = $client->request('GET', $domain);
         $body = $res->getBody()->getContents();
         $document = \phpQuery::newDocumentHTML($body);

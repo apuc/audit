@@ -5,6 +5,7 @@ namespace frontend\modules\api\controllers;
 
 use common\classes\Debug;
 use common\models\Comments;
+use common\models\User;
 use Yii;
 use yii\web\Controller;
 
@@ -54,6 +55,21 @@ class ApiController extends Controller
     {
         if(Yii::$app->request->isAjax) {
             var_dump(Yii::$app->request->post());
+        }
+    }
+
+    public function actionAccess()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = Yii::$app->request->post();
+
+            if($keys) {
+                foreach ($keys['keys'] as $key) {
+                    $user = User::findOne(['id' => $key]);
+                    $user->status = 10;
+                    $user->save();
+                }
+            }
         }
     }
 }

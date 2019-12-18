@@ -48,9 +48,8 @@ class SiteSearch extends Site
             ->leftJoin('url', 'site.id = url.site_id')
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
-            ->groupBy('site.name')
             ->orderBy('site.id desc')
-            ->with('theme');
+            ->groupBy('site.name');
 
         // add conditions that should always apply here
 
@@ -74,11 +73,11 @@ class SiteSearch extends Site
             'theme_id' => $this->theme_id,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', 'site.name', $this->name])
             ->andFilterWhere(['like', 'registrar', $this->registrar])
-            ->andFilterWhere(['like', 'states', $this->states]);
-        $query->andFilterWhere(['like', 'theme.name', $this->theme]);
-        $query->andFilterWhere(['like', 'external_links.acceptor', $this->external_links]);
+            ->andFilterWhere(['like', 'states', $this->states])
+            ->andFilterWhere(['like', 'theme.name', $this->theme])
+            ->andFilterWhere(['like', 'external_links.acceptor', $this->external_links]);
 
         return $dataProvider;
     }

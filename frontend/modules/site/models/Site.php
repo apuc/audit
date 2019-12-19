@@ -146,8 +146,8 @@ class Site extends \common\models\Site
         $external_links_array = array();
 
         if($data) {
-            if($data->urls[0]) {
-                if($data->urls[0]->audits[0]) {
+            if($data->urls) {
+                if($data->urls[0]->audits) {
                     foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
                         array_push($external_links_array, $value->acceptor);
                     }

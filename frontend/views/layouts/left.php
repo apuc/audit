@@ -49,6 +49,12 @@
                         'active' => \Yii::$app->controller->id == 'user',
                     ],
                     [
+                        'label' => 'Ссылки',
+                        'icon' => 'files-o',
+                        'url' => ['/links/links'],
+                        'active' => \Yii::$app->controller->id == 'links',
+                    ],
+                    [
                         'label' => 'Инструкция',
                         'icon' => 'files-o',
                         'url' => ['/site/info'],

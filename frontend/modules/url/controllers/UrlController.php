@@ -90,7 +90,7 @@ class UrlController extends Controller
                 );
             }
 
-            return $this->redirect('audit/audit');
+            return $this->redirect('domain/site');
 
         } else {
             return $this->render('urls', ['model' => $model]);

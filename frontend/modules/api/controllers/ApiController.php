@@ -8,6 +8,7 @@ use common\classes\UserAgentArray;
 use common\models\Audit;
 use common\models\Comments;
 use common\models\Search;
+use common\models\Site;
 use common\models\User;
 use common\models\Url;
 use Yii;
@@ -75,6 +76,30 @@ class ApiController extends Controller
                             $audit->check_search = 1;
                             $audit->save();
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    public function actionAudit()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = Yii::$app->request->post();
+
+            if($keys) {
+                foreach ($keys['keys'] as $key) {
+                    $url = Url::findOne(['site_id' => $key]);
+                    $audit_id = \frontend\modules\url\models\Url::addAudit($url->url, $url->id);
+                    if($audit_id) {
+                        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+                    }
+                    if($server_response) {
+                        $server_response_code = $server_response[0]['server_response_code'];
+                    }
+
+                    if ($server_response_code == 200) {
+                        \frontend\modules\url\models\Url::addExternalLinks($url->url, $audit_id);
                     }
                 }
             }

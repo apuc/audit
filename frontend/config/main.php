@@ -77,5 +77,8 @@ return [
         'comments' => [
             'class' => 'frontend\modules\comments\Comments',
         ],
+        'links' => [
+            'class' => 'frontend\modules\links\Links',
+        ],
     ],
 ];

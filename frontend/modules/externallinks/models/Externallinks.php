@@ -11,10 +11,4 @@ class Externallinks extends \common\models\ExternalLinks
         parent::init();
     }
 
-    public static function getLinks($id)
-    {
-
-    }
-
-
 }

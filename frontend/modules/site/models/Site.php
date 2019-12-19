@@ -7,11 +7,13 @@ use common\classes\Debug;
 use common\models\Audit;
 use common\models\Dns;
 use common\models\ExternalLinks;
+use common\models\Links;
 use common\models\Theme;
 use common\models\Url;
 use DOMDocument;
 use GuzzleHttp;
 use http\Env\Request;
+use yii\helpers\ArrayHelper;
 
 //use GuzzleHttp\Psr7\Request;
 
@@ -22,23 +24,16 @@ class Site extends \common\models\Site
         parent::init();
     }
 
-//    public static function getUrlName($id)
-//    {
-//        $url = Url::find()->where(['site_id' => $id])->asArray()->all();
-//        if($url) {
-//            return $url[0]['url'];
-//        }
-//    }
-
-    public static function getIcon($data)
+    public static function getLink($data)
     {
-//        try {
-//            $client = new GuzzleHttp\Client();
-//            $client->request('GET', 'https://' . $url . '/favicon.ico');
-//            return "<img src='https://" . $url . "/favicon.ico'>";
-//        } catch (\Exception $e) {
-//            return "<img src='http://www.google.com/s2/favicons?domain=www." . $url . "'";
-//        }
+        $res = [];
+        $links = Links::find()->all();
+        foreach ($links as $value) {
+            $clean = str_replace(array("PATH", "ANCHOR"), "", $value->link);
+            $result = '<a href='.str_replace(array("SITE"), $data->name, $clean).'>'.$value->name.'</a>';
+            $res[] = [$result];
+        }
+        return $res;
     }
 
     public static function getDate($date, $fl=0)
@@ -78,7 +73,7 @@ class Site extends \common\models\Site
         $arr =  explode(", ", $data->states);
 
         if($fl) {
-            return implode("<br>", $arr);
+            return $data->states;
         } else {
             return implode("\n", $arr);
         }
@@ -92,10 +87,13 @@ class Site extends \common\models\Site
                 array_push($ip_array, $value->ip);
             }
         }
-        if($fl) {
+
+        if($fl == 1) {
             return implode("<br>", $ip_array);
-        } else {
+        } elseif($fl == 0) {
             return implode("\n", $ip_array);
+        } elseif ($fl == 2) {
+            return $ip_array;
         }
     }
 
@@ -108,10 +106,13 @@ class Site extends \common\models\Site
                 array_push($dns_array, $value->target);
             }
         }
-        if($fl) {
+
+        if($fl == 1) {
             return implode("<br>", $dns_array);
-        } else {
+        } elseif($fl == 0) {
             return implode("\n", $dns_array);
+        } elseif ($fl == 2) {
+            return $dns_array;
         }
     }
 
@@ -146,10 +147,12 @@ class Site extends \common\models\Site
             array_push($external_links_array, $value->acceptor);
         }
 
-        if($fl) {
+        if($fl == 1) {
             return implode("<br>", $external_links_array);
-        } else {
+        } elseif($fl == 0) {
             return implode("\n", $external_links_array);
+        } elseif ($fl == 2) {
+            return $external_links_array;
         }
     }
 
@@ -168,10 +171,12 @@ class Site extends \common\models\Site
             }
         }
 
-        if($fl) {
+        if($fl == 1) {
             return implode("<br>", $external_links_array);
-        } else {
+        } elseif($fl == 0) {
             return implode("\n", $external_links_array);
+        } elseif ($fl == 2) {
+            return $external_links_array;
         }
     }
 

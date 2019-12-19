@@ -1,23 +1,18 @@
 <?php
 
-namespace frontend\modules\site\controllers;
+namespace frontend\modules\links\controllers;
 
-use common\classes\Debug;
-use common\models\Links;
-use common\models\Theme;
 use Yii;
-use common\models\Site;
-use frontend\modules\site\models\SiteSearch;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
+use common\models\Links;
+use frontend\modules\links\models\LinksSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * SiteController implements the CRUD actions for Site model.
+ * LinksController implements the CRUD actions for Links model.
  */
-class SiteController extends Controller
+class LinksController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -25,16 +20,6 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'view', 'create'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -45,12 +30,12 @@ class SiteController extends Controller
     }
 
     /**
-     * Lists all Site models.
+     * Lists all Links models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new SiteSearch();
+        $searchModel = new LinksSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -60,7 +45,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays a single Site model.
+     * Displays a single Links model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -73,16 +58,16 @@ class SiteController extends Controller
     }
 
     /**
-     * Creates a new Site model.
+     * Creates a new Links model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Site();
+        $model = new Links();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -91,7 +76,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Updates an existing Site model.
+     * Updates an existing Links model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -102,7 +87,7 @@ class SiteController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -111,47 +96,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Comment
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionComment($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('comment', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Theme
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionTheme($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('theme', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Site model.
+     * Deletes an existing Links model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -165,15 +110,15 @@ class SiteController extends Controller
     }
 
     /**
-     * Finds the Site model based on its primary key value.
+     * Finds the Links model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Site the loaded model
+     * @return Links the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Site::findOne($id)) !== null) {
+        if (($model = Links::findOne($id)) !== null) {
             return $model;
         }
 

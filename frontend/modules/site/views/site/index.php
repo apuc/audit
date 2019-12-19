@@ -1,5 +1,7 @@
 <?php
 
+use common\models\Links;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -29,8 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
+    <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) ?>
 
     <?php
+    $val = '';
     Pjax::begin(['id' => 'sitePjax']);
     echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -55,7 +59,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => '',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::tag('img', null, ['src' => Url::to('@web/icons/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                    return Html::tag('img', null, ['src' => Url::to('/icons/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                }
+            ],
+            [
+                'attribute' => '',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')), 'width' => '32px',
+                        'class' => 'my-img',
+                    ]);
                 }
             ],
             [
@@ -66,6 +79,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
             ],
             [
+                'attribute' => 'Код ответа сервера',
+                'value' => function ($data) {
+                    return Site::getAudit($data, 'server_response_code');
+                },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'server_response_code',
+                    ['class' => 'form-control']
+                ),
+            ],
+            [
+                'attribute' => 'Ссылки',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::activeDropDownList($data,'id', ArrayHelper::map(Links::find()->all(), 'id', 'name'),
+                            ['class' => ''])
+                        . Html::a('Перейти', $data->name, ['target' => '_blank', 'class' => '']);
+                },
+//             'value' => function ($data) {
+//                    return Html::activeDropDownList($data,'id', ArrayHelper::map(Site::getLink($data), 'id', 'name'),
+//                            ['class' => 'btn btn-secondary dropdown-toggle']);
+//                },
+            ],
+            [
                 'attribute' => 'Регистратор',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
@@ -73,15 +110,28 @@ $this->params['breadcrumbs'][] = $this->title;
                         . Site::getRegistrar($data, 1) . '</div';
                 },
                 'format' => 'raw',
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'registrar',
+                    ['class' => 'form-control']
+                ),
             ],
             [
                 'attribute' => 'Состояния',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getStates($data, 0) . '" class="custom-grid-view">'
+                        . Site::getStates($data, 0) . '" class="states">'
                         . Site::getStates($data, 1) . '</div';
                 },
                 'format' => 'raw',
+                'contentOptions' => function ($data) {
+                    return ['class' => (stristr(Site::getStates($data, 1), 'UNVERIFIED') ? 'danger' : '')];
+                },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'states',
+                    ['class' => 'form-control']
+                ),
             ],
             [
                 'attribute' => 'Дата создания',
@@ -96,6 +146,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Site::getDaysLeft($data->expiration_date);
                 },
                 'format' => 'raw',
+                'contentOptions' => function ($data) {
+                    return ['class' => (Site::getDaysLeft($data->expiration_date) < 30 ? 'danger' : '')];
+                },
             ],
             [
                 'attribute' => 'theme.name',
@@ -134,24 +187,54 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'IP',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getIp($data, 0) . '" class="custom-grid-view">'
+                        . Site::getIp($data, 0) . '" class="states">'
                         . Site::getIp($data, 1) . '</div';
                 },
                 'format' => 'raw',
+                'contentOptions' => function ($data) {
+                    return ['class' => (count(Site::getIp($data, 2)) > 2 ? 'warning' : '')];
+                },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'ip',
+                    ['class' => 'form-control']
+                ),
+            ],
+            [
+                'attribute' => 'кол',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return count(Site::getIp($data, 2));
+                },
+                'contentOptions' => function ($data) {
+                    return ['class' => 'success'];
+                },
             ],
             [
                 'attribute' => 'DNS',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getDnsServer($data, 0) . '" class="custom-grid-view">'
+                        . Site::getDnsServer($data, 0) . '" class="states">'
                         . Site::getDnsServer($data, 1) . '</div';
                 },
                 'format' => 'raw',
+                'contentOptions' => function ($data) {
+                    return ['class' => (count(Site::getDnsServer($data, 2)) > 2 ? 'warning' : '')];
+                },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'dns',
+                    ['class' => 'form-control']
+                ),
             ],
             [
-                'attribute' => 'Код ответа сервера',
+                'attribute' => 'кол',
+                'format' => 'raw',
                 'value' => function ($data) {
-                    return Site::getAudit($data, 'server_response_code');
+                    return count(Site::getDnsServer($data, 2));
+                },
+                'contentOptions' => function ($data) {
+                    return ['class' => 'success'];
                 },
             ],
             [
@@ -196,7 +279,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getAcceptor($data, 0)  . '" class="custom-grid-view">'
+                        . Site::getAcceptor($data, 0)  . '" class="states">'
                         . Site::getAcceptor($data, 1) . '</div>';
                 },
                 'filter' => Html::activeTextInput(
@@ -204,15 +287,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     'external_links',
                     ['class' => 'form-control']
                 ),
+                'contentOptions' => function ($data) {
+                    return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
+                },
+            ],
+            [
+                'attribute' => 'кол',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return count(Site::getAcceptor($data, 2));
+                },
+                'contentOptions' => function ($data) {
+                    return ['class' => 'success'];
+                },
             ],
             [
                 'attribute' => 'Анкор',
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getAnchor($data, 0) . '" class="custom-grid-view">'
+                        . Site::getAnchor($data, 0) . '" class="states">'
                         . Site::getAnchor($data, 1) . '</div>';
                 },
+                'contentOptions' => function ($data) {
+                    return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
+                },
+                'filter' => Html::activeTextInput(
+                    $searchModel,
+                    'anchor',
+                    ['class' => 'form-control']
+                ),
             ],
         ],
     ]);
@@ -255,10 +359,46 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $js = <<<JS
+$(document).ready(function() {
+	$(".my-img").click(function() {
+	  	let img = $(this);
+		let src = img.attr('src');
+		$("body").append("<div class='popup'>"+
+						 "<div class='popup_bg'></div>"+
+						 "<img src='"+src+"' class='popup_img' />"+
+						 "</div>"); 
+		$(".popup").fadeIn(100);
+		$(".popup_bg").click(function() {
+			$(".popup").fadeOut(100);
+			setTimeout(function() {
+			  $(".popup").remove();
+			}, 100);
+		});
+	});
+	
+});
+
 $('.indexing').on('click', function(){
     let keys = $('#grid').yiiGridView('getSelectedRows');
         $.ajax({
             url: '/api/api/indexing',
+            type: 'POST',
+            data: {
+                keys:keys
+            },
+            success: function(res){
+                $.pjax.reload({container:"#sitePjax"});
+            },
+            error: function(){
+                alert('Error!');
+            }
+        });
+    });
+
+$('.audit').on('click', function(){
+    let keys = $('#grid').yiiGridView('getSelectedRows');
+        $.ajax({
+            url: '/api/api/audit',
             type: 'POST',
             data: {
                 keys:keys

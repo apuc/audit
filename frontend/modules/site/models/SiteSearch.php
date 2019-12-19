@@ -14,14 +14,18 @@ class SiteSearch extends Site
 {
     public $theme;
     public $external_links;
+    public $ip;
+    public $dns;
+    public $server_response_code;
+    public $anchor;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'creation_date', 'expiration_date', 'theme_id'], 'integer'],
-            [['name', 'registrar', 'states', 'theme', 'external_links'], 'safe'],
+            [['id', 'creation_date', 'expiration_date', 'theme_id', 'server_response_code'], 'integer'],
+            [['name', 'registrar', 'states', 'theme', 'external_links', 'ip', 'dns', 'anchor'], 'safe'],
         ];
     }
 
@@ -48,6 +52,7 @@ class SiteSearch extends Site
             ->leftJoin('url', 'site.id = url.site_id')
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
+            ->leftJoin('dns', 'site.id = dns.site_id')
             ->orderBy('site.id desc')
             ->groupBy('site.name');
 
@@ -77,7 +82,11 @@ class SiteSearch extends Site
             ->andFilterWhere(['like', 'registrar', $this->registrar])
             ->andFilterWhere(['like', 'states', $this->states])
             ->andFilterWhere(['like', 'theme.name', $this->theme])
-            ->andFilterWhere(['like', 'external_links.acceptor', $this->external_links]);
+            ->andFilterWhere(['like', 'external_links.acceptor', $this->external_links])
+            ->andFilterWhere(['like', 'external_links.anchor', $this->anchor])
+            ->andFilterWhere(['like', 'dns.ip', $this->ip])
+            ->andFilterWhere(['like', 'dns.target', $this->dns])
+            ->andFilterWhere(['like', 'audit.server_response_code', $this->server_response_code]);
 
         return $dataProvider;
     }

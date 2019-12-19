@@ -119,7 +119,7 @@ class Site extends \common\models\Site
     public static function getAudit($data, $key="size")
     {
         $result = 0;
-        if($data) {
+        if($data->urls) {
             foreach ($data->urls[0]->audits as $value) {
                 $result = $value->$key;
             }
@@ -133,7 +133,7 @@ class Site extends \common\models\Site
         $site = Site::findOne(['id' => $id]);
         $audit_id = 0;
 
-        if($site) {
+        if($site->urls) {
             foreach ($site->urls[0]->audits as $value) {
                 $audit_id = $value->id;
             }
@@ -168,15 +168,19 @@ class Site extends \common\models\Site
     {
         $external_links_array = array();
 
-        if($data->urls[0]->audits[0]) {
-            foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
-                $val = trim(self::clearstr($value->anchor));
-                $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
+        if($data) {
+            if ($data->urls) {
+                if ($data->urls[0]->audits) {
+                    foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+                        $val = trim(self::clearstr($value->anchor));
+                        $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
 
-                if (!empty($val)) {
-                    array_push($external_links_array, $val);
-                } else {
-                    array_push($external_links_array, ' - анкор не задан');
+                        if (!empty($val)) {
+                            array_push($external_links_array, $val);
+                        } else {
+                            array_push($external_links_array, ' - анкор не задан');
+                        }
+                    }
                 }
             }
         }

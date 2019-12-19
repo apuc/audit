@@ -119,8 +119,10 @@ class Site extends \common\models\Site
     public static function getAudit($data, $key="size")
     {
         $result = 0;
-        foreach ($data->urls[0]->audits as $value) {
-            $result = $value->$key;
+        if($data) {
+            foreach ($data->urls[0]->audits as $value) {
+                $result = $value->$key;
+            }
         }
         return $result;
     }
@@ -143,9 +145,13 @@ class Site extends \common\models\Site
     {
         $external_links_array = array();
 
-        if($data->urls[0]->audits[0]) {
-            foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
-                array_push($external_links_array, $value->acceptor);
+        if($data) {
+            if($data->urls[0]) {
+                if($data->urls[0]->audits[0]) {
+                    foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+                        array_push($external_links_array, $value->acceptor);
+                    }
+                }
             }
         }
 

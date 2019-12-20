@@ -25,21 +25,23 @@ use \common\classes\Debug;
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
 
-?>
-<div class="site-index">
+$dataProvider->pagination->pageSize=15;
 
+?>
+
+<div class="site-index">
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
     <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) ?>
 
     <?php
-    $val = '';
     Pjax::begin(['id' => 'sitePjax']);
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'id' => 'grid',
+
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -74,7 +76,16 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'name',
                 'value' => function ($data) {
-                    return Html::a($data->name, 'http://' .  $data->name, ['target' => '_blank',]);
+                    return Html::a($data->name, 'http://' .  $data->name, ['target' => '_blank', 'id' => 'domain']);
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'Тайтл',
+                'value' => function ($data) {
+                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        . $data->title . '" class="states">'
+                        . $data->title . '</div';
                 },
                 'format' => 'raw',
             ],
@@ -90,12 +101,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 ),
             ],
             [
+                'attribute' => 'Размер (байт)',
+                'value' => function ($data) {
+                    return Site::getAudit($data, 'size');
+                },
+            ],
+            [
+                'attribute' => 'Время загрузки (мс)',
+                'value' => function ($data) {
+                    return Site::getAudit($data, 'loading_time');
+                },
+            ],
+            [
                 'attribute' => 'Ссылки',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::activeDropDownList($data,'id', ArrayHelper::map(Links::find()->all(), 'id', 'name'),
-                            ['class' => ''])
-                        . Html::a('Перейти', $data->name, ['target' => '_blank', 'class' => '']);
+                    return Html::activeDropDownList($data,'id', ArrayHelper::map(Links::find()->all(), 'name', 'name'),
+                            ['class' => '.dropdownlist', 'onchange' => 'jsFunction(this.value);', 'prompt' => '...'])
+                        . '<div class="innerHtml"></div>';
                 },
 //             'value' => function ($data) {
 //                    return Html::activeDropDownList($data,'id', ArrayHelper::map(Site::getLink($data), 'id', 'name'),
@@ -106,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Регистратор',
                 'value' => function ($data) {
                     return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                        . Site::getRegistrar($data, 0) . '" class="custom-grid-view">'
+                        . Site::getRegistrar($data, 0) . '" class="states">'
                         . Site::getRegistrar($data, 1) . '</div';
                 },
                 'format' => 'raw',
@@ -186,7 +209,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'IP',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                    return '<div class="count">'.count(Site::getIp($data, 2)).'</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                         . Site::getIp($data, 0) . '" class="states">'
                         . Site::getIp($data, 1) . '</div';
                 },
@@ -201,19 +224,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ),
             ],
             [
-                'attribute' => 'кол',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return count(Site::getIp($data, 2));
-                },
-                'contentOptions' => function ($data) {
-                    return ['class' => 'success'];
-                },
-            ],
-            [
                 'attribute' => 'DNS',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                    return '<div class="count">'.count(Site::getDnsServer($data, 2)).'</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                         . Site::getDnsServer($data, 0) . '" class="states">'
                         . Site::getDnsServer($data, 1) . '</div';
                 },
@@ -226,28 +239,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'dns',
                     ['class' => 'form-control']
                 ),
-            ],
-            [
-                'attribute' => 'кол',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return count(Site::getDnsServer($data, 2));
-                },
-                'contentOptions' => function ($data) {
-                    return ['class' => 'success'];
-                },
-            ],
-            [
-                'attribute' => 'Размер (байт)',
-                'value' => function ($data) {
-                    return Site::getAudit($data, 'size');
-                },
-            ],
-            [
-                'attribute' => 'Время загрузки (мс)',
-                'value' => function ($data) {
-                    return Site::getAudit($data, 'loading_time');
-                },
             ],
             [
                 'attribute' => 'Индексация Google',
@@ -278,7 +269,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Акцептор',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                    return '<div class="count">'.count(Site::getAcceptor($data, 2)).'</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                         . Site::getAcceptor($data, 0)  . '" class="states">'
                         . Site::getAcceptor($data, 1) . '</div>';
                 },
@@ -292,20 +283,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'кол',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return count(Site::getAcceptor($data, 2));
-                },
-                'contentOptions' => function ($data) {
-                    return ['class' => 'success'];
-                },
-            ],
-            [
                 'attribute' => 'Анкор',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                    return '<div class="count">'.count(Site::getAnchor($data, 2)).'</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                         . Site::getAnchor($data, 0) . '" class="states">'
                         . Site::getAnchor($data, 1) . '</div>';
                 },
@@ -322,7 +303,6 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     Pjax::end();
     ?>
-
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -393,7 +373,7 @@ $('.indexing').on('click', function(){
                 alert('Error!');
             }
         });
-    });
+    
 
 $('.audit').on('click', function(){
     let keys = $('#grid').yiiGridView('getSelectedRows');
@@ -405,6 +385,8 @@ $('.audit').on('click', function(){
             },
             success: function(res){
                 $.pjax.reload({container:"#sitePjax"});
+                console.log(res);
+                alert('Аудит проведен');
             },
             error: function(){
                 alert('Error!');
@@ -437,6 +419,8 @@ $('.audit').on('click', function(){
             }
         });
     });
+});
+    
 JS;
 $this->registerJs($js);
 ?>

@@ -62,7 +62,7 @@ class Site extends \common\models\Site
         $arr =  explode(", ", $data->registrar);
 
         if($fl) {
-            return implode("<br>", $arr);
+            return $data->registrar;
         } else {
             return implode("\n", $arr);
         }

@@ -60,6 +60,9 @@ class SiteSearch extends Site
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSizeLimit' => [1, 500],
+            ],
         ]);
 
         $this->load($params);

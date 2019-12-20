@@ -74,17 +74,17 @@ class Url extends \common\models\Url
             $url_id = self::addUrl($data->getSiteUrl(), $site_id);
             self::addDns($data->getSite(), $site_id);
 
-            $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-            if($audit_id) {
-                $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
-            }
-            if($server_response) {
-                $server_response_code = $server_response[0]['server_response_code'];
-            }
-
-            if ($server_response_code == 200) {
-                self::addExternalLinks($data->getSiteUrl(), $audit_id);
-            }
+//            $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+//            if($audit_id) {
+//                $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+//            }
+//            if($server_response) {
+//                $server_response_code = $server_response[0]['server_response_code'];
+//            }
+//
+//            if ($server_response_code == 200) {
+//                self::addExternalLinks($data->getSiteUrl(), $audit_id);
+//            }
 
             $report->newSite++;
             $report->newUrl++;
@@ -104,17 +104,17 @@ class Url extends \common\models\Url
         $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
         $url_id = self::addUrl($data->getSiteUrl(), $site_id);
 
-        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-        if($audit_id) {
-            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
-        }
-        if($server_response) {
-            $server_response_code = $server_response[0]['server_response_code'];
-        }
-
-        if ($server_response_code == 200) {
-            self::addExternalLinks($data->getSiteUrl(), $audit_id);
-        }
+//        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+//        if($audit_id) {
+//            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+//        }
+//        if($server_response) {
+//            $server_response_code = $server_response[0]['server_response_code'];
+//        }
+//
+//        if ($server_response_code == 200) {
+//            self::addExternalLinks($data->getSiteUrl(), $audit_id);
+//        }
 
         $report->newUrl++;
         $report->newAudit++;
@@ -127,58 +127,74 @@ class Url extends \common\models\Url
         $site_id = Site::find()->where(['name' => $data->getSite()])->asArray()->all()[0]['id'];
         $url_id = Url::find()->where(['url' => $data->getSiteUrl()])->asArray()->all()[0]['id'];
 
-        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
-        if($audit_id) {
-            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
-        }
-        if($server_response) {
-            $server_response_code = $server_response[0]['server_response_code'];
-        }
-
-        if ($server_response_code == 200) {
-            self::addExternalLinks($data->getSiteUrl(), $audit_id);
-        }
+//        $audit_id = self::addAudit($data->getSiteUrl(), $url_id);
+//        if($audit_id) {
+//            $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
+//        }
+//        if($server_response) {
+//            $server_response_code = $server_response[0]['server_response_code'];
+//        }
+//
+//        if ($server_response_code == 200) {
+//            self::addExternalLinks($data->getSiteUrl(), $audit_id);
+//        }
 
         $report->newAudit++;
     }
 
     public static function createSite($info, $domain)
     {
-        $creationDate = $info->getCreationDate();
-        $expirationDate = $info->getExpirationDate();
-        $registrar = $info->getRegistrar();
-        $states = $info->getStates();
-
         $site = new Site();
-        $site->name = $domain;
-        $site->creation_date = $creationDate;
-        $site->expiration_date = $expirationDate;
-        $site->registrar = $registrar;
-        $site->states = implode(", ", $states);
-        $site->save();
+
+        if($info) {
+            $creationDate = $info->getCreationDate();
+            $expirationDate = $info->getExpirationDate();
+            $registrar = $info->getRegistrar();
+            $states = $info->getStates();
+
+            $site->name = $domain;
+            $site->creation_date = $creationDate;
+            $site->expiration_date = $expirationDate;
+            $site->registrar = $registrar;
+            $site->states = implode(", ", $states);
+            $site->title = '';
+            $site->save();
+        } else {
+            $site->name = $domain;
+            $site->title = '';
+            $site->save();
+        }
 
         return $site->id;
     }
 
     public static function addSite($domain)
     {
-        $whois = Whois::create();
-        $info = $whois->loadDomainInfo($domain);
+        try {
+            $whois = Whois::create();
+            $info = $whois->loadDomainInfo($domain);
 
-        if ($info) {
-           return self::createSite($info, $domain);
-        } else {
-            $host_names = explode(".", $domain);
-            $bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
-            $domain  = $bottom_host_name;
-            try {
-                $info = $whois->loadDomainInfo($domain);
+            if ($info) {
+                Debug::dd('3');
                 return self::createSite($info, $domain);
-            } catch (Exception $e) {
-                return null;
+            } else {
+                $host_names = explode(".", $domain);
+                $bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
+                $domain  = $bottom_host_name;
+                try {
+                    Debug::dd('4');
+                    $info = $whois->loadDomainInfo($domain);
+                    return self::createSite($info, $domain);
+                } catch (Exception $e) {
+                    return null;
+                }
             }
-
+        } catch (Exception $e) {
+            return self::createSite(null, $domain);
         }
+
+
+
     }
 
     public static function addUrl($domain, $site_id)
@@ -237,9 +253,23 @@ class Url extends \common\models\Url
             $audit->icon = $file_name;
             $audit->url_id = $url_id;
             $audit->save();
-           //Debug::dd($audit->errors);
+
+            $site = Site::findOne(['name' => $domain]);
+            if($site) {
+                $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom()]);
+                $res = $client->request('GET', $domain);
+                $body = $res->getBody()->getContents();
+                $document = \phpQuery::newDocumentHTML($body);
+                $links = $document->find('title')->get();
+
+                $title = '';
+                if($links) {
+                    $title = $links[0]->nodeValue;
+                }
+                $site->title = $title;
+                $site->save();
+            }
         } catch (Exception $e) {
-           // Debug::dd($e->getMessage());
             $audit = new Audit();
             $audit->server_response_code = (string)$e->getCode();
             $audit->url_id = $url_id;

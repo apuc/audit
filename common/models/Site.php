@@ -14,7 +14,9 @@ use Yii;
  * @property string|null $registrar
  * @property string|null $states
  * @property int|null $theme_id
+ * @property string|null $title
  *
+ * @property Comments[] $comments
  * @property Dns[] $dns
  * @property Theme $theme
  * @property Url[] $urls
@@ -38,7 +40,7 @@ class Site extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
-            [['registrar', 'states'], 'string', 'max' => 255],
+            [['registrar', 'states', 'title'], 'string', 'max' => 255],
             [['theme_id'], 'exist', 'skipOnError' => true, 'targetClass' => Theme::className(), 'targetAttribute' => ['theme_id' => 'id']],
         ];
     }
@@ -55,8 +57,17 @@ class Site extends \yii\db\ActiveRecord
             'expiration_date' => 'Дата истечения срока',
             'registrar' => 'Регистратор',
             'states' => 'Состояния',
-            'theme_id' => 'Тема',
+            'theme_id' => 'Theme ID',
+            'title' => 'Тайтл',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getComments()
+    {
+        return $this->hasMany(Comments::className(), ['site_id' => 'id']);
     }
 
     /**
@@ -80,7 +91,6 @@ class Site extends \yii\db\ActiveRecord
      */
     public function getUrls()
     {
-        return $this->hasMany(Url::className(), ['site_id' => 'id'])
-            ->with('audits');
+        return $this->hasMany(Url::className(), ['site_id' => 'id']);
     }
 }

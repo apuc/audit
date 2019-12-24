@@ -183,8 +183,6 @@ a.desc:after {
     outline: none;
 }
 
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
-
 body{
     margin:0;
     overflow:hidden;
@@ -192,9 +190,7 @@ body{
 body * {
     box-sizing: border-box;
 }
-img{
-    width:100%;
-}
+
 #no-freeze-spinner {
     position: fixed;
     top: 0;

@@ -25,7 +25,7 @@ class SiteSearch extends Site
     {
         return [
             [['id', 'creation_date', 'expiration_date', 'theme_id', 'server_response_code'], 'integer'],
-            [['name', 'registrar', 'states', 'theme', 'external_links', 'ip', 'dns', 'anchor'], 'safe'],
+            [['name', 'registrar', 'states', 'theme', 'external_links', 'ip', 'dns', 'anchor', 'redirect'], 'safe'],
         ];
     }
 
@@ -82,6 +82,7 @@ class SiteSearch extends Site
         ]);
 
         $query->andFilterWhere(['like', 'site.name', $this->name])
+            ->andFilterWhere(['like', 'redirect', $this->redirect])
             ->andFilterWhere(['like', 'registrar', $this->registrar])
             ->andFilterWhere(['like', 'states', $this->states])
             ->andFilterWhere(['like', 'theme.name', $this->theme])

@@ -24,16 +24,12 @@ class Site extends \common\models\Site
         parent::init();
     }
 
-    public static function getLink($data)
+    public static function getLink($link, $domain)
     {
-        $res = [];
-        $links = Links::find()->all();
-        foreach ($links as $value) {
-            $clean = str_replace(array("PATH", "ANCHOR"), "", $value->link);
-            $result = '<a href='.str_replace(array("SITE"), $data->name, $clean).'>'.$value->name.'</a>';
-            $res[] = [$result];
-        }
-        return $res;
+        $links = Links::findOne(['name' => $link]);
+        $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
+
+        return str_replace(array("{SITE}"), $domain, $clean);
     }
 
     public static function getDate($date, $fl=0)
@@ -144,34 +140,31 @@ class Site extends \common\models\Site
     public static function getAcceptor($data, $fl)
     {
         $external_links_array = array();
+        $n = count($data->urls[0]->audits);
 
-        if($data) {
-            if($data->urls) {
-                if($data->urls[0]->audits) {
-                    foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+        if($data)
+            if($data->urls)
+                if($data->urls[0]->audits)
+                    foreach ($data->urls[0]->audits[$n-1]->externalLinks as $value)
                         array_push($external_links_array, $value->acceptor);
-                    }
-                }
-            }
-        }
 
-        if($fl == 1) {
+        if($fl == 1)
             return implode("<br>", $external_links_array);
-        } elseif($fl == 0) {
+        elseif($fl == 0)
             return implode("\n", $external_links_array);
-        } elseif ($fl == 2) {
+        elseif ($fl == 2)
             return $external_links_array;
-        }
     }
 
     public static function getAnchor($data, $fl)
     {
         $external_links_array = array();
+        $n = count($data->urls[0]->audits);
 
         if($data) {
             if ($data->urls) {
                 if ($data->urls[0]->audits) {
-                    foreach ($data->urls[0]->audits[0]->externalLinks as $value) {
+                    foreach ($data->urls[0]->audits[$n-1]->externalLinks as $value) {
                         $val = trim(self::clearstr($value->anchor));
                         $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
 

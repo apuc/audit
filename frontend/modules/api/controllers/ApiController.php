@@ -3,14 +3,13 @@
 
 namespace frontend\modules\api\controllers;
 
-use common\classes\Debug;
-use common\classes\UserAgentArray;
 use common\models\Audit;
 use common\models\Comments;
 use common\models\Search;
 use common\models\Site;
 use common\models\User;
 use common\models\Url;
+use common\services\AuditService;
 use Yii;
 use yii\web\Controller;
 
@@ -37,7 +36,7 @@ class ApiController extends Controller
             $site_id_decoded = base64_decode($site_id_encoded);
             $site_id = str_replace(array("i:", ";"), "", $site_id_decoded);
 
-            if (($site = \common\models\Site::findOne($site_id)) !== null) {
+            if (($site = Site::findOne($site_id)) !== null) {
                 $site->theme_id = $theme_id;
                 $site->save();
             }
@@ -61,7 +60,7 @@ class ApiController extends Controller
         if(Yii::$app->request->isAjax) {
             $keys = Yii::$app->request->post();
 
-            if($keys) {
+            if($keys)
                 foreach ($keys['keys'] as $key) {
                     $url = Url::findOne(['site_id' => $key]);
                     if($url) {
@@ -78,31 +77,20 @@ class ApiController extends Controller
                         }
                     }
                 }
-            }
         }
     }
 
     public function actionAudit()
     {
+        Yii::info('start', 'audit');
         if(Yii::$app->request->isAjax) {
             $keys = Yii::$app->request->post();
 
-            if($keys) {
+            if($keys)
                 foreach ($keys['keys'] as $key) {
                     $url = Url::findOne(['site_id' => $key]);
-                    $audit_id = \frontend\modules\url\models\Url::addAudit($url->url, $url->id);
-                    if($audit_id) {
-                        $server_response = Audit::find()->where(['id' => $audit_id])->asArray()->all();
-                    }
-                    if($server_response) {
-                        $server_response_code = $server_response[0]['server_response_code'];
-                    }
-
-                    if ($server_response_code == 200) {
-                        \frontend\modules\url\models\Url::addExternalLinks($url->url, $audit_id);
-                    }
+                    AuditService::addAudit($url->url, $url->id);
                 }
-            }
         }
     }
 
@@ -111,13 +99,21 @@ class ApiController extends Controller
         if(Yii::$app->request->isAjax) {
             $keys = Yii::$app->request->post();
 
-            if($keys) {
+            if($keys)
                 foreach ($keys['keys'] as $key) {
                     $user = User::findOne(['id' => $key]);
                     $user->status = 10;
                     $user->save();
                 }
-            }
+        }
+    }
+
+    public function actionRedirect()
+    {
+        if(Yii::$app->request->isAjax) {
+            $link = $_POST['value'];
+            $domain  =$_POST['domain'];
+            return \frontend\modules\site\models\Site::getLink($link, $domain);
         }
     }
 }

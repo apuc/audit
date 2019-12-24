@@ -3,8 +3,11 @@
 namespace frontend\modules\site\controllers;
 
 use common\classes\Debug;
+use common\classes\SizerGridView;
 use common\models\Links;
 use common\models\Theme;
+use common\services\AuditService;
+use frontend\modules\url\models\Url;
 use Yii;
 use common\models\Site;
 use frontend\modules\site\models\SiteSearch;
@@ -52,6 +55,11 @@ class SiteController extends Controller
     {
         $searchModel = new SiteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if(Yii::$app->request->isAjax) {
+            SizerGridView::setSize($_GET['value']);
+        }
+
+        $dataProvider->pagination->pageSize = SizerGridView::getSize();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -178,5 +186,10 @@ class SiteController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionTest()
+    {
+       AuditService::addAudit('rabota.today', 34);
     }
 }

@@ -15,6 +15,7 @@ use Yii;
  * @property string|null $states
  * @property int|null $theme_id
  * @property string|null $title
+ * @property string|null $redirect
  *
  * @property Comments[] $comments
  * @property Dns[] $dns
@@ -40,7 +41,7 @@ class Site extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['creation_date', 'expiration_date', 'theme_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
-            [['registrar', 'states', 'title'], 'string', 'max' => 255],
+            [['registrar', 'states', 'title', 'redirect'], 'string', 'max' => 255],
             [['theme_id'], 'exist', 'skipOnError' => true, 'targetClass' => Theme::className(), 'targetAttribute' => ['theme_id' => 'id']],
         ];
     }
@@ -59,6 +60,7 @@ class Site extends \yii\db\ActiveRecord
             'states' => 'Состояния',
             'theme_id' => 'Theme ID',
             'title' => 'Тайтл',
+            'redirect' => 'Редирект',
         ];
     }
 

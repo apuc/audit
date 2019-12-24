@@ -33,6 +33,13 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['audit'],
+                    'logFile' => '@frontend/runtime/logs/audit.log',
+                ],
+
             ],
         ],
         'errorHandler' => [

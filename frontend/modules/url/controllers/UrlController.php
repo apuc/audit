@@ -3,6 +3,7 @@
 namespace frontend\modules\url\controllers;
 
 use common\classes\Debug;
+use common\services\AuditService;
 use frontend\modules\url\models\ReportForm;
 use Yii;
 use yii\web\Controller;
@@ -66,10 +67,9 @@ class UrlController extends Controller
         $model = new UrlForm();
 
         if ($model->load(Yii::$app->request->post())) {
-            $formatting_urls = Url::formattingUrl($model->urls);
-            $data_array = Url::formData($formatting_urls);
+            $data_array = AuditService::formData($model->urls);
             $report = new ReportForm();
-            Url::addData($data_array, $report);
+            AuditService::addData($data_array, $report);
 
             if($report->errorsUrl != 0) {
                 Yii::$app->session->setFlash(

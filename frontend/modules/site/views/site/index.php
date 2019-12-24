@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => '',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return Html::tag('img', null, ['src' => Url::to('/icons/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                        return Html::tag('img', null, ['src' => Url::to('@web/i/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
                     }
                 ],
                 [

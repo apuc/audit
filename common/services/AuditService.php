@@ -174,6 +174,7 @@ class AuditService
             $audit->icon = AuditService::makeIconPicture($domain);
         } else {
             $audit->server_response_code = $e;
+            $audit->screenshot = 'error.jpg';
         }
 
         $audit->url_id = $url_id;
@@ -287,7 +288,7 @@ class AuditService
     {
         $date = new DateTime();
         $file_name = $date->getTimestamp() . '.jpg';
-        $icon_path = Yii::getAlias('@frontend/web/icons/') . $file_name;
+        $icon_path = Yii::getAlias('@frontend/web/i/') . $file_name;
         copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
 
         return $file_name;

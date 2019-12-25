@@ -26,19 +26,21 @@ class Site extends \common\models\Site
 
     public static function deleteSite($site)
     {
-        foreach($site->urls as $url) {
-           foreach ($url->audits as $audit) {
-               foreach ($audit->externalLinks as $link) {
-                   ExternalLinks::deleteAll(['id' => $link->id]);
-               }
-               Audit::deleteAll(['id' => $audit->id]);
-           }
-           Url::deleteAll(['id' => $url->id]);
-        }
-        foreach ($site->dns as $dns) {
-            Dns::deleteAll(['id' => $dns->id]);
-        }
-        Site::deleteAll(['id' => $site->id]);
+        try {
+            foreach($site->urls as $url) {
+                foreach ($url->audits as $audit) {
+                    foreach ($audit->externalLinks as $link) {
+                        ExternalLinks::deleteAll(['id' => $link->id]);
+                    }
+                    Audit::deleteAll(['id' => $audit->id]);
+                }
+                Url::deleteAll(['id' => $url->id]);
+            }
+            foreach ($site->dns as $dns) {
+                Dns::deleteAll(['id' => $dns->id]);
+            }
+            Site::deleteAll(['id' => $site->id]);
+        } catch (\Exception $e) { }
     }
 
     public static function getLink($link, $domain)

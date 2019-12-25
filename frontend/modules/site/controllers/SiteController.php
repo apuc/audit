@@ -192,7 +192,7 @@ class SiteController extends Controller
     public function actionTest()
     {
 //       AuditService::addAudit('cyberforum.ru', 33);
-        $data = Site::findOne(['id' => 3]);
+        $data = Site::findOne(['id' => 5]);
         \frontend\modules\site\models\Site::deleteSite($data);
     }
 }

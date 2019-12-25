@@ -167,7 +167,8 @@ class SiteController extends Controller
 
     public function actionCustomdelete($id)
     {
-        $site = Site::findOne(str_replace('=', "", stristr($id, '=')));
+        $clean_id = str_replace('=', "", stristr($id, '='));
+        $site = Site::findOne($clean_id);
         \frontend\modules\site\models\Site::deleteSite($site);
         return $this->redirect(['index']);
     }

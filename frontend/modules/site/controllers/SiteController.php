@@ -5,6 +5,7 @@ namespace frontend\modules\site\controllers;
 use common\classes\Debug;
 use common\classes\SizerGridView;
 use common\models\Links;
+use common\models\Search;
 use common\models\Theme;
 use common\services\AuditService;
 use frontend\modules\url\models\Url;
@@ -191,8 +192,9 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-//       AuditService::addAudit('cyberforum.ru', 33);
-        $data = Site::findOne(['id' => 5]);
-        \frontend\modules\site\models\Site::deleteSite($data);
+       AuditService::addAudit('vuejs.org/', 19);
+//        $data = Site::findOne(['id' => 5]);
+//        \frontend\modules\site\models\Site::deleteSite($data);
+        //Search::getCount('rabota.today');
     }
 }

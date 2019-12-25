@@ -58,6 +58,21 @@ class Search
         return $count === 1 && $text !== '';
     }
 
+    public static function getCount($link)
+    {
+        $sc = new self();
+        return $sc->getCountIndexedPagesGoogle($link);
+    }
+
+    public function getCountIndexedPagesGoogle($link)
+    {
+        $res = $this->parse('https://www.google.ru/search', ['q' => 'site:' . $link,]);
+
+        $document = \phpQuery::newDocument($res);
+        $text = $document->find('#resultStats')->text();
+        return str_replace(array(":", " "), "", stristr(stristr($text, ':'), '(', true));
+    }
+
     public function parse($link, array $data = array())
     {
         $url = $link;

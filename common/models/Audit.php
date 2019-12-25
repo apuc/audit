@@ -15,12 +15,13 @@ use yii\db\Expression;
  * @property int|null $size
  * @property int|null $loading_time
  * @property int $created_at
- * @property int $url_id
  * @property bool|null $google_indexing
  * @property bool|null $yandex_indexing
  * @property bool|null $check_search
  * @property string|null $screenshot
+ * @property int $url_id
  * @property string|null $icon
+ * @property int|null $google_indexed_pages
  *
  * @property Url $url
  * @property ExternalLinks[] $externalLinks
@@ -56,7 +57,7 @@ class Audit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['size', 'loading_time', 'created_at', 'url_id'], 'integer'],
+            [['size', 'loading_time', 'created_at', 'url_id', 'google_indexed_pages'], 'integer'],
             [['url_id'], 'required'],
             [['google_indexing', 'yandex_indexing', 'check_search'], 'boolean'],
             [['server_response_code'], 'string', 'max' => 100],
@@ -71,7 +72,6 @@ class Audit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-
             'id' => 'ID',
             'server_response_code' => 'Код ответа сервера',
             'size' => 'Размер (байт)',
@@ -82,7 +82,8 @@ class Audit extends \yii\db\ActiveRecord
             'yandex_indexing' => 'Индексация Яндекс',
             'check_search' => 'Флаг индексации',
             'screenshot' => 'Скриншот',
-            'icon' => 'Иконка'
+            'icon' => 'Иконка',
+            'google_indexed_pages' => 'Количество страниц проиндексированных в гугле'
         ];
     }
 

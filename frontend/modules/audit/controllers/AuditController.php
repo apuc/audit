@@ -69,44 +69,50 @@ class AuditController extends Controller
      */
     public function actionView($id)
     {
-        $url_id = Audit::find()->where(['id' => $id])->asArray()->all()[0]['url_id'];
-        $site_id = Url::find()->where(['id' => $url_id])->asArray()->all()[0]['site_id'];
+        $audit = Audit::find()->where(['id' => $id])->asArray()->all();
+        if($audit) {
+            $url = Url::find()->where(['id' => $audit[0]['url_id']])->asArray()->all();
+            if($url) {
+                $site_id = $url[0]['site_id'];
 
-        $dns = new ActiveDataProvider([
-            'query' => Dns::find()->where(['site_id' => $site_id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+                $dns = new ActiveDataProvider([
+                    'query' => Dns::find()->where(['site_id' => $site_id]),
+                    'pagination' => [
+                        'pageSize' => 20,
+                    ],
+                ]);
 
-        $externalLinks = new ActiveDataProvider([
-            'query' => ExternalLinks::find()->where(['audit_id' => $id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+                $externalLinks = new ActiveDataProvider([
+                    'query' => ExternalLinks::find()->where(['audit_id' => $id]),
+                    'pagination' => [
+                        'pageSize' => 20,
+                    ],
+                ]);
 
-        $site = new ActiveDataProvider([
-            'query' => Site::find()->where(['id' => $site_id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+                $site = new ActiveDataProvider([
+                    'query' => Site::find()->where(['id' => $site_id]),
+                    'pagination' => [
+                        'pageSize' => 20,
+                    ],
+                ]);
 
-        $audit = new ActiveDataProvider([
-            'query' => Audit::find()->where(['id' => $id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
+                $audit = new ActiveDataProvider([
+                    'query' => Audit::find()->where(['id' => $id]),
+                    'pagination' => [
+                        'pageSize' => 20,
+                    ],
+                ]);
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'externalLinks' => $externalLinks,
-            'dns' => $dns,
-            'site' => $site,
-            'audit' => $audit
-        ]);
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                    'externalLinks' => $externalLinks,
+                    'dns' => $dns,
+                    'site' => $site,
+                    'audit' => $audit
+                ]);
+            }
+        }
+        return $this->redirect(['/domain/site']);
     }
 
     /**

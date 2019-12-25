@@ -32,6 +32,7 @@ function sizer(value) {
             console.log(res);
         },
         error: function(){
+            $.pjax.reload({container:"#sitePjax"});
             alert('Error!');
         }
     });
@@ -53,6 +54,7 @@ $(document).ready(function(){
                 alert('Аудит проведен');
             },
             error: function(){
+                $.pjax.reload({container:"#sitePjax"});
                 alert('Error!');
             }
         });

@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="site-index">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-        <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
+        <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
         <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
 
         <?php
@@ -253,6 +253,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'Индексация Google',
                     'value' => function ($data) {
                         return Site::getAudit($data, 'google_indexing');
+                    },
+                ],
+                [
+                    'attribute' => 'Проиндексированных в гугле страниц',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'google_indexed_pages');
                     },
                 ],
                 [

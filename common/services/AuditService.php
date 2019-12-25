@@ -123,6 +123,7 @@ class AuditService
             $audit->loading_time = $loading_time;
             echo 'Время загрузки: ' . $audit->loading_time . '<br>';
             $audit->check_search = 0;
+            $audit->google_indexed_pages = 0;
             echo 'Флаг индексации: ' . $audit->check_search . '<br>';
             try {
                 $audit->screenshot = AuditService::makeScreen('https://' . $domain, false);
@@ -146,6 +147,7 @@ class AuditService
         $audit->url_id = $url_id;
         echo 'url_id: ' . $audit->url_id . '<br>';
         $audit->save();
+        var_dump($audit->errors);
         return $audit;
     }
 

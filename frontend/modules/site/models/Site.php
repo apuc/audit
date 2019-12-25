@@ -156,8 +156,14 @@ class Site extends \common\models\Site
 
     public static function getAcceptor($data, $fl)
     {
+        $n = 1;
         $external_links_array = array();
-        $n = count($data->urls[0]->audits);
+        if($data->urls) {
+            if($data->urls[0]->audits) {
+                $n = count($data->urls[0]->audits);
+                if($n <= 0) $n = 1;
+            }
+        }
 
         if($data)
             if($data->urls)
@@ -175,8 +181,14 @@ class Site extends \common\models\Site
 
     public static function getAnchor($data, $fl)
     {
+        $n = 1;
         $external_links_array = array();
-        $n = count($data->urls[0]->audits);
+        if($data->urls) {
+            if($data->urls[0]->audits) {
+                $n = count($data->urls[0]->audits);
+                if($n <= 0) $n = 1;
+            }
+        }
 
         if($data) {
             if ($data->urls) {

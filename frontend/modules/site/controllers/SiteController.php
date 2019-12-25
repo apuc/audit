@@ -190,6 +190,6 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-       AuditService::addAudit('rabota.today', 34);
+       AuditService::addAudit('cyberforum.ru', 33);
     }
 }

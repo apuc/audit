@@ -82,18 +82,71 @@ class AuditService
     {
         try {
             $audit = self::createAudit($domain, $url_id,'ok');
-
-            $site = Site::findOne(['name' => $domain]);
-            $site->title = AuditService::getTitle($domain);
-            $site->redirect = AuditService::getRedirect($domain);
-            $site->save();
-
-            if ($audit->server_response_code == 200)
-                AuditService::createExternalLinks($domain, $audit->id);
-
         } catch (Exception $e) {
             self::createAudit($domain, $url_id, (string)$e->getCode());
         }
+
+        try {
+            $site = Site::findOne(['name' => $domain]);
+            $site->title = AuditService::getTitle($domain);
+            echo '<br>Тайтл: ' . $site->title . '<br>';
+            $site->redirect = AuditService::getRedirect($domain);
+            echo 'Редирект: ' . $site->redirect . '<br>';
+            $site->save();
+        } catch (Exception $e) { }
+
+        try {
+            AuditService::createExternalLinks($domain, $audit->id);
+        } catch (Exception $e) { }
+    }
+
+    public static function createAudit($domain, $url_id, $e)
+    {
+        echo 'Домен: ' . $domain . '<br>';
+        $audit = new Audit();
+        if($e == 'ok') {
+            $startTime = microtime(1);
+            $client = new GuzzleHttp\Client();
+            $response = $client->get($domain, [
+                'headers' => [
+                    'User-Agent' => UserAgentArray::getRandom(),
+                ],
+                'verify' => false
+            ]);
+            $endTime = microtime(1);
+            $loading_time = round(($endTime - $startTime) * 1000);
+
+            $audit->server_response_code = (string)$response->getStatusCode();
+            echo 'Код ответа сервера: ' . $audit->server_response_code . '<br>';
+            $audit->size = strlen($response->getBody());
+            echo 'Размер: ' . $audit->size . '<br>';
+            $audit->loading_time = $loading_time;
+            echo 'Время загрузки: ' . $audit->loading_time . '<br>';
+            $audit->check_search = 0;
+            echo 'Флаг индексации: ' . $audit->check_search . '<br>';
+            try {
+                $audit->screenshot = AuditService::makeScreen('https://' . $domain, false);
+            } catch (Exception $e) {
+                $audit->screenshot = 'error.jpg';
+            }
+            echo 'Скриншот: ' . $audit->screenshot . '<br>';
+            try {
+                $audit->icon = AuditService::makeIconPicture($domain);
+            } catch (Exception $e) {
+                $audit->icon = 'error.jpg';
+            }
+            echo 'Иконка: ' . $audit->icon . '<br>';
+        } else {
+            $audit->server_response_code = $e;
+            echo 'Код ответа сервера: ' . $audit->server_response_code . '<br>';
+            $audit->screenshot = 'error.jpg';
+            echo 'Скриншот: ' . $audit->screenshot . '<br>';
+        }
+
+        $audit->url_id = $url_id;
+        echo 'url_id: ' . $audit->url_id . '<br>';
+        $audit->save();
+        return $audit;
     }
 
     public static function createSite($info, $domain)
@@ -153,36 +206,6 @@ class AuditService
         return $url->id;
     }
 
-    public static function createAudit($domain, $url_id, $e)
-    {
-        $audit = new Audit();
-        if($e == 'ok') {
-            $startTime = microtime(1);
-            $client = new GuzzleHttp\Client([
-                'User-Agent' => UserAgentArray::getRandom(),
-                'base_uri' => $domain,
-            ]);
-            $response = $client->get($domain, ['verify' => false]);
-            $endTime = microtime(1);
-            $loading_time = round(($endTime - $startTime) * 1000);
-
-            $audit->server_response_code = (string)$response->getStatusCode();
-            $audit->size = strlen($response->getBody());
-            $audit->loading_time = $loading_time;
-            $audit->check_search = 0;
-            $audit->screenshot = AuditService::makeScreen('https://' . $domain, false);
-            $audit->icon = AuditService::makeIconPicture($domain);
-        } else {
-            $audit->server_response_code = $e;
-            $audit->screenshot = 'error.jpg';
-        }
-
-        $audit->url_id = $url_id;
-        $audit->save();
-
-        return $audit;
-    }
-
     public static function createExternalLinks($domain, $audit_id)
     {
         $client = new GuzzleHttp\Client([
@@ -217,6 +240,7 @@ class AuditService
                 }
             }
         }
+        var_dump($host_path_array);
         for ($i = 0; $i < count($host_path_array); $i++) {
             $ext_links = new ExternalLinks();
             $ext_links->acceptor = $host_path_array[$i];

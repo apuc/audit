@@ -313,9 +313,9 @@ class AuditService
         $date = new DateTime();
         $file_name = $date->getTimestamp() . '.jpg';
         $icon_path = Yii::getAlias('@frontend/web/i/') . $file_name;
-        copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
+        $img = copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
 
-        return $file_name;
+        return $img ? $file_name : 'error.jpg';
     }
 
     // проверяет наличие ключа в массиве

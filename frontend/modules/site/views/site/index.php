@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\classes\SizerGridView;
+use common\services\AuditService;
 use \frontend\modules\site\models\Site;
 use \common\models\Theme;
 use \common\models\Comments;
@@ -39,13 +40,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['class' => 'yii\grid\SerialColumn'],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{show} {update}',
+                    'template' => '{show} {update} {delete}',
                     'buttons' => [
                         'show' => function ($data) {
                             return Html::a(
                                 "<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
-                                ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]
-                            );
+                                ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]);
+                        },
+                        'delete' => function ($data) {
+                            return Html::a("<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>",
+                                ['/domain/site/customdelete', 'id' => $data]);
                         },
                     ],
                 ],
@@ -54,15 +58,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => '',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return Html::tag('img', null, ['src' => Url::to('@web/i/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                        if(Site::getAudit($data, 'icon') != 'error.jpg')
+                            return Html::tag('img', null, ['src' => Url::to('@web/i/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                        else return '';
                     }
                 ],
                 [
                     'attribute' => '',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return Html::tag('img', null, ['src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')), 'width' => '32px',
-                        'class' => 'my-img']);
+                        if(Site::getAudit($data, 'screenshot') != 'error.jpg')
+                            return Html::tag('img', null, [
+                                    'src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')),
+                                    'width' => '32px',
+                                    'class' => 'my-img']);
+                        else return '';
                     }
                 ],
                 [

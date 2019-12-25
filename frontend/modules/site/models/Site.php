@@ -24,6 +24,23 @@ class Site extends \common\models\Site
         parent::init();
     }
 
+    public static function deleteSite($site)
+    {
+        foreach($site->urls as $url) {
+           foreach ($url->audits as $audit) {
+               foreach ($audit->externalLinks as $link) {
+                   ExternalLinks::deleteAll(['id' => $link->id]);
+               }
+               Audit::deleteAll(['id' => $audit->id]);
+           }
+           Url::deleteAll(['id' => $url->id]);
+        }
+        foreach ($site->dns as $dns) {
+            Dns::deleteAll(['id' => $dns->id]);
+        }
+        Site::deleteAll(['id' => $site->id]);
+    }
+
     public static function getLink($link, $domain)
     {
         $links = Links::findOne(['name' => $link]);

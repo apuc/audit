@@ -158,17 +158,17 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Site model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $site = Site::findOne(['id' => $id]);
+        \frontend\modules\site\models\Site::deleteSite($site);
+        return $this->redirect(['index']);
+    }
 
+    public function actionCustomdelete($id)
+    {
+        $site = Site::findOne(str_replace('=', "", stristr($id, '=')));
+        \frontend\modules\site\models\Site::deleteSite($site);
         return $this->redirect(['index']);
     }
 
@@ -190,6 +190,8 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-       AuditService::addAudit('cyberforum.ru', 33);
+//       AuditService::addAudit('cyberforum.ru', 33);
+        $data = Site::findOne(['id' => 3]);
+        \frontend\modules\site\models\Site::deleteSite($data);
     }
 }

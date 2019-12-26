@@ -101,10 +101,12 @@ class Site extends \common\models\Site
     {
         $arr =  explode(", ", $data->states);
 
-        if($fl) {
+        if($fl == 1) {
             return $data->states;
-        } else {
+        } elseif($fl == 0) {
             return implode("\n", $arr);
+        } elseif ($fl == 2) {
+            return $arr;
         }
     }
 

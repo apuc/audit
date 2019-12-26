@@ -152,9 +152,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Состояния',
                     'value' => function ($data) {
-                        return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return ' <div class="count">' . count(Site::getStates($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getStates($data, 0) . '" class="states">'
                             . Site::getStates($data, 1) . '</div';
+
                     },
                     'format' => 'raw',
                     'contentOptions' => function ($data) {
@@ -217,6 +218,37 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'attribute' => 'Индексация Google',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'google_indexing');
+                    },
+                ],
+                [
+                    'attribute' => 'Проиндексированных в гугле страниц',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'google_indexed_pages');
+                    },
+                ],
+                [
+                    'attribute' => 'Ссылка на кэш гугла',
+                    'value' => function ($data) {
+                        return Html::a($data->name, 'http://webcache.googleusercontent.com/search?q=cache:' . $data->name, ['target' => '_blank']);
+                    },
+                    'format' => 'raw',
+                ],
+                [
+                    'attribute' => 'Дата кэша',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'date_cache');
+                    },
+                ],
+                [
+                    'attribute' => 'Индексация Яндекс',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'yandex_indexing');
+                    },
+                ],
+                [
                     'attribute' => 'IP',
                     'value' => function ($data) {
                         return '<div class="count">' . count(Site::getIp($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
@@ -249,37 +281,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'dns',
                         ['class' => 'form-control']
                     ),
-                ],
-                [
-                    'attribute' => 'Индексация Google',
-                    'value' => function ($data) {
-                        return Site::getAudit($data, 'google_indexing');
-                    },
-                ],
-                [
-                    'attribute' => 'Проиндексированных в гугле страниц',
-                    'value' => function ($data) {
-                        return Site::getAudit($data, 'google_indexed_pages');
-                    },
-                ],
-                [
-                    'attribute' => 'Ссылка на кэш гугла',
-                    'value' => function ($data) {
-                        return Html::a($data->name, 'http://webcache.googleusercontent.com/search?q=cache:' . $data->name, ['target' => '_blank']);
-                    },
-                    'format' => 'raw',
-                ],
-                [
-                    'attribute' => 'Дата кэша',
-                    'value' => function ($data) {
-                        return Site::getAudit($data, 'date_cache');
-                    },
-                ],
-                [
-                    'attribute' => 'Индексация Яндекс',
-                    'value' => function ($data) {
-                        return Site::getAudit($data, 'yandex_indexing');
-                    },
                 ],
                 [
                     'attribute' => 'Комментарий',

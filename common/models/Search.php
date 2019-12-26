@@ -27,20 +27,24 @@ class Search
 
     public function getDateCache($link)
     {
-        $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom(),]);
-        $response = $client->get('http://webcache.googleusercontent.com/search?q=cache:'.$link);
-        $body = $response->getBody()->getContents();
-        $document = \phpQuery::newDocumentHTML($body);
-        $links = $document->find('span')->get();
+        try {
+            $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom(),]);
+            $response = $client->get('http://webcache.googleusercontent.com/search?q=cache:'.$link);
+            $body = $response->getBody()->getContents();
+            $document = \phpQuery::newDocumentHTML($body);
+            $links = $document->find('span')->get();
 
-        if($links) {
-            $pattern = "/^[^0-9]*/";
-            $date = $links[1]->nodeValue;
-            $date = preg_replace($pattern, "", $date);
-            $date = stristr($date, ':', true);
-            $date = substr($date, 0, strlen($date)-3);
-            return $date;
-        } else return false;
+            if($links) {
+                $pattern = "/^[^0-9]*/";
+                $date = $links[1]->nodeValue;
+                $date = preg_replace($pattern, "", $date);
+                $date = stristr($date, ':', true);
+                $date = substr($date, 0, strlen($date)-3);
+                return $date;
+            } else return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public static function check($link, $searchSystem = null)

@@ -29,7 +29,8 @@
         "kartik-v/yii2-grid": "dev-master",
         "2amigos/yii2-editable-widget": "~1.0",
         "kartik-v/yii2-builder": "dev-master",
-      "ext-http": "*"
+        "miloschuman/yii2-highcharts-widget": "dev-master",
+        "2amigos/yii2-highcharts-widget": "~1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

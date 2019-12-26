@@ -22,6 +22,7 @@ use yii\db\Expression;
  * @property int $url_id
  * @property string|null $icon
  * @property int|null $google_indexed_pages
+ * @property string|null $date_cache
  *
  * @property Url $url
  * @property ExternalLinks[] $externalLinks
@@ -61,7 +62,7 @@ class Audit extends \yii\db\ActiveRecord
             [['url_id'], 'required'],
             [['google_indexing', 'yandex_indexing', 'check_search'], 'boolean'],
             [['server_response_code'], 'string', 'max' => 100],
-            [['screenshot', 'icon'], 'string', 'max' => 255],
+            [['screenshot', 'icon', 'date_cache'], 'string', 'max' => 255],
             [['url_id'], 'exist', 'skipOnError' => true, 'targetClass' => Url::className(), 'targetAttribute' => ['url_id' => 'id']],
         ];
     }
@@ -83,7 +84,8 @@ class Audit extends \yii\db\ActiveRecord
             'check_search' => 'Флаг индексации',
             'screenshot' => 'Скриншот',
             'icon' => 'Иконка',
-            'google_indexed_pages' => 'Количество страниц проиндексированных в гугле'
+            'google_indexed_pages' => 'Количество страниц проиндексированных в гугле',
+            'date_cache' => 'Дата кэша'
         ];
     }
 

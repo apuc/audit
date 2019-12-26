@@ -10,10 +10,38 @@ namespace common\models;
 
 use common\classes\Debug;
 use common\classes\UserAgentArray;
+use GuzzleHttp;
 use Yii;
 
 class Search
 {
+
+    public static function cache($link, $key)
+    {
+        $sc = new self();
+        if ($key === 'date') {
+            return $sc->getDateCache($link);
+        }
+        return false;
+    }
+
+    public function getDateCache($link)
+    {
+        $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom(),]);
+        $response = $client->get('http://webcache.googleusercontent.com/search?q=cache:'.$link);
+        $body = $response->getBody()->getContents();
+        $document = \phpQuery::newDocumentHTML($body);
+        $links = $document->find('span')->get();
+
+        if($links) {
+            $pattern = "/^[^0-9]*/";
+            $date = $links[1]->nodeValue;
+            $date = preg_replace($pattern, "", $date);
+            $date = stristr($date, ':', true);
+            $date = substr($date, 0, strlen($date)-3);
+            return $date;
+        } else return false;
+    }
 
     public static function check($link, $searchSystem = null)
     {
@@ -70,7 +98,10 @@ class Search
 
         $document = \phpQuery::newDocument($res);
         $text = $document->find('#resultStats')->text();
-        return str_replace(array(":", " "), "", stristr(stristr($text, ':'), '(', true));
+        $cuted = stristr(stristr($text, ':'), '(', true);
+        $replaced = str_replace(array(":", " ", "%20", "&#160;", "&#8194;", "&#8195;", "&#8201;"), "", $cuted);
+        $replaced = preg_replace('/[^\p{L}0-9 ]/iu','', $replaced);
+        return $replaced;
     }
 
     public function parse($link, array $data = array())

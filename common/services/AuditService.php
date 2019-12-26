@@ -123,7 +123,6 @@ class AuditService
             $audit->loading_time = $loading_time;
             echo 'Время загрузки: ' . $audit->loading_time . '<br>';
             $audit->check_search = 0;
-            $audit->google_indexed_pages = 0;
             echo 'Флаг индексации: ' . $audit->check_search . '<br>';
             try {
                 $audit->screenshot = AuditService::makeScreen('https://' . $domain, false);
@@ -334,7 +333,6 @@ class AuditService
         return $isExist;
     }
 
-    // форматирование доменов и url
     public static function formattingUrl($urls)
     {
         $separated_urls = str_replace(array("\r\n", "\r", "\n"), ",", $urls);

@@ -73,7 +73,8 @@ class ApiController extends Controller
                             $result['ya'] ? $audit->yandex_indexing = 1 : false;
                             $result['google'] ? $audit->google_indexing = 1 : false;
                             $audit->check_search = 1;
-                            $audit->google_indexed_pages = Search::getCount($url->url);;
+                            $audit->google_indexed_pages = Search::getCount($url->url);
+                            $audit->date_cache = Search::cache($url->url, 'date');
                             $audit->save();
                         }
                     }

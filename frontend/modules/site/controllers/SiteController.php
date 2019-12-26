@@ -192,9 +192,10 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-       AuditService::addAudit('vuejs.org/', 19);
-//        $data = Site::findOne(['id' => 5]);
-//        \frontend\modules\site\models\Site::deleteSite($data);
-        //Search::getCount('rabota.today');
+       //AuditService::addAudit('vuejs.org/', 19);
+//        $data = Site::findOne(['id' => 42]);
+//        \frontend\modules\site\models\Site::getChart($data, 'server_response_code');
+        //Search::cache('rabota.today', 'date');
+        //Debug::dd(array(1, 0, 4));
     }
 }

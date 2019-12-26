@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use \common\classes\Debug;
 
+
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
@@ -259,6 +260,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'Проиндексированных в гугле страниц',
                     'value' => function ($data) {
                         return Site::getAudit($data, 'google_indexed_pages');
+                    },
+                ],
+                [
+                    'attribute' => 'Ссылка на кэш гугла',
+                    'value' => function ($data) {
+                        return Html::a($data->name, 'http://webcache.googleusercontent.com/search?q=cache:' . $data->name, ['target' => '_blank']);
+                    },
+                    'format' => 'raw',
+                ],
+                [
+                    'attribute' => 'Дата кэша',
+                    'value' => function ($data) {
+                        return Site::getAudit($data, 'date_cache');
                     },
                 ],
                 [

@@ -11,6 +11,7 @@ use common\models\Links;
 use common\models\Theme;
 use common\models\Url;
 use DOMDocument;
+use dosamigos\highcharts\HighCharts;
 use GuzzleHttp;
 use http\Env\Request;
 use yii\helpers\ArrayHelper;
@@ -22,6 +23,19 @@ class Site extends \common\models\Site
     public function init()
     {
         parent::init();
+    }
+
+    public static function getChart($data, $key)
+    {
+        $result = array();
+        if($data->urls) {
+            foreach ($data->urls[0]->audits as $value) {
+                if($value->created_at >= strtotime("-3 month")){
+                    array_push($result, $value->$key);
+                }
+            }
+        }
+        return $result;
     }
 
     public static function deleteSite($site)
@@ -131,7 +145,7 @@ class Site extends \common\models\Site
         }
     }
 
-    public static function getAudit($data, $key="size")
+    public static function getAudit($data, $key)
     {
         $result = 0;
         if($data->urls) {

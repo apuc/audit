@@ -70,7 +70,7 @@ $(document).ready(function() {
             "<img src='"+src+"' class='popup_img' />"+
             "</div>");
         $(".popup").fadeIn(100);
-        $(".popup_bg").click(function() {
+        $(".popup_bg").mouseout(function() {
             $(".popup").fadeOut(100);
             setTimeout(function() {
                 $(".popup").remove();

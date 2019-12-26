@@ -90,8 +90,10 @@ $('.indexing').on('click', function(){
         },
         success: function(res){
             $.pjax.reload({container:"#sitePjax"});
+            alert('Индексация проведена');
         },
         error: function(){
+            $.pjax.reload({container:"#sitePjax"});
             alert('Error!');
         }
     });

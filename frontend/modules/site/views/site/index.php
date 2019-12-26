@@ -152,7 +152,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Состояния',
                     'value' => function ($data) {
-                        return ' <div class="count">' . count(Site::getStates($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return ' <div class="count">' . Site::getStates($data, 2) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getStates($data, 0) . '" class="states">'
                             . Site::getStates($data, 1) . '</div';
 

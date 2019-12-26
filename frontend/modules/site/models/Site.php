@@ -106,7 +106,10 @@ class Site extends \common\models\Site
         } elseif($fl == 0) {
             return implode("\n", $arr);
         } elseif ($fl == 2) {
-            return $arr;
+            if(count($arr) == 1 && $arr[0] == "")
+                return 0;
+            else
+                return count($arr);
         }
     }
 

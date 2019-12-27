@@ -203,7 +203,7 @@ class SiteController extends Controller
 
     public function actionSearch($domain)
     {
-        $site = Site::findOne($domain);
+        $site = Site::findOne(['name' => $domain]);
         $indexing = new Indexing();
         $result = Search::check($site->name);
         $result['ya'] ? $indexing->yandex_indexing = 1 : false;

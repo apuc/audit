@@ -3,8 +3,10 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\classes\Debug;
 use common\models\Audit;
 use common\models\Comments;
+use common\models\Indexing;
 use common\models\Search;
 use common\models\Site;
 use common\models\User;
@@ -62,22 +64,15 @@ class ApiController extends Controller
 
             if($keys)
                 foreach ($keys['keys'] as $key) {
-                    $url = Url::findOne(['site_id' => $key]);
-                    if($url) {
-                        $audit = Audit::find()
-                            ->where(['url_id' => $url->id, 'check_search' => 0])
-                            ->orderBy('created_at desc')
-                            ->one();
-                        if($audit) {
-                            $result = Search::check($url->url);
-                            $result['ya'] ? $audit->yandex_indexing = 1 : false;
-                            $result['google'] ? $audit->google_indexing = 1 : false;
-                            $audit->check_search = 1;
-                            $audit->google_indexed_pages = Search::getCount($url->url);
-                            $audit->date_cache = Search::cache($url->url, 'date');
-                            $audit->save();
-                        }
-                    }
+                    $site = Site::findOne($key);
+                    $indexing = new Indexing();
+                    $result = Search::check($site->name);
+                    $result['ya'] ? $indexing->yandex_indexing = 1 : false;
+                    $result['google'] ? $indexing->google_indexing = 1 : false;
+                    $indexing->google_indexed_pages = Search::getCount($site->name);
+                    $indexing->date_cache = Search::cache($site->name, 'date');
+                    $indexing->site_id = $site->id;
+                    $indexing->save();
                 }
         }
     }

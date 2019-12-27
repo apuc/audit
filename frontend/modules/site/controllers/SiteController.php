@@ -5,6 +5,7 @@ namespace frontend\modules\site\controllers;
 use common\classes\Debug;
 use common\classes\SizerGridView;
 use common\classes\UserAgentArray;
+use common\models\Indexing;
 use common\models\Links;
 use common\models\Search;
 use common\models\Theme;
@@ -193,30 +194,24 @@ class SiteController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionTest()
+    public function actionAudit($domain)
     {
-//        $client = new GuzzleHttp\Client([
-//            'headers' => ['User-Agent' => UserAgentArray::getStatic()],
-//            'verify' => true,
-//            'curl' => [
-//                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-//                CURLOPT_PROXY => 'http://:8000'
-//            ],
-//            'allow_redirects' => ['track_redirects' => true]
-//        ]);
-//
-//        $response = $client->get('kuhnemania.ru');
-//        $body = $response->getBody()->getContents();
-//        $document = \phpQuery::newDocumentHTML($body);
-
-        AuditService::addAudit('reactjs.org', 17);
-        //$data = Site::findOne(['id' => 44]);
-        //\frontend\modules\site\models\Site::getStates($data, '2');
-        //AuditService::createExternalLinks('kuhnemania.ru', 263, $document);
-        //AuditService::createExternalLinks('rabota.today', 259);
-      
+        $site = Site::findOne(['name' => $domain]);
+        $url = \common\models\Url::findOne(['site_id' => $site->id]);
+        AuditService::addAudit($domain, $url->id);
         //Search::cache('mychannels.gq', 'date');
+    }
 
-        //Debug::dd(array(1, 0, 4));
+    public function actionSearch()
+    {
+        $indexing = new Indexing();
+        $result = Search::check('rabota.today');
+        $result['ya'] ? $indexing->yandex_indexing = 1 : false;
+        $result['google'] ? $indexing->google_indexing = 1 : false;
+        $indexing->google_indexed_pages = Search::getCount('rabota.today');
+        $indexing->date_cache = Search::cache('rabota.today', 'date');
+        $indexing->site_id = 42;
+        $indexing->save();
+        Debug::dd($indexing->errors);
     }
 }

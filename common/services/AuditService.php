@@ -119,7 +119,6 @@ class AuditService
         $site->title = self::getTitle($document);
         $site->redirect = self::getRedirect($domain, $response);
         $site->save();
-        Debug::prn($site->title);
 
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
 
@@ -190,7 +189,6 @@ class AuditService
         $audit->size = $size;
         $audit->loading_time = $loading_time;
         $audit->server_response_code = $server_response_code;
-        $audit->check_search = 0;
         $audit->screenshot = $screenshot;
         $audit->icon = $icon;
         $audit->url_id = $url_id;

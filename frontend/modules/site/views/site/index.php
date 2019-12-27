@@ -236,13 +236,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Индексация Google',
                     'value' => function ($data) {
-                        return Site::getAudit($data, 'google_indexing');
+                        return Site::getIndex($data, 'google_indexing');
                     },
                 ],
                 [
                     'attribute' => 'Проиндексированных в гугле страниц',
                     'value' => function ($data) {
-                        return Site::getAudit($data, 'google_indexed_pages');
+                        return Site::getIndex($data, 'google_indexed_pages');
                     },
                 ],
                 [
@@ -255,13 +255,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Дата кэша',
                     'value' => function ($data) {
-                        return Site::getAudit($data, 'date_cache');
+                        return Site::getIndex($data, 'date_cache');
                     },
                 ],
                 [
                     'attribute' => 'Индексация Яндекс',
                     'value' => function ($data) {
-                        return Site::getAudit($data, 'yandex_indexing');
+                        return Site::getIndex($data, 'yandex_indexing');
                     },
                 ],
                 [

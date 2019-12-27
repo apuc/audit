@@ -21,6 +21,7 @@ use Yii;
  * @property Dns[] $dns
  * @property Theme $theme
  * @property Url[] $urls
+ * @property  Indexing[] $indexing
  */
 class Site extends \yii\db\ActiveRecord
 {
@@ -94,5 +95,13 @@ class Site extends \yii\db\ActiveRecord
     public function getUrls()
     {
         return $this->hasMany(Url::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIndexing()
+    {
+        return $this->hasMany(Indexing::className(), ['site_id' => 'id']);
     }
 }

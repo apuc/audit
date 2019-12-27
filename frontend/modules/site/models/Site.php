@@ -161,6 +161,17 @@ class Site extends \common\models\Site
         return $result;
     }
 
+    public static function getIndex($data, $key)
+    {
+        $result = 0;
+        if($data->indexing) {
+            foreach ($data->indexing as $value) {
+                $result = $value->$key;
+            }
+        }
+        return $result;
+    }
+
     public static function getAuditID($model, $key)
     {
         $id = str_replace("=", "", stristr($model, '='));

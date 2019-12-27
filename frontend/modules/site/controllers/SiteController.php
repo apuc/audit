@@ -201,15 +201,16 @@ class SiteController extends Controller
         AuditService::addAudit($domain, $url->id);
     }
 
-    public function actionSearch()
+    public function actionSearch($domain)
     {
+        $site = Site::findOne($domain);
         $indexing = new Indexing();
-        $result = Search::check('rabota.today');
+        $result = Search::check($site->name);
         $result['ya'] ? $indexing->yandex_indexing = 1 : false;
         $result['google'] ? $indexing->google_indexing = 1 : false;
-        $indexing->google_indexed_pages = Search::getCount('rabota.today');
-        $indexing->date_cache = Search::cache('rabota.today', 'date');
-        $indexing->site_id = 42;
+        $indexing->google_indexed_pages = Search::getCount($site->name);
+        $indexing->date_cache = Search::cache($site->name, 'date');
+        $indexing->site_id = $site->id;
         $indexing->save();
         Debug::dd($indexing->errors);
     }

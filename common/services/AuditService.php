@@ -118,6 +118,7 @@ class AuditService
 
         $site = Site::findOne(['name' => $domain]);
         $site->title = self::getTitle($document);
+        Debug::prn($site->title);
         $site->redirect = self::getRedirect($domain, $response);
         $site->save();
 

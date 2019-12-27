@@ -54,8 +54,10 @@ class AuditService
         $report->newUrl++;
     }
 
+
     public static function addSite($domain)
     {
+        $domain = self::cutDomain($domain);
         try {
             $whois = Whois::create();
             $info = $whois->loadDomainInfo($domain);
@@ -80,75 +82,42 @@ class AuditService
 
     public static function addAudit($domain, $url_id)
     {
-        try {
-            $audit = self::createAudit($domain, $url_id,'ok');
-        } catch (Exception $e) {
-            self::createAudit($domain, $url_id, (string)$e->getCode());
-        }
+        $domain = self::cutDomain($domain);
+        $startTime = microtime(1);
+        $client = new GuzzleHttp\Client([
+            'headers' => ['User-Agent' => UserAgentArray::getStatic()],
+            'verify' => true,
+            'curl' => [
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                CURLOPT_PROXY => 'http://:8000'
+            ],
+            'allow_redirects' => ['track_redirects' => true]
+        ]);
+        $response = $client->get($domain);
+        $endTime = microtime(1);
 
-        try {
-            $site = Site::findOne(['name' => $domain]);
-            $site->title = AuditService::getTitle($domain);
-            echo '<br>Тайтл: ' . $site->title . '<br>';
-            $site->redirect = AuditService::getRedirect($domain);
-            echo 'Редирект: ' . $site->redirect . '<br>';
-            $site->save();
-        } catch (Exception $e) { }
+        $body = $response->getBody()->getContents();
+        $document = \phpQuery::newDocumentHTML($body);
 
-        try {
-            AuditService::createExternalLinks($domain, $audit->id);
-        } catch (Exception $e) { }
+        $loading_time = round(($endTime - $startTime) * 1000);
+
+        $server_response_code = self::getServerResponseCode($response);
+        $size = self::getSize($response);
+
+        $screenshot = self::getScreen('https://' . $domain, false);
+        $icon = self::getIconPicture($domain);
+
+        $site = Site::findOne(['name' => $domain]);
+        $site->title = self::getTitle($document);
+        $site->redirect = self::getRedirect($domain, $response);
+        $site->save();
+        //Debug::prn($site->title);
+
+        $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
+
+        self::createExternalLinks($domain, $audit->id, $document);
     }
 
-    public static function createAudit($domain, $url_id, $e)
-    {
-        echo 'Домен: ' . $domain . '<br>';
-        $audit = new Audit();
-        if($e == 'ok') {
-            $startTime = microtime(1);
-            $client = new GuzzleHttp\Client();
-            $response = $client->get($domain, [
-                'headers' => [
-                    'User-Agent' => UserAgentArray::getRandom(),
-                ],
-                'verify' => false
-            ]);
-            $endTime = microtime(1);
-            $loading_time = round(($endTime - $startTime) * 1000);
-
-            $audit->server_response_code = (string)$response->getStatusCode();
-            echo 'Код ответа сервера: ' . $audit->server_response_code . '<br>';
-            $audit->size = strlen($response->getBody());
-            echo 'Размер: ' . $audit->size . '<br>';
-            $audit->loading_time = $loading_time;
-            echo 'Время загрузки: ' . $audit->loading_time . '<br>';
-            $audit->check_search = 0;
-            echo 'Флаг индексации: ' . $audit->check_search . '<br>';
-            try {
-                $audit->screenshot = AuditService::makeScreen('https://' . $domain, false);
-            } catch (Exception $e) {
-                $audit->screenshot = 'error.jpg';
-            }
-            echo 'Скриншот: ' . $audit->screenshot . '<br>';
-            try {
-                $audit->icon = AuditService::makeIconPicture($domain);
-            } catch (Exception $e) {
-                $audit->icon = 'error.jpg';
-            }
-            echo 'Иконка: ' . $audit->icon . '<br>';
-        } else {
-            $audit->server_response_code = $e;
-            echo 'Код ответа сервера: ' . $audit->server_response_code . '<br>';
-            $audit->screenshot = 'error.jpg';
-            echo 'Скриншот: ' . $audit->screenshot . '<br>';
-        }
-
-        $audit->url_id = $url_id;
-        echo 'url_id: ' . $audit->url_id . '<br>';
-        $audit->save();
-        var_dump($audit->errors);
-        return $audit;
-    }
 
     public static function createSite($info, $domain)
     {
@@ -177,6 +146,18 @@ class AuditService
         return $site->id;
     }
 
+    public static function createUrl($domain, $site_id)
+    {
+        $ip = gethostbyname($domain);
+        $url = new Url();
+        $url->url = $domain;
+        $url->site_id = $site_id;
+        $url->ip = $ip;
+        $url->save();
+
+        return $url->id;
+    }
+
     public static function createDns($domain, $site_id)
     {
         $records = dns_get_record($domain);
@@ -195,142 +176,199 @@ class AuditService
         }
     }
 
-    public static function createUrl($domain, $site_id)
-    {
-        $ip = gethostbyname($domain);
-        $url = new Url();
-        $url->url = $domain;
-        $url->site_id = $site_id;
-        $url->ip = $ip;
-        $url->save();
-
-        return $url->id;
+    public static function createAudit($url_id, $server_response_code, $loading_time = 0, $size = 0,
+                                       $screenshot = '', $icon = '') {
+        $audit = new Audit();
+        $audit->size = $size;
+        $audit->loading_time = $loading_time;
+        $audit->server_response_code = $server_response_code;
+        $audit->check_search = 0;
+        $audit->screenshot = $screenshot;
+        $audit->icon = $icon;
+        $audit->url_id = $url_id;
+        $audit->save();
+        return $audit;
     }
 
-    public static function createExternalLinks($domain, $audit_id)
+    public static function createExternalLinks($domain, $audit_id, $document)
     {
-        $client = new GuzzleHttp\Client([
-            'User-Agent' => UserAgentArray::getRandom(),
-        ]);
-        $response = $client->get($domain);
-        $body = $response->getBody()->getContents();
-        $document = \phpQuery::newDocumentHTML($body);
-        $links = $document->find('a')->get();
-
-        $host_path_array = array();
-        $anchor_array = array();
-        foreach ($links as $link) {
-            if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
-                $clean_url = AuditService::cutUrl(parse_url($link->getAttribute('href'))['host']);
-                $cut_domain = AuditService::cutDomain($domain);
-
-                if($clean_url != $cut_domain) {
-                    if (AuditService::isExist(parse_url($link->getAttribute('href')), 'path')) {
-                        $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
-
-                        if (!in_array($host_path, $host_path_array)) {
-                            array_push($host_path_array, $host_path);
-                            array_push($anchor_array, $link->nodeValue);
-                        }
-                    } else {
-                        if (!in_array($clean_url, $host_path_array)) {
-                            array_push($host_path_array, $clean_url);
-                            array_push($anchor_array, $link->nodeValue);
-                        }
-                    }
-                }
-            }
-        }
-        var_dump($host_path_array);
-        for ($i = 0; $i < count($host_path_array); $i++) {
-            $ext_links = new ExternalLinks();
-            $ext_links->acceptor = $host_path_array[$i];
-            $ext_links->anchor = $anchor_array[$i];
-            $ext_links->audit_id = $audit_id;
-            $ext_links->save();
-        }
+       $result_array = self::getExternalLinks($document, $domain);
+       if($result_array) {
+           for ($i = 0; $i < count($result_array[0]); $i++) {
+               $ext_links = new ExternalLinks();
+               $ext_links->acceptor = $result_array[0][$i];
+               $ext_links->anchor = $result_array[1][$i];
+               $ext_links->audit_id = $audit_id;
+               $ext_links->save();
+           }
+       }
     }
 
-    public static function getTitle($domain)
+
+    public static function getTitle($document)
     {
-        $client = new GuzzleHttp\Client([
-            'User-Agent' => UserAgentArray::getRandom(),
-        ]);
-        $response = $client->get($domain);
-        $body = $response->getBody()->getContents();
-
-        $document = \phpQuery::newDocumentHTML($body);
-        $links = $document->find('title')->get();
-
-        return $links ? $links[0]->nodeValue : null;
-
-    }
-
-    public static function getRedirect($domain)
-    {
-        $client = new GuzzleHttp\Client([
-            'User-Agent' => UserAgentArray::getRandom(),
-            'allow_redirects' => ['track_redirects' => true]
-        ]);
-        $response = $client->get($domain);
-        $redirect = $response->getHeader(\GuzzleHttp\RedirectMiddleware::HISTORY_HEADER)[0];
-        $cut_redirect = self::cutUrl($redirect);
-        $cut_again = self::cutDomain($cut_redirect);
         try {
-            return ($cut_again == $domain) ? '' : $cut_again;
+            $links = $document->find('title')->get();
+            return $links ? $links[0]->nodeValue : null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    public static function getRedirect($domain, $response)
+    {
+        try {
+            $redirect = $response->getHeader(\GuzzleHttp\RedirectMiddleware::HISTORY_HEADER)[0];
+            $cut_redirect = self::cutDomain(self::cutUrl($redirect));
+            return ($cut_redirect == $domain) ? '' : $cut_redirect;
         }
         catch (Exception $e) {
             return null;
         }
     }
 
-    public static function makeScreen($url, $mobile = true)
+    public static function getServerResponseCode($response)
     {
-        $date = new DateTime();
-        $file_name = $date->getTimestamp() . '.jpg';
-        $path = Yii::getAlias('@frontend/web/screenshots/') . $file_name;
-
-        $query = http_build_query(array_filter([
-            'strategy' => $mobile ? 'mobile' : null,
-            'screenshot' => 'true',
-            'url' => $url
-        ]));
-        $api_url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?{$query}";
-
-        $result = json_decode(file_get_contents($api_url), true);
-
-        $screen_data = str_replace(
-            ['_', '-', ' ', 'data:image/jpeg;base64,'],
-            ['/', '+', '+', ''],
-            $result['screenshot']['data']
-        );
-
-        $img = file_put_contents($path, base64_decode($screen_data));
-        return $img ? $file_name : 'error.jpg';
-    }
-
-    public static function makeIconPicture($domain)
-    {
-        $date = new DateTime();
-        $file_name = $date->getTimestamp() . '.jpg';
-        $icon_path = Yii::getAlias('@frontend/web/i/') . $file_name;
-        $img = copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
-
-        return $img ? $file_name : 'error.jpg';
-    }
-
-    // проверяет наличие ключа в массиве
-    public static function isExist($array, $key)
-    {
-        $isExist = 0;
-        while (current($array)) {
-            if (key($array) == $key) {
-                $isExist = 1;
-                break;
-            }
-            next($array);
+        try {
+            return (string)$response->getStatusCode();
+        } catch (Exception $e) {
+            return 0;
         }
-        return $isExist;
+    }
+
+    public static function getSize($response)
+    {
+        try {
+            return strlen($response->getBody());
+        } catch (Exception $e) {
+            return 0;
+        }
+    }
+
+    public static function getExternalLinks($document, $domain)
+    {
+        try {
+            $links = $document->find('a')->get();
+            $host_path_array = array();
+            $anchor_array = array();
+            $result_array = array();
+            foreach ($links as $link) {
+                if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
+                    $clean_url = AuditService::cutUrl(parse_url($link->getAttribute('href'))['host']);
+                    $cut_domain = AuditService::cutDomain($domain);
+                    if($clean_url != $cut_domain) {
+                        if (AuditService::isExist(parse_url($link->getAttribute('href')), 'path')) {
+                            $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
+                            if (!in_array($host_path, $host_path_array)) {
+                                array_push($host_path_array, $host_path);
+                                array_push($anchor_array, $link->nodeValue);
+                            }
+                        } else {
+                            if (!in_array($clean_url, $host_path_array)) {
+                                array_push($host_path_array, $clean_url);
+                                array_push($anchor_array, $link->nodeValue);
+                            }
+                        }
+                    }
+                }
+            }
+            array_push($result_array, $host_path_array);
+            array_push($result_array, $anchor_array);
+            return $result_array;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    public static function getScreen($url, $mobile = true)
+    {
+        try {
+            $date = new DateTime();
+            $file_name = $date->getTimestamp() . '.jpg';
+            $path = Yii::getAlias('@frontend/web/screenshots/') . $file_name;
+
+            $query = http_build_query(array_filter([
+                'strategy' => $mobile ? 'mobile' : null,
+                'screenshot' => 'true',
+                'url' => $url
+            ]));
+            $api_url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?{$query}";
+
+            $result = json_decode(file_get_contents($api_url), true);
+
+            $screen_data = str_replace(
+                ['_', '-', ' ', 'data:image/jpeg;base64,'],
+                ['/', '+', '+', ''],
+                $result['screenshot']['data']
+            );
+
+            $img = file_put_contents($path, base64_decode($screen_data));
+            return $img ? $file_name : 'error.jpg';
+        } catch (Exception $e) {
+            return 'error.jpg';
+        }
+    }
+
+    public static function getIconPicture($domain)
+    {
+        try {
+            $date = new DateTime();
+            $file_name = $date->getTimestamp() . '.jpg';
+            $icon_path = Yii::getAlias('@frontend/web/i/') . $file_name;
+            $img = copy('http://www.google.com/s2/favicons?domain=www.' . $domain, $icon_path);
+
+            return $img ? $file_name : 'error.jpg';
+        } catch (Exception $e) {
+            return 'error.jpg';
+        }
+    }
+
+
+    public static function formData($urls)
+    {
+        $formatting_urls = self::formattingUrl($urls);
+
+        $data_array = array();
+        $all_url_array = AuditService::allUrlArray();
+        $all_site_array = AuditService::allSiteArray();
+
+        foreach ($formatting_urls as $value) {
+            $data = new DataForm();
+            $data->setSite($value);
+            $data->setSiteUrl($value);
+            foreach ($all_site_array as $all_site_value) {
+                if ($all_site_value == $data->getSite()) {
+                    $data->setSiteExist(1);
+                }
+            }
+            foreach ($all_url_array as $all_url_value) {
+                if ($all_url_value == $data->getSiteUrl()) {
+                    $data->setUrlExist(1);
+                }
+            }
+            array_push($data_array, $data);
+        }
+        return $data_array;
+    }
+
+    public static function allUrlArray()
+    {
+        $all_url = Url::find()->all();
+        $all_url_array = array();
+        foreach ($all_url as $value) {
+            array_push($all_url_array, $value->url);
+        }
+        return $all_url_array;
+    }
+
+    public static function allSiteArray()
+    {
+        $all_site = Site::find()->all();
+        $all_site_array = array();
+        foreach ($all_site as $value) {
+            array_push($all_site_array, $value->name);
+        }
+        return $all_site_array;
     }
 
     public static function formattingUrl($urls)
@@ -359,53 +397,16 @@ class AuditService
         return str_replace(array("http://", "https://", "www."), "", $url);
     }
 
-    // формирование данных для добавления
-    public static function formData($urls)
+    public static function isExist($array, $key)
     {
-        $formatting_urls = self::formattingUrl($urls);
-
-        $data_array = array();
-        $all_url_array = AuditService::allUrlArray();
-        $all_site_array = AuditService::allSiteArray();
-
-        foreach ($formatting_urls as $value) {
-            $data = new DataForm();
-            $data->setSite($value);
-            $data->setSiteUrl($value);
-            foreach ($all_site_array as $all_site_value) {
-                if ($all_site_value == $data->getSite()) {
-                    $data->setSiteExist(1);
-                }
+        $isExist = 0;
+        while (current($array)) {
+            if (key($array) == $key) {
+                $isExist = 1;
+                break;
             }
-            foreach ($all_url_array as $all_url_value) {
-                if ($all_url_value == $data->getSiteUrl()) {
-                    $data->setUrlExist(1);
-                }
-            }
-            array_push($data_array, $data);
+            next($array);
         }
-        return $data_array;
-    }
-
-    // возвращает массив url
-    public static function allUrlArray()
-    {
-        $all_url = Url::find()->all();
-        $all_url_array = array();
-        foreach ($all_url as $value) {
-            array_push($all_url_array, $value->url);
-        }
-        return $all_url_array;
-    }
-
-    // возвращает массив доменов
-    public static function allSiteArray()
-    {
-        $all_site = Site::find()->all();
-        $all_site_array = array();
-        foreach ($all_site as $value) {
-            array_push($all_site_array, $value->name);
-        }
-        return $all_site_array;
+        return $isExist;
     }
 }

@@ -4,11 +4,14 @@ namespace frontend\modules\site\controllers;
 
 use common\classes\Debug;
 use common\classes\SizerGridView;
+use common\classes\UserAgentArray;
 use common\models\Links;
 use common\models\Search;
 use common\models\Theme;
 use common\services\AuditService;
 use frontend\modules\url\models\Url;
+use http\Exception;
+use GuzzleHttp;
 use Yii;
 use common\models\Site;
 use frontend\modules\site\models\SiteSearch;
@@ -192,9 +195,26 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-       //AuditService::addAudit('vuejs.org/', 19);
-        $data = Site::findOne(['id' => 44]);
-        \frontend\modules\site\models\Site::getStates($data, '2');
+//        $client = new GuzzleHttp\Client([
+//            'headers' => ['User-Agent' => UserAgentArray::getStatic()],
+//            'verify' => true,
+//            'curl' => [
+//                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+//                CURLOPT_PROXY => 'http://:8000'
+//            ],
+//            'allow_redirects' => ['track_redirects' => true]
+//        ]);
+//
+//        $response = $client->get('kuhnemania.ru');
+//        $body = $response->getBody()->getContents();
+//        $document = \phpQuery::newDocumentHTML($body);
+
+        AuditService::addAudit('reactjs.org', 17);
+        //$data = Site::findOne(['id' => 44]);
+        //\frontend\modules\site\models\Site::getStates($data, '2');
+        //AuditService::createExternalLinks('kuhnemania.ru', 263, $document);
+        //AuditService::createExternalLinks('rabota.today', 259);
+      
         //Search::cache('mychannels.gq', 'date');
 
         //Debug::dd(array(1, 0, 4));

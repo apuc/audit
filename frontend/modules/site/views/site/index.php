@@ -1,6 +1,7 @@
 <?php
 
 use common\models\Links;
+use dosamigos\highcharts\HighCharts;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -27,6 +28,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="site-index">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+<!--        --><?php
+//        echo HighCharts::widget([
+//            'clientOptions' => [
+//                'chart' => ['type' => 'spline'],
+//                'title' => ['text' => 'Fruit Consumption'],
+//                'xAxis' => ['categories' => ['Apples', 'Bananas', 'Oranges']],
+//                'yAxis' => ['title' => ['text' => 'Fruit eaten']],
+//                'series' => [
+//                    ['name' => 'Jane', 'data' => [1, 0, 4]],
+//                    ['name' => 'John', 'data' => [5, 7, 3]]
+//                ]
+//            ]
+//        ]);
+//        ?>
 
         <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
         <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>

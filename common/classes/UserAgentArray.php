@@ -18,8 +18,14 @@ class UserAgentArray
         'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
     ];
+
     public static function getRandom()
     {
         return static::$userAgents[rand(0,count(static::$userAgents)-1)];
+    }
+
+    public static function getStatic()
+    {
+        return static::$userAgents[0];
     }
 }

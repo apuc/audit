@@ -22,7 +22,7 @@ class Search
         if ($key === 'date') {
             return $sc->getDateCache($link);
         }
-        return false;
+        return '';
     }
 
     public function getDateCache($link)
@@ -42,10 +42,10 @@ class Search
                 $date = substr($date, 0, strlen($date)-3);
                 Debug::prn($date);
                 return $date;
-            } else return false;
+            } else return '';
         } catch (\Exception $e) {
             Debug::prn($e->getMessage());
-            return false;
+            return '';
         }
     }
 

@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
 <!--        --><?php
+//        $site = Site::findOne(42);
 //        echo HighCharts::widget([
 //            'clientOptions' => [
 //                'chart' => ['type' => 'spline'],
@@ -37,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                'xAxis' => ['categories' => ['Apples', 'Bananas', 'Oranges']],
 //                'yAxis' => ['title' => ['text' => 'Fruit eaten']],
 //                'series' => [
-//                    ['name' => 'Jane', 'data' => [1, 0, 4]],
+//                    ['name' => 'Jane', Site::getChart($site, 'size')],
 //                    ['name' => 'John', 'data' => [5, 7, 3]]
 //                ]
 //            ]

@@ -199,7 +199,6 @@ class SiteController extends Controller
         $site = Site::findOne(['name' => $domain]);
         $url = \common\models\Url::findOne(['site_id' => $site->id]);
         AuditService::addAudit($domain, $url->id);
-        //Search::cache('mychannels.gq', 'date');
     }
 
     public function actionSearch()

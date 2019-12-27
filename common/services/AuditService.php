@@ -110,6 +110,7 @@ class AuditService
             $loading_time = 0;
             $size = 0;
             $server_response_code = $e->getCode();
+            Debug::prn($e->getMessage());
         }
 
         $screenshot = self::getScreen('https://' . $domain, false);
@@ -218,9 +219,11 @@ class AuditService
                 $links = $document->find('title')->get();
                 return $links ? $links[0]->nodeValue : null;
             } catch (Exception $e) {
+                Debug::prn($e->getMessage());
                 return null;
             }
         } else {
+            Debug::prn('title error');
             return null;
         }
 
@@ -235,9 +238,11 @@ class AuditService
                 return ($cut_redirect == $domain) ? '' : $cut_redirect;
             }
             catch (Exception $e) {
+                Debug::prn($e->getMessage());
                 return null;
             }
         } else {
+            Debug::prn('redirect error');
             return null;
         }
     }
@@ -248,9 +253,11 @@ class AuditService
             try {
                 return (string)$response->getStatusCode();
             } catch (Exception $e) {
+                Debug::prn($e->getMessage());
                 return 0;
             }
         } else {
+            Debug::prn('server response code error');
             return 0;
         }
     }
@@ -261,9 +268,11 @@ class AuditService
             try {
                 return strlen($response->getBody());
             } catch (Exception $e) {
+                Debug::prn($e->getMessage());
                 return 0;
             }
         } else {
+            Debug::prn('size error');
             return 0;
         }
     }
@@ -300,9 +309,11 @@ class AuditService
                 array_push($result_array, $anchor_array);
                 return $result_array;
             } catch (Exception $e) {
+                Debug::prn($e->getMessage());
                 return null;
             }
         } else {
+            Debug::prn('external links error');
             return null;
         }
     }
@@ -332,6 +343,7 @@ class AuditService
             $img = file_put_contents($path, base64_decode($screen_data));
             return $img ? $file_name : 'error.jpg';
         } catch (Exception $e) {
+            Debug::prn($e->getMessage());
             return 'error.jpg';
         }
     }
@@ -346,6 +358,7 @@ class AuditService
 
             return $img ? $file_name : 'error.jpg';
         } catch (Exception $e) {
+            Debug::prn($e->getMessage());
             return 'error.jpg';
         }
     }

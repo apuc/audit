@@ -113,6 +113,10 @@ class AuditService
             Debug::prn($e->getMessage());
         }
 
+        Debug::prn('server_response_code: ' . $server_response_code);
+        Debug::prn('size: ' . $size);
+        Debug::prn('loading_time: ' . $loading_time);
+
         $screenshot = self::getScreen('https://' . $domain, false);
         $icon = self::getIconPicture($domain);
 
@@ -202,6 +206,7 @@ class AuditService
     {
        $result_array = self::getExternalLinks($document, $domain);
        if($result_array) {
+           Debug::prn('external_links exist');
            for ($i = 0; $i < count($result_array[0]); $i++) {
                $ext_links = new ExternalLinks();
                $ext_links->acceptor = $result_array[0][$i];

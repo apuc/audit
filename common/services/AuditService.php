@@ -88,8 +88,11 @@ class AuditService
         $domain = self::cutDomain($domain);
         if(self::IS_PROXY) {
             $fl = 0;
-            while (!$fl) {
+            $count = 0;
+            while($fl == 0 && $count <= 10) {
                 try {
+                    $proxy = ProxyListArray::getRandom();
+                    Debug::prn($proxy);
                     $startTime = microtime(1);
                     $client = new GuzzleHttp\Client([
                         'headers' => ['User-Agent' => UserAgentArray::getStatic()],
@@ -97,7 +100,8 @@ class AuditService
                         'curl' => [
                             CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
                             CURLOPT_PROXYTYPE => CURLPROXY_SOCKS4,
-                            CURLOPT_PROXY => ProxyListArray::getRandom(),
+                            CURLOPT_PROXY => $proxy,
+                            CURLOPT_CONNECTTIMEOUT => 30,
                         ],
                         'allow_redirects' => ['track_redirects' => true]
                     ]);
@@ -111,7 +115,16 @@ class AuditService
                     $server_response_code = self::getServerResponseCode($response);
                     $size = self::getSize($response);
                     $fl = 1;
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                    $fl = 0;
+                    $response = null;
+                    $document = null;
+                    $loading_time = 0;
+                    $size = 0;
+                    $server_response_code = $e->getCode();
+                    Debug::prn($e->getMessage());
+                }
+                $count++;
             }
         } else {
             try {
@@ -158,7 +171,6 @@ class AuditService
 
         self::createExternalLinks($domain, $audit->id, $document);
     }
-
 
     public static function createSite($info, $domain)
     {

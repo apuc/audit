@@ -215,8 +215,10 @@ class SiteController extends Controller
         Debug::dd($indexing->errors);
     }
 
-    public function actionTest()
+    public function actionTest($domain)
     {
-
+        $links = Links::findOne(['name' => 	'ru.megaindex.com']);
+        $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
+        return str_replace(array("{SITE}"), $domain, $clean);
     }
 }

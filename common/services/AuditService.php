@@ -3,6 +3,7 @@
 namespace common\services;
 
 use common\classes\Debug;
+use common\classes\ProxyListArray;
 use common\classes\UserAgentArray;
 use common\models\Audit;
 use common\models\Dns;
@@ -19,6 +20,8 @@ use GuzzleHttp;
 
 class AuditService
 {
+    const IS_PROXY = 1;
+
     public static function addData($data_array, $report)
     {
         foreach ($data_array as $data) {
@@ -83,35 +86,59 @@ class AuditService
     public static function addAudit($domain, $url_id)
     {
         $domain = self::cutDomain($domain);
-        try {
-            $startTime = microtime(1);
-            $client = new GuzzleHttp\Client([
-                'headers' => ['User-Agent' => UserAgentArray::getStatic()],
-                'verify' => true,
-                'curl' => [
-                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                    CURLOPT_PROXYTYPE => CURLPROXY_SOCKS4,
-                    CURLOPT_PROXY => '196.22.222.177:51692'
-                ],
-                'allow_redirects' => ['track_redirects' => true]
-            ]);
-            $response = $client->get($domain);
-            $endTime = microtime(1);
-            $loading_time = round(($endTime - $startTime) * 1000);
+        if(self::IS_PROXY) {
+            $fl = 0;
+            while (!$fl) {
+                try {
+                    $startTime = microtime(1);
+                    $client = new GuzzleHttp\Client([
+                        'headers' => ['User-Agent' => UserAgentArray::getStatic()],
+                        'verify' => true,
+                        'curl' => [
+                            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                            CURLOPT_PROXYTYPE => CURLPROXY_SOCKS4,
+                            CURLOPT_PROXY => ProxyListArray::getRandom(),
+                        ],
+                        'allow_redirects' => ['track_redirects' => true]
+                    ]);
+                    $response = $client->get($domain);
+                    $endTime = microtime(1);
+                    $loading_time = round(($endTime - $startTime) * 1000);
 
-            $body = $response->getBody()->getContents();
-            $document = \phpQuery::newDocumentHTML($body);
+                    $body = $response->getBody()->getContents();
+                    $document = \phpQuery::newDocumentHTML($body);
 
-            $server_response_code = self::getServerResponseCode($response);
-            $size = self::getSize($response);
+                    $server_response_code = self::getServerResponseCode($response);
+                    $size = self::getSize($response);
+                    $fl = 1;
+                } catch (Exception $e) {}
+            }
+        } else {
+            try {
+                $startTime = microtime(1);
+                $client = new GuzzleHttp\Client([
+                    'headers' => ['User-Agent' => UserAgentArray::getStatic()],
+                    'verify' => true,
+                    'allow_redirects' => ['track_redirects' => true]
+                ]);
+                $response = $client->get($domain);
+                $endTime = microtime(1);
+                $loading_time = round(($endTime - $startTime) * 1000);
 
-        } catch (Exception $e) {
-            $response = null;
-            $document = null;
-            $loading_time = 0;
-            $size = 0;
-            $server_response_code = $e->getCode();
-            Debug::prn($e->getMessage());
+                $body = $response->getBody()->getContents();
+                $document = \phpQuery::newDocumentHTML($body);
+
+                $server_response_code = self::getServerResponseCode($response);
+                $size = self::getSize($response);
+
+            } catch (Exception $e) {
+                $response = null;
+                $document = null;
+                $loading_time = 0;
+                $size = 0;
+                $server_response_code = $e->getCode();
+                Debug::prn($e->getMessage());
+            }
         }
 
         Debug::prn('server_response_code: ' . $server_response_code);

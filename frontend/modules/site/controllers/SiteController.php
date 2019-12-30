@@ -219,7 +219,9 @@ class SiteController extends Controller
     {
         Debug::prn($domain);
         $links = Links::findOne(['name' => 	'ru.megaindex.com']);
+        Debug::prn($links);
         $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
+        Debug::prn($clean);
         Debug::prn(str_replace(array("{SITE}"), $domain, $clean));
     }
 }

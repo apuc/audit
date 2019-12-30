@@ -2,6 +2,7 @@
 function jsFunction(e, value)
 {
     let domain = e.getAttribute('data-domain-name');
+    console.log(domain);
     $.ajax({
         url: '/api/api/redirect',
         type: 'POST',

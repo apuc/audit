@@ -214,4 +214,9 @@ class SiteController extends Controller
         $indexing->save();
         Debug::dd($indexing->errors);
     }
+
+    public function actionTest()
+    {
+
+    }
 }

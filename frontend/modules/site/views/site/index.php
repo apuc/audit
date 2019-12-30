@@ -34,12 +34,58 @@ $this->params['breadcrumbs'][] = $this->title;
 //        echo HighCharts::widget([
 //            'clientOptions' => [
 //                'chart' => ['type' => 'spline'],
-//                'title' => ['text' => 'Fruit Consumption'],
-//                'xAxis' => ['categories' => ['Apples', 'Bananas', 'Oranges']],
-//                'yAxis' => ['title' => ['text' => 'Fruit eaten']],
+//                'title' => ['text' => ''],
+//                'xAxis' => ['categories' => ['', '', '']],
+//                'yAxis' => ['title' => ['text' => '']],
 //                'series' => [
-//                    ['name' => 'Jane', Site::getChart($site, 'size')],
-//                    ['name' => 'John', 'data' => [5, 7, 3]]
+//                    ['name' => 'Код ответа сервера', 'data' => [200, 200, 200]],
+//                    ['name' => 'Время загрузки', 'data' => [548, 720, 527]],
+//                    ['name' => 'Размер', 'data' => [369446, 369436, 369065]]
+//                ]
+//            ]
+//        ]);
+//        ?>
+<!---->
+<!--        --><?php
+//        $site = Site::findOne(42);
+//        echo HighCharts::widget([
+//            'clientOptions' => [
+//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
+//                'title' => ['text' => ''],
+//                'xAxis' => ['categories' => ['', '', '']],
+//                'yAxis' => ['title' => ['text' => '']],
+//                'series' => [
+//                    ['name' => 'Размер', 'data' => [369446, 369436, 369065]]
+//                ]
+//            ]
+//        ]);
+//        ?>
+<!---->
+<!--        --><?php
+//        $site = Site::findOne(42);
+//        echo HighCharts::widget([
+//            'clientOptions' => [
+//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
+//                'title' => ['text' => ''],
+//                'xAxis' => ['categories' => ['', '', '']],
+//                'yAxis' => ['title' => ['text' => '']],
+//                'series' => [
+//                    ['name' => 'Размер', 'data' => [548, 720, 527]]
+//                ]
+//            ]
+//        ]);
+//        ?>
+<!---->
+<!--        --><?php
+//        $site = Site::findOne(42);
+//        echo HighCharts::widget([
+//            'clientOptions' => [
+//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
+//                'title' => ['text' => ''],
+//                'xAxis' => ['categories' => ['', '', '']],
+//                'yAxis' => ['title' => ['text' => '']],
+//                'series' => [
+//                    ['name' => 'Размер', 'data' => [200, 200, 200]]
 //                ]
 //            ]
 //        ]);

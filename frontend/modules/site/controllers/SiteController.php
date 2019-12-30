@@ -219,6 +219,6 @@ class SiteController extends Controller
     {
         $links = Links::findOne(['name' => 	'ru.megaindex.com']);
         $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
-        return str_replace(array("{SITE}"), $domain, $clean);
+        Debug::prn(str_replace(array("{SITE}"), $domain, $clean));
     }
 }

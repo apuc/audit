@@ -90,7 +90,7 @@ class AuditService
                 'verify' => true,
                 'curl' => [
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                    CURLOPT_PROXY => 'http://:8000'
+                    CURLOPT_PROXY => '79.101.98.2:53281'
                 ],
                 'allow_redirects' => ['track_redirects' => true]
             ]);

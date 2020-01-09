@@ -62,22 +62,18 @@ $(document).ready(function(){
 });
 
 $(document).ready(function() {
-    $(".my-img").click(function() {
+
+    $(".my-img").mouseover(function(event) {
+        let y =  event.pageY - 100;
         let img = $(this);
         let src = img.attr('src');
-        $("body").append("<div class='popup'>"+
-            "<div class='popup_bg'></div>"+
-            "<img src='"+src+"' class='popup_img' />"+
-            "</div>");
+        $("body").append("<div class='popup' style='position:absolute; left:-27%; top:"+y+"px'><img src='"+src+"' class='popup_img' /></div>");
         $(".popup").fadeIn(100);
-        $(".popup_bg").click(function() {
+        $(".popup").mouseout(function() {
             $(".popup").fadeOut(100);
-            setTimeout(function() {
-                $(".popup").remove();
-            }, 100);
+            setTimeout(function() { $(".popup").remove(); }, 100);
         });
     });
-
 });
 
 $('.indexing').on('click', function(){

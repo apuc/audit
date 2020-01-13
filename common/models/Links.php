@@ -40,8 +40,8 @@ class Links extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'link' => 'Link',
+            'name' => 'Ссылка',
+            'link' => 'Полная ссылка',
         ];
     }
 }

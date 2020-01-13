@@ -5,6 +5,7 @@ namespace frontend\modules\api\controllers;
 
 use common\classes\Debug;
 use common\models\Audit;
+use common\models\AuditPending;
 use common\models\Comments;
 use common\models\Indexing;
 use common\models\Links;
@@ -84,11 +85,13 @@ class ApiController extends Controller
         Yii::info('start', 'audit');
         if(Yii::$app->request->isAjax) {
             $keys = Yii::$app->request->post();
-
             if($keys)
                 foreach ($keys['keys'] as $key) {
                     $url = Url::findOne(['site_id' => $key]);
                     AuditService::addAudit($url->url, $url->id);
+//                    $audit = new AuditPending();
+//                    $audit->site_id = $key;
+//                    $audit->save();
                 }
         }
     }

@@ -147,7 +147,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
-                                    title="Ссылки" class="states">Ссылки</div>',
+                                    title="Ссылки" class="states"><span class="glyphicon glyphicon-link"
+                        aria-hidden="true"></span></div>',
                     'format' => 'raw',
                     'value' => function ($data) {
                         $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
@@ -155,6 +156,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::activeDropDownList($data, 'id', $array, [
                                 'onchange' => 'jsFunction(this, this.value);',
                                 'prompt' => '...',
+                                'class' => 'custom-ddl',
                                 'data-domain-name' => $data->name
                         ]);
                     },
@@ -420,13 +422,13 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-<div class="no-freeze-spinner modal fade" id="spinner">
-    <div id="no-freeze-spinner">
-        <div>
-            <i class="material-icons"></i>
-            <i class="material-icons"></i>
-            <i class="material-icons"></i>
-            <div></div>
+    <div class="no-freeze-spinner modal fade" id="spinner">
+        <div id="no-freeze-spinner">
+            <div>
+                <i class="material-icons"></i>
+                <i class="material-icons"></i>
+                <i class="material-icons"></i>
+                <div></div>
+            </div>
         </div>
     </div>
-</div>

@@ -17,11 +17,13 @@ use Yii;
  * @property string|null $title
  * @property string|null $redirect
  *
+ * @property AuditPending[] $auditPendings
  * @property Comments[] $comments
  * @property Dns[] $dns
+ * @property Indexing[] $indexing
+ * @property IndexingPending[] $indexingPendings
  * @property Theme $theme
  * @property Url[] $urls
- * @property  Indexing[] $indexing
  */
 class Site extends \yii\db\ActiveRecord
 {
@@ -68,6 +70,14 @@ class Site extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getAuditPendings()
+    {
+        return $this->hasMany(AuditPending::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getComments()
     {
         return $this->hasMany(Comments::className(), ['site_id' => 'id']);
@@ -84,6 +94,22 @@ class Site extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getIndexing()
+    {
+        return $this->hasMany(Indexing::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIndexingPendings()
+    {
+        return $this->hasMany(IndexingPending::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTheme()
     {
         return $this->hasOne(Theme::className(), ['id' => 'theme_id']);
@@ -95,13 +121,5 @@ class Site extends \yii\db\ActiveRecord
     public function getUrls()
     {
         return $this->hasMany(Url::className(), ['site_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getIndexing()
-    {
-        return $this->hasMany(Indexing::className(), ['site_id' => 'id']);
     }
 }

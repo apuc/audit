@@ -289,3 +289,8 @@ body * {
 .left-menu-width {
     width: 165px !important;
 }
+
+.custom-ddl {
+    width: 18px;
+    height: 18px;
+}

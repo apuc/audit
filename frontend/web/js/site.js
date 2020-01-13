@@ -2,7 +2,7 @@
 function jsFunction(e, value)
 {
     let domain = e.getAttribute('data-domain-name');
-    console.log(value);
+    console.log(e);
     $.ajax({
         url: '/api/api/redirect',
         type: 'POST',
@@ -37,7 +37,6 @@ function sizer(value) {
             alert('Error!');
         }
     });
-
 }
 
 $(document).ready(function(){
@@ -52,7 +51,7 @@ $(document).ready(function(){
             success: function(res){
                 $.pjax.reload({container:"#sitePjax"});
                 console.log(res);
-                alert('Аудит проведен');
+                alert('Сайты добавлены в очередь на аудит.');
             },
             error: function(){
                 $.pjax.reload({container:"#sitePjax"});
@@ -173,4 +172,3 @@ $('#commentAjax').on('click', function(){
         }
     });
 });
-

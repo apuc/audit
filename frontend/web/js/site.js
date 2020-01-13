@@ -2,7 +2,7 @@
 function jsFunction(e, value)
 {
     let domain = e.getAttribute('data-domain-name');
-    console.log(domain);
+    console.log(value);
     $.ajax({
         url: '/api/api/redirect',
         type: 'POST',
@@ -11,6 +11,7 @@ function jsFunction(e, value)
             value:value
         },
         success: function(res){
+            console.log(res);
             window.open(res, "_blank");
         },
         error: function(){
@@ -75,6 +76,57 @@ $(document).ready(function() {
         });
     });
 });
+
+$(document).ready(function() {
+    //$(".graphic" ).hide();
+    $(".target").mouseover(function(event) {
+        // $.ajax({
+        //     url: '/api/api/chart',
+        //     type: 'POST',
+        //     data: {
+        //         event:target
+        //     },
+        //     dataType: "json",
+        //     success: function(res){
+        //         console.log(res);
+        //
+        //     },
+        //     error: function(){
+        //       console.log('error');
+        //     }
+        // });
+    });
+    $(".target").mouseout(function(event) {
+        //$(".graphic" ).hide();
+    });
+});
+
+function darwChart() {
+    let chart = new Highcharts.chart('container', {
+        chart: {
+            type: 'spline',
+            scrollablePlotArea: {
+                width: 250,
+                height: 250,
+                scrollPositionX: 1
+            }
+        },
+        title: { text: 'Размер' },
+        xAxis: { type: 'date', labels: { overflow: 'justify' } },
+        yAxis: { title: { text: 'Number of Employees' } },
+        legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
+        plotOptions: {
+            series: {
+                label: { connectorAllowed: false },
+                pointStart: 2010
+            },
+        },
+        series: [{
+            name: 'Размер',
+            data: [43934, 52503, 57177, 69658, 97031, 119931]
+        }],
+    });
+}
 
 $('.indexing').on('click', function(){
     let keys = $('#grid').yiiGridView('getSelectedRows');

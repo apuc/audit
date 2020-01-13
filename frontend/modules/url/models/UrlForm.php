@@ -20,4 +20,13 @@ class UrlForm extends Model
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'urls' => '',
+        ];
+    }
 }

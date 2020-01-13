@@ -31,7 +31,11 @@ class Site extends \common\models\Site
         if($data->urls) {
             foreach ($data->urls[0]->audits as $value) {
                 if($value->created_at >= strtotime("-3 month")){
-                    array_push($result, $value->$key);
+                    if($key == "created_at") {
+                        array_push($result, self::getDate($value->$key));
+                    } else {
+                        array_push($result, (int)$value->$key);
+                    }
                 }
             }
         }
@@ -55,14 +59,6 @@ class Site extends \common\models\Site
             }
             Site::deleteAll(['id' => $site->id]);
         } catch (\Exception $e) { }
-    }
-
-    public static function getLink($link, $domain)
-    {
-        $links = Links::findOne(['name' => $link]);
-        $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
-
-        return str_replace(array("{SITE}"), $domain, $clean);
     }
 
     public static function getDate($date, $fl=0)

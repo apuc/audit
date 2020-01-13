@@ -1,7 +1,7 @@
 <?php
 
 use common\models\Links;
-use dosamigos\highcharts\HighCharts;
+//use dosamigos\highcharts\HighCharts;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -29,68 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="site-index">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<!--        --><?php
-//        $site = Site::findOne(42);
-//        echo HighCharts::widget([
-//            'clientOptions' => [
-//                'chart' => ['type' => 'spline'],
-//                'title' => ['text' => ''],
-//                'xAxis' => ['categories' => ['', '', '']],
-//                'yAxis' => ['title' => ['text' => '']],
-//                'series' => [
-//                    ['name' => 'Код ответа сервера', 'data' => [200, 200, 200]],
-//                    ['name' => 'Время загрузки', 'data' => [548, 720, 527]],
-//                    ['name' => 'Размер', 'data' => [369446, 369436, 369065]]
-//                ]
-//            ]
-//        ]);
-//        ?>
-<!---->
-<!--        --><?php
-//        $site = Site::findOne(42);
-//        echo HighCharts::widget([
-//            'clientOptions' => [
-//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
-//                'title' => ['text' => ''],
-//                'xAxis' => ['categories' => ['', '', '']],
-//                'yAxis' => ['title' => ['text' => '']],
-//                'series' => [
-//                    ['name' => 'Размер', 'data' => [369446, 369436, 369065]]
-//                ]
-//            ]
-//        ]);
-//        ?>
-<!---->
-<!--        --><?php
-//        $site = Site::findOne(42);
-//        echo HighCharts::widget([
-//            'clientOptions' => [
-//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
-//                'title' => ['text' => ''],
-//                'xAxis' => ['categories' => ['', '', '']],
-//                'yAxis' => ['title' => ['text' => '']],
-//                'series' => [
-//                    ['name' => 'Размер', 'data' => [548, 720, 527]]
-//                ]
-//            ]
-//        ]);
-//        ?>
-<!---->
-<!--        --><?php
-//        $site = Site::findOne(42);
-//        echo HighCharts::widget([
-//            'clientOptions' => [
-//                'chart' => ['type' => 'spline', 'width' => 300, 'height' => 250],
-//                'title' => ['text' => ''],
-//                'xAxis' => ['categories' => ['', '', '']],
-//                'yAxis' => ['title' => ['text' => '']],
-//                'series' => [
-//                    ['name' => 'Размер', 'data' => [200, 200, 200]]
-//                ]
-//            ]
-//        ]);
-//        ?>
-
         <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
         <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
 
@@ -108,11 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'buttons' => [
                         'show' => function ($data) {
                             return Html::a(
-                                "<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
+                                "<span class='glyphicon glyphicon-eye-open' aria-hidden='true'></span>",
                                 ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]);
                         },
                         'delete' => function ($data) {
-                            return Html::a("<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>",
+                            return Html::a("<span class='glyphicon glyphicon-trash' aria-hidden='true'></span>",
                                 ['/domain/site/customdelete', 'id' => $data]);
                         },
                     ],
@@ -123,7 +61,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($data) {
                         if(Site::getAudit($data, 'icon') != 'error.jpg')
-                            return Html::tag('img', null, ['src' => Url::to('@web/i/' . Site::getAudit($data, 'icon')), 'width' => '16px']);
+                            return Html::tag('img', null, ['src' => Url::to('@web/i/'
+                                . Site::getAudit($data, 'icon')), 'width' => '16px']);
                         else return '';
                     }
                 ],
@@ -133,72 +72,101 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         if(Site::getAudit($data, 'screenshot') != 'error.jpg')
                             return Html::tag('img', null, [
-                                    'src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')),
-                                    'width' => '32px',
-                                    'class' => 'my-img']);
+                                'src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')),
+                                'width' => '32px', 'class' => 'my-img']);
                         else return '';
                     }
                 ],
+//                [
+//                    'attribute' => '',
+//                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="График" class="states"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
+//                    'format' => 'raw',
+//                    'value' => function ($data) {
+//
+//                        return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span><div class='graphic'><div id='container'></div></div>";
+                           // ."<div class='graphic'>"
+//                            . HighCharts::widget([
+//                                'clientOptions' => [
+//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
+//                                    'title' => ['text' => ''],
+//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
+//                                    'yAxis' => ['title' => ['text' => '']],
+//                                    'series' => [['name' => 'Размер', 'data' => Site::getChart($data, 'size')]]
+//                                ]
+//                            ]) . HighCharts::widget([
+//                                'clientOptions' => [
+//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
+//                                    'title' => ['text' => ''],
+//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
+//                                    'yAxis' => ['title' => ['text' => '']],
+//                                    'series' => [['name' => 'Время загрузки', 'data' => Site::getChart($data, 'loading_time')]]
+//                                ]
+//                            ]) . HighCharts::widget([
+//                                'clientOptions' => [
+//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
+//                                    'title' => ['text' => ''],
+//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
+//                                    'yAxis' => ['title' => ['text' => '']],
+//                                    'series' => [['name' => 'Код ответа сервера', 'data' => Site::getChart($data, 'server_response_code')]]
+//                                ]
+//                            ])
+                          //  . "</div>";
+//                    },
+//                ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Домен" class="states">Домен</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Домен" class="states">Домен</div>',
                     'value' => function ($data) {
-                        return Html::a($data->name, 'http://' . $data->name, ['target' => '_blank', 'id' => 'domain']);
+                        return Html::a($data->name, 'http://' . $data->name,
+                            ['target' => '_blank', 'id' => 'domain']);
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'name',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'name', ['class' => 'form-control']),
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Редирект" class="states">Редирект</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Редирект" class="states">Редирект</div>',
                     'value' => function ($data) {
                         return Html::a($data->redirect, 'http://' . $data->redirect, ['target' => '_blank']);
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'redirect',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'redirect', ['class' => 'form-control']),
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Тайтл" class="states">Тайтл</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Тайтл" class="states">Тайтл</div>',
                     'value' => function ($data) {
                         return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                            . $data->title . '" class="states">'
-                            . $data->title . '</div';
+                            . $data->title . '" class="states">' . $data->title . '</div';
                     },
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Ссылки" class="states">Ссылки</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                                    title="Ссылки" class="states">Ссылки</div>',
                     'format' => 'raw',
                     'value' => function ($data) {
-
-                        return Html::activeDropDownList($data, 'id', ArrayHelper::map(Links::find()->all(), 'name', 'name'),
-                            [
+                        $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
+                        $array[$data->name] = $data->name;
+                        return Html::activeDropDownList($data, 'id', $array, [
                                 'onchange' => 'jsFunction(this, this.value);',
                                 'prompt' => '...',
                                 'data-domain-name' => $data->name
-                            ]);
+                        ]);
                     },
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Тема" class="states">Тема</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Тема" class="states">Тема</div>',
                     'value' => function ($data) {
-
-                        if (!$data->theme) {
+                        if (!$data->theme)
                             $value = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><br>';
-                        } else {
-                            $value = $data->theme->name;
-                        }
+                        else $value = $data->theme->name;
 
                         return Editable::widget([
                             'name' => 'theme',
@@ -209,23 +177,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             'clientOptions' => [
                                 'placement' => 'right',
                                 'pk' => $data->id,
-                                'select2' => [
-                                    'width' => '124px'
-                                ],
+                                'select2' => ['width' => '124px'],
                                 'source' => Theme::getSource(),
                             ]
                         ]);
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'theme',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'theme', ['class' => 'form-control']),
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Комментарий" class="states"><span class="glyphicon glyphicon-comment " aria-hidden="true"></span></div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Комментарий" class="states"><span class="glyphicon glyphicon-comment "
+                        aria-hidden="true"></span></div>',
                     'format' => 'raw',
                     'value' => function ($data) {
                         return '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="' . $data->id
@@ -239,67 +203,61 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Код ответа сервера" class="states">Код</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Код ответа сервера" class="states">Код</div>',
                     'value' => function ($data) {
                         return Site::getAudit($data, 'server_response_code');
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'server_response_code',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'server_response_code', ['class' => 'form-control']),
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Размер (байт)" class="states">Байт</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Размер (байт)" class="states">Байт</div>',
                     'value' => function ($data) {
                         return Site::getAudit($data, 'size');
                     },
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Время загрузки (мс)" class="states">Мс</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Время загрузки (мс)" class="states">Мс</div>',
                     'value' => function ($data) {
                         return Site::getAudit($data, 'loading_time');
                     },
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Регистратор" class="states">Регистратор</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Регистратор" class="states">Регистратор</div>',
                     'value' => function ($data) {
                         return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getRegistrar($data, 0) . '" class="states">'
                             . Site::getRegistrar($data, 1) . '</div';
                     },
                     'format' => 'raw',
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'registrar',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'registrar', ['class' => 'form-control']),
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Состояния" class="states">Состояния</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Состояния" class="states">Состояния</div>',
                     'value' => function ($data) {
-                        return ' <div class="count">' . Site::getStates($data, 2) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return ' <div class="count">' . Site::getStates($data, 2)
+                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getStates($data, 0) . '" class="states">'
                             . Site::getStates($data, 1) . '</div';
-
                     },
                     'format' => 'raw',
                     'contentOptions' => function ($data) {
                         return ['class' => (stristr(Site::getStates($data, 1), 'UNVERIFIED') ? 'danger' : '')];
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'states',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'states', ['class' => 'form-control']),
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Дата создания" class="states">Создан</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Дата создания" class="states">Создан</div>',
                     'value' => function ($data) {
                         return Site::getDate($data->creation_date);
                     },
@@ -307,7 +265,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Дней до окончания регистрации" class="states">Дни</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+                        title="Дней до окончания регистрации" class="states">Дни</div>',
                     'value' => function ($data) {
                         return Site::getDaysLeft($data->expiration_date);
                     },
@@ -318,7 +277,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Индексация Google" class="states">'.
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Индексация главной страницы в Google" class="states">'.
                         Html::tag('img', null, ['src' => Url::to('@web/img/google.jpg'), 'width' => '16px']).'</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'google_indexing');
@@ -326,39 +286,46 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Количество проиндексированных страниц" class="states">N</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Количество проиндексированных страниц" class="states">N</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'google_indexed_pages');
                     },
                 ],
+//                [
+//                    'attribute' => '',
+//                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+//                        title="Кэш Google" class="states">CG</div>',
+//                    'value' => function ($data) {
+//                        return Html::a($data->name, 'http://webcache.googleusercontent.com/search?q=cache:' . $data->name, ['target' => '_blank']);
+//                    },
+//                    'format' => 'raw',
+//                ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Кэш Google" class="states">CG</div>',
-                    'value' => function ($data) {
-                        return Html::a($data->name, 'http://webcache.googleusercontent.com/search?q=cache:' . $data->name, ['target' => '_blank']);
-                    },
-                    'format' => 'raw',
-                ],
-                [
-                    'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Дата кэша" class="states">Дата кэша</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Дата кэша" class="states">Дата кэша</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'date_cache');
                     },
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Индексация Yandex" class="states">'.
-                        Html::tag('img', null, ['src' => Url::to('@web/img/yandex.jpg'), 'width' => '16px']).'</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Индексация главной страницы в Yandex" class="states">'
+                        . Html::tag('img', null, ['src' =>
+                            Url::to('@web/img/yandex.jpg'), 'width' => '16px']).'</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'yandex_indexing');
                     },
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="IP" class="states">IP</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="IP" class="states">IP</div>',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getIp($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return '<div class="count">' . count(Site::getIp($data, 2))
+                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getIp($data, 0) . '" class="states">'
                             . Site::getIp($data, 1) . '</div';
                     },
@@ -366,17 +333,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => function ($data) {
                         return ['class' => (count(Site::getIp($data, 2)) > 2 ? 'warning' : '')];
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'ip',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'ip', ['class' => 'form-control']),
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="DNS" class="states">DNS</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="DNS" class="states">DNS</div>',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getDnsServer($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return '<div class="count">' . count(Site::getDnsServer($data, 2))
+                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getDnsServer($data, 0) . '" class="states">'
                             . Site::getDnsServer($data, 1) . '</div';
                     },
@@ -384,47 +349,39 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => function ($data) {
                         return ['class' => (count(Site::getDnsServer($data, 2)) > 2 ? 'warning' : '')];
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'dns',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'dns', ['class' => 'form-control']),
                 ],
                 [
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Акцептор" class="states">Акцептор</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Акцептор" class="states">Акцептор</div>',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getAcceptor($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return '<div class="count">' . count(Site::getAcceptor($data, 2))
+                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getAcceptor($data, 0) . '" class="states">'
                             . Site::getAcceptor($data, 1) . '</div>';
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'external_links',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel,'external_links', ['class' => 'form-control']),
                     'contentOptions' => function ($data) {
                         return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
                     },
                 ],
                 [
                     'attribute' => 'Анкор',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="Анкор" class="states">Анкор</div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="Анкор" class="states">Анкор</div>',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getAnchor($data, 2)) . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                        return '<div class="count">' . count(Site::getAnchor($data, 2))
+                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
                             . Site::getAnchor($data, 0) . '" class="states">'
                             . Site::getAnchor($data, 1) . '</div>';
                     },
                     'contentOptions' => function ($data) {
                         return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
                     },
-                    'filter' => Html::activeTextInput(
-                        $searchModel,
-                        'anchor',
-                        ['class' => 'form-control']
-                    ),
+                    'filter' => Html::activeTextInput($searchModel, 'anchor', ['class' => 'form-control']),
                 ],
             ],
         ]);
@@ -457,7 +414,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjax',
                             'data-dismiss' => "modal"]) ?>
                     </div>
-
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>

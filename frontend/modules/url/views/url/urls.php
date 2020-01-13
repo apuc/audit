@@ -6,9 +6,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\captcha\Captcha;
 
-$this->title = 'URLs';
+$this->title = 'Добавить сайты';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>

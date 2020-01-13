@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed7b52b978c975f6ce17053620a5ac78",
+    "content-hash": "132b3e9f60dd00dec74ba5b02969badd",
     "packages": [
         {
             "name": "2amigos/yii2-editable-widget",
@@ -252,7 +252,7 @@
             "version": "3.4.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "15bc73803f76bc53b654b9fdbbbc096f56d7c03d"
             },
             "dist": {
@@ -270,12 +270,12 @@
             "version": "1.12.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/components/jqueryui.git",
+                "url": "git@github.com:jquery/jquery-ui.git",
                 "reference": "44ecf3794cc56b65954cc19737234a3119d036cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/components/jqueryui/zipball/44ecf3794cc56b65954cc19737234a3119d036cc",
+                "url": "https://api.github.com/repos/jquery/jquery-ui/zipball/44ecf3794cc56b65954cc19737234a3119d036cc",
                 "reference": "44ecf3794cc56b65954cc19737234a3119d036cc"
             },
             "require": {
@@ -324,7 +324,7 @@
             "version": "2.0.7.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:yiisoft/jquery-pjax.git",
+                "url": "https://github.com/yiisoft/jquery-pjax.git",
                 "reference": "aef7b953107264f00234902a3880eb50dafc48be"
             },
             "dist": {
@@ -1515,6 +1515,54 @@
                 "yii"
             ],
             "time": "2017-01-11T14:05:47+00:00"
+        },
+        {
+            "name": "slavkovrn/yii2-googlechart",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SlavKoVrn/yii2-googlechart.git",
+                "reference": "7cc4032eac7af5177a012870fb1a1032a821e696"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SlavKoVrn/yii2-googlechart/zipball/7cc4032eac7af5177a012870fb1a1032a821e696",
+                "reference": "7cc4032eac7af5177a012870fb1a1032a821e696",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "slavkovrn\\googlechart\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Viacheslav Kolesnikov",
+                    "email": "slavko.chita@gmail.com",
+                    "homepage": "http://yii2.kadastrcard.ru"
+                }
+            ],
+            "description": "Yii2 Google Chart",
+            "keywords": [
+                "google chart",
+                "yii 2",
+                "yii2"
+            ],
+            "time": "2019-08-25T15:56:53+00:00"
         },
         {
             "name": "studio-42/elfinder",
@@ -4990,7 +5038,8 @@
         "zomberg/phpquery": 20,
         "kartik-v/yii2-grid": 20,
         "kartik-v/yii2-builder": 20,
-        "miloschuman/yii2-highcharts-widget": 20
+        "miloschuman/yii2-highcharts-widget": 20,
+        "slavkovrn/yii2-googlechart": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

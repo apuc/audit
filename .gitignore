@@ -17,6 +17,9 @@ nbproject
 # windows thumbnail cache
 Thumbs.db
 
+/audit.db
+audit.db
+
 # composer vendor dir
 /vendor
 
@@ -44,5 +47,4 @@ phpunit.phar
 /frontend/web/screenshots
 /frontend/web/icons
 /frontend/web/i
-
-audit.db
+/frontend/web/graphics

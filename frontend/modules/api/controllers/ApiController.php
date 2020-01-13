@@ -7,6 +7,7 @@ use common\classes\Debug;
 use common\models\Audit;
 use common\models\Comments;
 use common\models\Indexing;
+use common\models\Links;
 use common\models\Search;
 use common\models\Site;
 use common\models\User;
@@ -14,6 +15,7 @@ use common\models\Url;
 use common\services\AuditService;
 use Yii;
 use yii\web\Controller;
+use yii\helpers\Html;
 
 
 class ApiController extends Controller
@@ -110,7 +112,32 @@ class ApiController extends Controller
         if(Yii::$app->request->isAjax) {
             $link = $_POST['value'];
             $domain  =$_POST['domain'];
-            return \frontend\modules\site\models\Site::getLink($link, $domain);
+            $links = Links::findOne(['name' => $link]);
+            if($link != $domain)
+                return $links->link . $domain;
+            else return 'http://webcache.googleusercontent.com/search?q=cache:' . $domain;
+        }
+    }
+
+    public function actionChart()
+    {
+        if(Yii::$app->request->isAjax) {
+            $event = $_POST['event'];
+            $id = preg_replace('~\D~','', $event);
+            $site = Site::findOne($id);
+            if($site) {
+                $size = \frontend\modules\site\models\Site::getChart($site, 'size');
+                $loading_time = \frontend\modules\site\models\Site::getChart($site, 'loading_time');
+                $server_response_code = \frontend\modules\site\models\Site::getChart($site, 'server_response_code');
+                $created_at = \frontend\modules\site\models\Site::getChart($site, 'created_at');
+                $result = json_encode($size);
+                $result .= json_encode($loading_time);
+                $result .= json_encode($server_response_code);
+                $result .= json_encode($created_at);
+                return $result;
+            } else {
+                return false;
+            }
         }
     }
 }

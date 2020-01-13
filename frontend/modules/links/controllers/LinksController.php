@@ -2,6 +2,7 @@
 
 namespace frontend\modules\links\controllers;
 
+use frontend\modules\links\models\LinksForm;
 use Yii;
 use common\models\Links;
 use frontend\modules\links\models\LinksSearch;
@@ -123,5 +124,20 @@ class LinksController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionLinks()
+    {
+        $model = new LinksForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            \frontend\modules\links\models\Links::addLinks($model->links);
+            return $this->redirect('links');
+        } else {
+            return $this->render('links', ['model' => $model]);
+        }
     }
 }

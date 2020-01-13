@@ -122,15 +122,6 @@ a.desc:after {
     text-align:center;
 }
 
-.popup_bg {
-    background:rgba(0,0,0,0.4);
-    position:fixed;
-    z-index:1;
-    height:100%;
-    width:100%;
-    top:0;
-    left: 0;
-}
 
 .popup_img {
     position: relative;
@@ -139,6 +130,25 @@ a.desc:after {
     max-height:94%;
     max-width:94%;
     margin:1% 0 0 0;
+}
+
+.graphic {
+    position: fixed;
+    /*height:100%;*/
+    /*width:100%;*/
+    z-index:2;
+    top:7%;
+    left:25%;
+}
+
+.popup_bg {
+    background:rgba(0,0,0,0.4);
+    position:fixed;
+    z-index:1;
+    height:100%;
+    width:100%;
+    top:0;
+    left: 0;
 }
 
 .info {
@@ -274,4 +284,8 @@ body * {
 }
 .no-freeze-spinner #no-freeze-spinner i:nth-of-type(3) {
     animation: loadicons 3s 2s infinite ease-in-out;
+}
+
+.left-menu-width {
+    width: 165px !important;
 }

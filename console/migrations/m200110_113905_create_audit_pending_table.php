@@ -14,6 +14,7 @@ class m200110_113905_create_audit_pending_table extends Migration
     {
         $this->createTable('{{%audit_pending}}', [
             'id' => $this->primaryKey(),
+            'site_id'=> 'integer NOT NULL REFERENCES site(id)'
         ]);
     }
 

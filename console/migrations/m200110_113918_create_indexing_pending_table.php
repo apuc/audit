@@ -14,6 +14,7 @@ class m200110_113918_create_indexing_pending_table extends Migration
     {
         $this->createTable('{{%indexing_pending}}', [
             'id' => $this->primaryKey(),
+            'site_id'=> 'integer NOT NULL REFERENCES site(id)'
         ]);
     }
 

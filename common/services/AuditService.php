@@ -92,7 +92,7 @@ class AuditService
             while($fl == 0 && $count <= 10) {
                 try {
                     $proxy = ProxyListArray::getRandom();
-                    Debug::prn($proxy);
+                    echo $proxy . "\n";
                     $startTime = microtime(1);
                     $client = new GuzzleHttp\Client([
                         'headers' => ['User-Agent' => UserAgentArray::getStatic()],
@@ -122,7 +122,7 @@ class AuditService
                     $loading_time = 0;
                     $size = 0;
                     $server_response_code = $e->getCode();
-                    Debug::prn($e->getMessage());
+                    echo $e->getMessage() . "\n";
                 }
                 $count++;
             }
@@ -150,26 +150,27 @@ class AuditService
                 $loading_time = 0;
                 $size = 0;
                 $server_response_code = $e->getCode();
-                Debug::prn($e->getMessage());
+                echo $e->getMessage() . "\n";
             }
         }
 
-        Debug::prn('server_response_code: ' . $server_response_code);
-        Debug::prn('size: ' . $size);
-        Debug::prn('loading_time: ' . $loading_time);
+        echo 'server_response_code: ' . $server_response_code . "\n";
+        echo 'size: ' . $size . "\n";
+        echo 'loading_time: ' . $loading_time . "\n";
 
         $screenshot = self::getScreen('https://' . $domain, false);
         $icon = self::getIconPicture($domain);
 
         $site = Site::findOne(['name' => $domain]);
         $site->title = self::getTitle($document);
-        Debug::prn($site->title);
+        echo $site->title . "\n";
         $site->redirect = self::getRedirect($domain, $response);
         $site->save();
 
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
 
         self::createExternalLinks($domain, $audit->id, $document);
+        echo "\n";
     }
 
     public static function createSite($info, $domain)
@@ -246,7 +247,7 @@ class AuditService
     {
        $result_array = self::getExternalLinks($document, $domain);
        if($result_array) {
-           Debug::prn('external_links exist');
+           echo 'external_links exist' . "\n";
            for ($i = 0; $i < count($result_array[0]); $i++) {
                $ext_links = new ExternalLinks();
                $ext_links->acceptor = $result_array[0][$i];
@@ -355,11 +356,11 @@ class AuditService
                 array_push($result_array, $anchor_array);
                 return $result_array;
             } catch (Exception $e) {
-                Debug::prn($e->getMessage());
+                echo $e->getMessage() . "\n";
                 return null;
             }
         } else {
-            Debug::prn('external links error');
+            echo 'external links error' . "\n";
             return null;
         }
     }

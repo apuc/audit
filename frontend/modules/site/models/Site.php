@@ -5,8 +5,10 @@ namespace frontend\modules\site\models;
 
 use common\classes\Debug;
 use common\models\Audit;
+use common\models\AuditPending;
 use common\models\Dns;
 use common\models\ExternalLinks;
+use common\models\IndexingPending;
 use common\models\Links;
 use common\models\Theme;
 use common\models\Url;
@@ -53,6 +55,15 @@ class Site extends \common\models\Site
                     Audit::deleteAll(['id' => $audit->id]);
                 }
                 Url::deleteAll(['id' => $url->id]);
+            }
+            foreach ($site->dns as $dns) {
+                Dns::deleteAll(['id' => $dns->id]);
+            }
+            foreach ($site->auditPendings as $auditPendings) {
+                AuditPending::deleteAll(['id' => $auditPendings->id]);
+            }
+            foreach ($site->indexingPendings as $indexingPendings) {
+                IndexingPending::deleteAll(['id' => $indexingPendings->id]);
             }
             foreach ($site->dns as $dns) {
                 Dns::deleteAll(['id' => $dns->id]);

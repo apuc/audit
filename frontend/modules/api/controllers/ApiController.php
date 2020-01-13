@@ -8,6 +8,7 @@ use common\models\Audit;
 use common\models\AuditPending;
 use common\models\Comments;
 use common\models\Indexing;
+use common\models\IndexingPending;
 use common\models\Links;
 use common\models\Search;
 use common\models\Site;
@@ -67,14 +68,8 @@ class ApiController extends Controller
 
             if($keys)
                 foreach ($keys['keys'] as $key) {
-                    $site = Site::findOne($key);
-                    $indexing = new Indexing();
-                    $result = Search::check($site->name);
-                    $result['ya'] ? $indexing->yandex_indexing = 1 : false;
-                    $result['google'] ? $indexing->google_indexing = 1 : false;
-                    $indexing->google_indexed_pages = Search::getCount($site->name);
-                    $indexing->date_cache = Search::cache($site->name, 'date');
-                    $indexing->site_id = $site->id;
+                    $indexing = new IndexingPending();
+                    $indexing->site_id = $key;
                     $indexing->save();
                 }
         }
@@ -87,11 +82,9 @@ class ApiController extends Controller
             $keys = Yii::$app->request->post();
             if($keys)
                 foreach ($keys['keys'] as $key) {
-                    $url = Url::findOne(['site_id' => $key]);
-                    AuditService::addAudit($url->url, $url->id);
-//                    $audit = new AuditPending();
-//                    $audit->site_id = $key;
-//                    $audit->save();
+                    $audit = new AuditPending();
+                    $audit->site_id = $key;
+                    $audit->save();
                 }
         }
     }

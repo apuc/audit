@@ -137,7 +137,7 @@ $('.indexing').on('click', function(){
         },
         success: function(res){
             $.pjax.reload({container:"#sitePjax"});
-            alert('Индексация проведена');
+            alert('Сайты добавлены в очередь на индексацию.');
         },
         error: function(){
             $.pjax.reload({container:"#sitePjax"});

@@ -50,7 +50,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => '/url/url/urls',
+                '' => '/domain/site',
             ],
         ],
     ],

@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="site-index">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-        <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
-        <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit', 'data-toggle' => 'modal', 'data-target' => '#spinner']) ?>
+        <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
+        <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) ?>
 
         <?php
         Pjax::begin(['id' => 'sitePjax']);
@@ -418,17 +418,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="no-freeze-spinner modal fade" id="spinner">
-        <div id="no-freeze-spinner">
-            <div>
-                <i class="material-icons"></i>
-                <i class="material-icons"></i>
-                <i class="material-icons"></i>
-                <div></div>
             </div>
         </div>
     </div>

@@ -39,11 +39,10 @@ class AuditService
         try {
             $site_id = self::addSite($data->getSite());
             self::createUrl($data->getSiteUrl(), $site_id);
-
             $report->newSite++;
             $report->newUrl++;
-
         } catch (Exception $e) {
+            Debug::prn($e->getMessage());
             $report->errorsUrl++;
             array_push($report->errorUrlArray, $data->getSiteUrl());
         }
@@ -64,7 +63,6 @@ class AuditService
         try {
             $whois = Whois::create();
             $info = $whois->loadDomainInfo($domain);
-
             if ($info) {
                 return self::createSite($info, $domain);
             } else {
@@ -75,10 +73,12 @@ class AuditService
                     $info = $whois->loadDomainInfo($domain);
                     return self::createSite($info, $domain);
                 } catch (Exception $e) {
+                    Debug::prn($e->getMessage());
                     return null;
                 }
             }
         } catch (Exception $e) {
+            Debug::prn($e->getMessage());
             return self::createSite(null, $domain);
         }
     }
@@ -214,19 +214,23 @@ class AuditService
 
     public static function createDns($domain, $site_id)
     {
-        $records = dns_get_record($domain);
+        try {
+            $records = dns_get_record($domain);
 
-        foreach ($records as $record) {
-            $dns = new Dns();
-            $dns->class = $record['class'];
-            $dns->ttl = $record['ttl'];
-            $dns->type = $record['type'];
-            if (self::isExist($record, 'target'))
-                $dns->target = $record['target'];
-            if (self::isExist($record, 'ip'))
-                $dns->ip = $record['ip'];
-            $dns->site_id = $site_id;
-            $dns->save();
+            foreach ($records as $record) {
+                $dns = new Dns();
+                $dns->class = $record['class'];
+                $dns->ttl = $record['ttl'];
+                $dns->type = $record['type'];
+                if (self::isExist($record, 'target'))
+                    $dns->target = $record['target'];
+                if (self::isExist($record, 'ip'))
+                    $dns->ip = $record['ip'];
+                $dns->site_id = $site_id;
+                $dns->save();
+            }
+        } catch (Exception $e) {
+           Debug::prn($e->getMessage());
         }
     }
 

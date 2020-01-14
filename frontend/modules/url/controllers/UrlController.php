@@ -89,8 +89,7 @@ class UrlController extends Controller
 //                    "Ошибки: ". $report->errorsUrl . "<br>"
                 );
             }
-
-            return $this->redirect('domain/site');
+            return $this->redirect('/domain/site');
 
         } else {
             return $this->render('urls', ['model' => $model]);

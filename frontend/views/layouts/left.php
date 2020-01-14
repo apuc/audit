@@ -21,7 +21,7 @@
                         'label' => 'Аудит сайтов',
                         'icon' => 'list-alt',
                         'url' => ['/domain/site'],
-                        'active' => \Yii::$app->controller->id == 'audit',
+                        'active' => \Yii::$app->controller->id == 'site',
                     ],
                     [
                         'label' => 'Очередь',

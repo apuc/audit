@@ -26,7 +26,7 @@ use \common\classes\YandexIks;
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
 
-echo YandexIks::getValueFromImage('rabota.today');
+//echo YandexIks::getValueFromImage('rabota.today');
 ?>
 
     <div class="site-index">

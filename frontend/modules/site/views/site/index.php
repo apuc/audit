@@ -14,7 +14,6 @@ use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use \common\classes\Debug;
-use \common\classes\YandexIks;
 
 
 /* @var $form yii\bootstrap\ActiveForm */
@@ -25,8 +24,6 @@ use \common\classes\YandexIks;
 
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
-
-//echo YandexIks::getValueFromImage('rabota.today');
 ?>
 
     <div class="site-index">
@@ -322,6 +319,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             Url::to('@web/img/yandex.jpg'), 'width' => '16px']).'</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'yandex_indexing');
+                    },
+                ],
+                [
+                    'attribute' => '',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="ИКС" class="states">ИКС</div>',
+                    'value' => function ($data) {
+                        return Site::getIndex($data, 'iks');
                     },
                 ],
                 [

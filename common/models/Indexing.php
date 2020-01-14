@@ -12,6 +12,7 @@ use Yii;
  * @property int|null $google_indexed_pages
  * @property string|null $date_cache
  * @property bool|null $yandex_indexing
+ * @property int|null $iks
  * @property int $site_id
  *
  * @property Site $site
@@ -33,7 +34,7 @@ class Indexing extends \yii\db\ActiveRecord
     {
         return [
             [['google_indexing', 'yandex_indexing'], 'boolean'],
-            [['google_indexed_pages', 'site_id'], 'integer'],
+            [['google_indexed_pages', 'site_id', 'iks'], 'integer'],
             [['site_id'], 'required'],
             [['date_cache'], 'string', 'max' => 255],
             [['site_id'], 'exist', 'skipOnError' => true, 'targetClass' => Site::className(), 'targetAttribute' => ['site_id' => 'id']],
@@ -51,6 +52,7 @@ class Indexing extends \yii\db\ActiveRecord
             'google_indexed_pages' => 'Google Indexed Pages',
             'date_cache' => 'Date Cache',
             'yandex_indexing' => 'Yandex Indexing',
+            'isk' => "ИКС",
             'site_id' => 'Site ID',
         ];
     }

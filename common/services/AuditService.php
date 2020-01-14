@@ -101,6 +101,9 @@ class AuditService
                     echo $proxy . "\n";
                     $startTime = microtime(1);
 
+                    //$plugin = new ForceCharsetPlugin();
+                    //$plugin->setForcedCharset('utf-8');
+
                     $client = new GuzzleHttp\Client([
                         'headers' => ['User-Agent' => UserAgentArray::getStatic()],
                         'verify' => true,
@@ -110,12 +113,19 @@ class AuditService
                             CURLOPT_PROXY => $proxy,
                             CURLOPT_CONNECTTIMEOUT => 30,
                         ],
-                        'allow_redirects' => ['track_redirects' => true]
+                        'allow_redirects' => ['track_redirects' => true],
                     ]);
+
+                    //$client->getClient()->addSubscriber('UTF-8');
+                    //$response = $client->request('get', $domain);
+                    //echo $response->text();
 
                     $response = $client->get($domain);
                     $endTime = microtime(1);
                     $loading_time = round(($endTime - $startTime) * 1000);
+
+                    $result = iconv("windows-1251","utf-8",$response);
+                    Debug::prn($result);
 
                     $body = $response->getBody()->getContents();
                     $document = \phpQuery::newDocumentHTML($body);

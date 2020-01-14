@@ -9,6 +9,7 @@ use common\models\IndexingPending;
 use common\models\Search;
 use common\models\Site;
 use yii\console\Controller;
+use \common\classes\YandexIks;
 
 class IndexingController extends Controller
 {
@@ -24,6 +25,7 @@ class IndexingController extends Controller
                 $result['google'] ? $indexing->google_indexing = 1 : false;
                 $indexing->google_indexed_pages = Search::getCount($site->name);
                 $indexing->date_cache = Search::cache($site->name, 'date');
+                $indexing->iks = YandexIks::getValueFromImage($site->name);
                 $indexing->site_id = $site->id;
                 $indexing->save();
 

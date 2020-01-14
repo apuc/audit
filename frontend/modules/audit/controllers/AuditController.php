@@ -62,6 +62,15 @@ class AuditController extends Controller
     }
 
     /**
+     * Lists all Audit models.
+     * @return mixed
+     */
+    public function actionPending()
+    {
+        return $this->render('pending');
+    }
+
+    /**
      * Displays a single Audit model.
      * @param integer $id
      * @return mixed

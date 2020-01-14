@@ -89,11 +89,18 @@ class AuditService
         if(self::IS_PROXY) {
             $fl = 0;
             $count = 0;
-            while($fl == 0 && $count <= 10) {
+            while($fl == 0 && $count <= 5) {
                 try {
                     $proxy = ProxyListArray::getRandom();
+//                    $ch = curl_init($domain);
+//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//                    $html = curl_exec($ch);
+//                    curl_close($ch);
+//                    Debug::prn($html);
+
                     echo $proxy . "\n";
                     $startTime = microtime(1);
+
                     $client = new GuzzleHttp\Client([
                         'headers' => ['User-Agent' => UserAgentArray::getStatic()],
                         'verify' => true,
@@ -105,6 +112,7 @@ class AuditService
                         ],
                         'allow_redirects' => ['track_redirects' => true]
                     ]);
+
                     $response = $client->get($domain);
                     $endTime = microtime(1);
                     $loading_time = round(($endTime - $startTime) * 1000);
@@ -134,6 +142,7 @@ class AuditService
                     'verify' => true,
                     'allow_redirects' => ['track_redirects' => true]
                 ]);
+
                 $response = $client->get($domain);
                 $endTime = microtime(1);
                 $loading_time = round(($endTime - $startTime) * 1000);
@@ -158,7 +167,7 @@ class AuditService
         echo 'size: ' . $size . "\n";
         echo 'loading_time: ' . $loading_time . "\n";
 
-        $screenshot = self::getScreen('https://' . $domain, false);
+        $screenshot = self::getScreen('http://' . $domain, false);
         $icon = self::getIconPicture($domain);
 
         $site = Site::findOne(['name' => $domain]);

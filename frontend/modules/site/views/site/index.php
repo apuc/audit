@@ -14,6 +14,7 @@ use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use \common\classes\Debug;
+use \common\classes\YandexIks;
 
 
 /* @var $form yii\bootstrap\ActiveForm */
@@ -24,6 +25,8 @@ use \common\classes\Debug;
 
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
+
+echo YandexIks::getValueFromImage('rabota.today');
 ?>
 
     <div class="site-index">

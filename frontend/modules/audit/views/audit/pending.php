@@ -2,15 +2,23 @@
 
 use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Html;
 
 echo "<h3>Сайты в очереди на аудит</h3><br>";
-//$queue = \common\models\AuditPending::find()->all();
-//foreach ($queue as $value)
-//$query = "SELECT site.name FROM site, audit_pending WHERE site.id =".$id;
 $dataProvider = new ActiveDataProvider(['query' => \common\models\AuditPending::find()]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{delete}',
+            'buttons' => [
+                'delete' => function ($data) {
+                    return Html::a("<span class='glyphicon glyphicon-trash' aria-hidden='true'></span>",
+                        ['/auditpending/auditpending/customdelete', 'id' => $data]);
+                },
+            ],
+        ],
         'site.name'
     ],
 ]);
@@ -20,6 +28,16 @@ $dataProvider = new ActiveDataProvider(['query' => \common\models\IndexingPendin
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
-       'site.name'
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{delete}',
+            'buttons' => [
+                'delete' => function ($data) {
+                    return Html::a("<span class='glyphicon glyphicon-trash' aria-hidden='true'></span>",
+                        ['/indexingpending/indexingpending/customdelete', 'id' => $data]);
+                },
+            ],
+        ],
+        'site.name'
     ],
 ]);

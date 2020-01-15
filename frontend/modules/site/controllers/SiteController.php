@@ -201,18 +201,10 @@ class SiteController extends Controller
         AuditService::addAudit($domain, $url->id);
     }
 
-    public function actionSearch($domain)
+    public function actionIndexing($domain)
     {
-
-    }
-
-    public function actionTest($domain)
-    {
-        Debug::prn($domain);
-        $links = Links::findOne(['name' => 	'ru.megaindex.com']);
-        Debug::prn($links);
-        $clean = str_replace(array("{PATH}", "{ANCHOR}"), "", $links->link);
-        Debug::prn($clean);
-        Debug::prn(str_replace(array("{SITE}"), $domain, $clean));
+        $site = Site::findOne(['name' => $domain]);
+        $url = \common\models\Url::findOne(['site_id' => $site->id]);
+        AuditService::addAudit($domain, $url->id);
     }
 }

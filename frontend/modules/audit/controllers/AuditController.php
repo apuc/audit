@@ -3,6 +3,7 @@
 namespace frontend\modules\audit\controllers;
 
 use common\classes\Debug;
+use common\models\AuditPending;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Url;

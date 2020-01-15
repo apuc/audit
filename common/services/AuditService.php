@@ -2,16 +2,20 @@
 
 namespace common\services;
 
+use common\classes\CurlHelper;
 use common\classes\Debug;
+use common\classes\ForceCharsetPlugin;
 use common\classes\ProxyListArray;
 use common\classes\UserAgentArray;
 use common\models\Audit;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Site;
+use DOMDocument;
 use frontend\modules\url\models\DataForm;
 use frontend\modules\url\models\Url;
 use Iodev\Whois\Whois;
+use phpQuery;
 use Yii;
 use DateTime;
 use Exception;
@@ -85,111 +89,38 @@ class AuditService
 
     public static function addAudit($domain, $url_id)
     {
+        $server_response_code = 0;
+        $size = 0;
+        $loading_time = 0;
+        $fl = 0;
+        $count = 0;
         $domain = self::cutDomain($domain);
-        if(self::IS_PROXY) {
-            $fl = 0;
-            $count = 0;
-            while($fl == 0 && $count <= 5) {
-                try {
-                    $proxy = ProxyListArray::getRandom();
-//                    $ch = curl_init($domain);
-//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//                    $html = curl_exec($ch);
-//                    curl_close($ch);
-//                    Debug::prn($html);
 
-                    echo $proxy . "\n";
-                    $startTime = microtime(1);
-
-                    //$plugin = new ForceCharsetPlugin();
-                    //$plugin->setForcedCharset('utf-8');
-
-                    $client = new GuzzleHttp\Client([
-                        'headers' => ['User-Agent' => UserAgentArray::getStatic()],
-                        'verify' => true,
-                        'curl' => [
-                            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                            CURLOPT_PROXYTYPE => CURLPROXY_SOCKS4,
-                            CURLOPT_PROXY => $proxy,
-                            CURLOPT_CONNECTTIMEOUT => 30,
-                        ],
-                        'allow_redirects' => ['track_redirects' => true],
-                    ]);
-
-                    //$client->getClient()->addSubscriber('UTF-8');
-                    //$response = $client->request('get', $domain);
-                    //echo $response->text();
-
-                    $response = $client->get($domain);
-                    $endTime = microtime(1);
-                    $loading_time = round(($endTime - $startTime) * 1000);
-
-                    $result = iconv("windows-1251","utf-8",$response);
-                    Debug::prn($result);
-
-                    $body = $response->getBody()->getContents();
-                    $document = \phpQuery::newDocumentHTML($body);
-
-                    $server_response_code = self::getServerResponseCode($response);
-                    $size = self::getSize($response);
-                    $fl = 1;
-                } catch (Exception $e) {
-                    $fl = 0;
-                    $response = null;
-                    $document = null;
-                    $loading_time = 0;
-                    $size = 0;
-                    $server_response_code = $e->getCode();
-                    echo $e->getMessage() . "\n";
-                }
-                $count++;
+        while($fl == 0 && $count <= 10) {
+            $curl = new CurlHelper($domain);
+            if(!$curl->getError()) {
+                $server_response_code = $curl->getServerResponseCode();
+                $size = $curl->getSize();
+                $loading_time = $curl->getLoadingTime();
+                $fl = 1;
+            } else {
+                echo $curl->getError();
+                $fl = 0;
             }
-        } else {
-            try {
-                $startTime = microtime(1);
-                $client = new GuzzleHttp\Client([
-                    'headers' => ['User-Agent' => UserAgentArray::getStatic()],
-                    'verify' => true,
-                    'allow_redirects' => ['track_redirects' => true]
-                ]);
-
-                $response = $client->get($domain);
-                $endTime = microtime(1);
-                $loading_time = round(($endTime - $startTime) * 1000);
-
-                $body = $response->getBody()->getContents();
-                $document = \phpQuery::newDocumentHTML($body);
-
-                $server_response_code = self::getServerResponseCode($response);
-                $size = self::getSize($response);
-
-            } catch (Exception $e) {
-                $response = null;
-                $document = null;
-                $loading_time = 0;
-                $size = 0;
-                $server_response_code = $e->getCode();
-                echo $e->getMessage() . "\n";
-            }
+            $count++;
         }
-
-        echo 'server_response_code: ' . $server_response_code . "\n";
-        echo 'size: ' . $size . "\n";
-        echo 'loading_time: ' . $loading_time . "\n";
 
         $screenshot = self::getScreen('http://' . $domain, false);
         $icon = self::getIconPicture($domain);
 
         $site = Site::findOne(['name' => $domain]);
-        $site->title = self::getTitle($document);
-        echo $site->title . "\n";
-        $site->redirect = self::getRedirect($domain, $response);
+        $site->title = self::getTitle($domain);
+        //$site->redirect = self::getRedirect($domain, $response);
         $site->save();
 
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
 
-        self::createExternalLinks($domain, $audit->id, $document);
-        echo "\n";
+        self::createExternalLinks($domain, $audit->id);
     }
 
     public static function createSite($info, $domain)
@@ -257,20 +188,20 @@ class AuditService
                                        $screenshot = '', $icon = '') {
         $audit = new Audit();
         $audit->size = $size;
-        $audit->loading_time = $loading_time;
-        $audit->server_response_code = $server_response_code;
+        $audit->loading_time = round($loading_time * 1000);
+        $audit->server_response_code = (string)$server_response_code;
         $audit->screenshot = $screenshot;
         $audit->icon = $icon;
         $audit->url_id = $url_id;
         $audit->save();
+        print_r($audit->errors);
         return $audit;
     }
 
-    public static function createExternalLinks($domain, $audit_id, $document)
+    public static function createExternalLinks($domain, $audit_id)
     {
-       $result_array = self::getExternalLinks($document, $domain);
+       $result_array = self::getExternalLinks($domain);
        if($result_array) {
-           echo 'external_links exist' . "\n";
            for ($i = 0; $i < count($result_array[0]); $i++) {
                $ext_links = new ExternalLinks();
                $ext_links->acceptor = $result_array[0][$i];
@@ -282,21 +213,32 @@ class AuditService
     }
 
 
-    public static function getTitle($document)
+    public static function getTitle($domain)
     {
-        if($document) {
-            try {
-                $links = $document->find('title')->get();
-                return $links ? $links[0]->nodeValue : null;
-            } catch (Exception $e) {
-                Debug::prn($e->getMessage());
-                return null;
-            }
-        } else {
-            Debug::prn('title error');
-            return null;
-        }
+//        $html = file_get_contents('http://' . $domain);
+//        $document = phpQuery::newDocument($html);
+//        if($document) {
+//            try {
+//                $links = $document->find('title')->get();
+//                return $links ? $links[0]->nodeValue : null;
+//            } catch (Exception $e) {
+//                Debug::prn($e->getMessage());
+//                return null;
+//            }
+//        } else {
+//            Debug::prn('title error');
+//            return null;
+//        }
 
+        try {
+            $page_content = file_get_contents ('http://' . $domain);
+            preg_match_all( "|<title>(.*)</title>|sUSi", $page_content, $titles);
+            if(count($titles[1]))
+                return $titles[1][0];
+            else return '';
+        } catch (Exception $e) {
+            return str_replace('file_get_contents(): php_network_getaddresses: getaddrinfo failed:', '', $e->getMessage());
+        }
     }
 
     public static function getRedirect($domain, $response)
@@ -317,73 +259,50 @@ class AuditService
         }
     }
 
-    public static function getServerResponseCode($response)
+    public static function getExternalLinks($domain)
     {
-        if($response) {
-            try {
-                return (string)$response->getStatusCode();
-            } catch (Exception $e) {
-                Debug::prn($e->getMessage());
-                return 0;
-            }
-        } else {
-            Debug::prn('server response code error');
-            return 0;
-        }
-    }
+        try {
+            $html = file_get_contents('http://' . $domain);
+            $document = phpQuery::newDocument($html);
 
-    public static function getSize($response)
-    {
-        if($response) {
-            try {
-                return strlen($response->getBody());
-            } catch (Exception $e) {
-                Debug::prn($e->getMessage());
-                return 0;
-            }
-        } else {
-            Debug::prn('size error');
-            return 0;
-        }
-    }
-
-    public static function getExternalLinks($document, $domain)
-    {
-        if($document) {
-            try {
-                $links = $document->find('a')->get();
-                $host_path_array = array();
-                $anchor_array = array();
-                $result_array = array();
-                foreach ($links as $link) {
-                    if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
-                        $clean_url = AuditService::cutUrl(parse_url($link->getAttribute('href'))['host']);
-                        $cut_domain = AuditService::cutDomain($domain);
-                        if($clean_url != $cut_domain) {
-                            if (AuditService::isExist(parse_url($link->getAttribute('href')), 'path')) {
-                                $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
-                                if (!in_array($host_path, $host_path_array)) {
-                                    array_push($host_path_array, $host_path);
-                                    array_push($anchor_array, $link->nodeValue);
-                                }
-                            } else {
-                                if (!in_array($clean_url, $host_path_array)) {
-                                    array_push($host_path_array, $clean_url);
-                                    array_push($anchor_array, $link->nodeValue);
+            if($document) {
+                try {
+                    $links = $document->find('a')->get();
+                    $host_path_array = array();
+                    $anchor_array = array();
+                    $result_array = array();
+                    foreach ($links as $link) {
+                        if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
+                            $clean_url = AuditService::cutUrl(parse_url($link->getAttribute('href'))['host']);
+                            $cut_domain = AuditService::cutDomain($domain);
+                            if($clean_url != $cut_domain) {
+                                if (AuditService::isExist(parse_url($link->getAttribute('href')), 'path')) {
+                                    $host_path = $clean_url . parse_url($link->getAttribute('href'))['path'];
+                                    if (!in_array($host_path, $host_path_array)) {
+                                        array_push($host_path_array, $host_path);
+                                        array_push($anchor_array, $link->nodeValue);
+                                    }
+                                } else {
+                                    if (!in_array($clean_url, $host_path_array)) {
+                                        array_push($host_path_array, $clean_url);
+                                        array_push($anchor_array, $link->nodeValue);
+                                    }
                                 }
                             }
                         }
                     }
+                    array_push($result_array, $host_path_array);
+                    array_push($result_array, $anchor_array);
+                    return $result_array;
+                } catch (Exception $e) {
+                    echo $e->getMessage() . "\n";
+                    return null;
                 }
-                array_push($result_array, $host_path_array);
-                array_push($result_array, $anchor_array);
-                return $result_array;
-            } catch (Exception $e) {
-                echo $e->getMessage() . "\n";
+            } else {
+                echo 'external links error' . "\n";
                 return null;
             }
-        } else {
-            echo 'external links error' . "\n";
+        } catch (Exception $e) {
             return null;
         }
     }

@@ -87,5 +87,11 @@ return [
         'links' => [
             'class' => 'frontend\modules\links\Links',
         ],
+        'auditpending' => [
+            'class' => 'frontend\modules\auditpending\Auditpending',
+        ],
+        'indexingpending' => [
+            'class' => 'frontend\modules\indexingpending\Indexingpending',
+        ],
     ],
 ];

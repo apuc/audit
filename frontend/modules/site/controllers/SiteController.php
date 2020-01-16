@@ -13,6 +13,8 @@ use common\services\AuditService;
 use frontend\modules\url\models\Url;
 use http\Exception;
 use GuzzleHttp;
+use phpQuery;
+use TrueBV\Punycode;
 use Yii;
 use common\models\Site;
 use frontend\modules\site\models\SiteSearch;
@@ -206,5 +208,13 @@ class SiteController extends Controller
         $site = Site::findOne(['name' => $domain]);
         $url = \common\models\Url::findOne(['site_id' => $site->id]);
         AuditService::addAudit($domain, $url->id);
+    }
+
+    public function actionTest($domain)
+    {
+        $Punycode = new Punycode();
+        $html = file_get_contents('http://' . $Punycode->encode($domain));
+        $document = phpQuery::newDocument($html);
+        Debug::dd($document);
     }
 }

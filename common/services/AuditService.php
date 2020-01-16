@@ -16,6 +16,7 @@ use frontend\modules\url\models\DataForm;
 use frontend\modules\url\models\Url;
 use Iodev\Whois\Whois;
 use phpQuery;
+use TrueBV\Punycode;
 use Yii;
 use DateTime;
 use Exception;
@@ -231,7 +232,8 @@ class AuditService
 //        }
 
         try {
-            $page_content = file_get_contents ('http://' . $domain);
+            $Punycode = new Punycode();
+            $page_content = file_get_contents('http://' . $Punycode->encode($domain));
             preg_match_all( "|<title>(.*)</title>|sUSi", $page_content, $titles);
             if(count($titles[1]))
                 return $titles[1][0];
@@ -262,7 +264,8 @@ class AuditService
     public static function getExternalLinks($domain)
     {
         try {
-            $html = file_get_contents('http://' . $domain);
+            $Punycode = new Punycode();
+            $html = file_get_contents('http://' . $Punycode->encode($domain));
             $document = phpQuery::newDocument($html);
 
             if($document) {

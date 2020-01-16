@@ -31,7 +31,8 @@
         "kartik-v/yii2-builder": "dev-master",
         "miloschuman/yii2-highcharts-widget": "dev-master",
         "2amigos/yii2-highcharts-widget": "~1.0",
-        "slavkovrn/yii2-googlechart": "dev-master"
+        "slavkovrn/yii2-googlechart": "dev-master",
+        "true/punycode": "~2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

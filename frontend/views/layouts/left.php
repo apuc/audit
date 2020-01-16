@@ -18,7 +18,7 @@
                         'url' => ['/links/links/links'],
                     ],
                     [
-                        'label' => 'Аудит сайтов',
+                        'label' => 'Сайты',
                         'icon' => 'list-alt',
                         'url' => ['/domain/site'],
                         'active' => \Yii::$app->controller->id == 'site',
@@ -65,12 +65,12 @@
                         'url' => ['/user/user'],
                         'active' => \Yii::$app->controller->id == 'user',
                     ],
-                    [
-                        'label' => 'Инструкция',
-                        'icon' => 'info',
-                        'url' => ['/site/info'],
-                        'active' => \Yii::$app->controller->id == 'site',
-                    ],
+//                    [
+//                        'label' => 'Инструкция',
+//                        'icon' => 'info',
+//                        'url' => ['/site/info'],
+//                        'active' => \Yii::$app->controller->id == 'site',
+//                    ],
                 ],
             ]
         ) ?>

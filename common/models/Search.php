@@ -40,11 +40,11 @@ class Search
                 $date = preg_replace($pattern, "", $date);
                 $date = stristr($date, ':', true);
                 $date = substr($date, 0, strlen($date)-3);
-                Debug::prn($date);
+                echo "Дата кэша: " . $date . "\n";
                 return $date;
             } else return '';
         } catch (\Exception $e) {
-            Debug::prn($e->getMessage());
+            echo "Ошибка кэша: " . $e->getMessage() . "\n";
             return '';
         }
     }
@@ -107,7 +107,7 @@ class Search
         $cuted = stristr(stristr($text, ':'), '(', true);
         $replaced = str_replace(array(":", " ", "%20", "&#160;", "&#8194;", "&#8195;", "&#8201;"), "", $cuted);
         $replaced = preg_replace('/[^\p{L}0-9 ]/iu','', $replaced);
-        Debug::prn($replaced);
+        echo "Количество проиндексированных страниц: " . $replaced . "\n";
         return $replaced;
     }
 

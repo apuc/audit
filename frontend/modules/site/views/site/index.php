@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if(Site::getAudit($data, 'screenshot') != 'error.jpg')
                             return Html::tag('img', null, [
                                 'src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')),
-                                'width' => '32px', 'class' => 'my-img']);
+                                'width' => '32px', 'class' => 'scale']);
                         else return '';
                     }
                 ],

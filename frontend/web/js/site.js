@@ -1,6 +1,5 @@
-
-function jsFunction(e, value)
-{
+//редирект
+function jsFunction(e, value) {
     let domain = e.getAttribute('data-domain-name');
     console.log(e);
     $.ajax({
@@ -20,8 +19,8 @@ function jsFunction(e, value)
     });
 }
 
+//размер GridView
 function sizer(value) {
-
     $.ajax({
         url: '/domain/site/index',
         type: 'GET',
@@ -39,67 +38,28 @@ function sizer(value) {
     });
 }
 
-$(document).ready(function(){
-    $('.audit').on('click', function(){
-        let keys = $('#grid').yiiGridView('getSelectedRows');
-        $.ajax({
-            url: '/api/api/audit',
-            type: 'POST',
-            data: {
-                keys:keys
-            },
-            success: function(res){
-                $.pjax.reload({container:"#sitePjax"});
-                console.log(res);
-                alert('Сайты добавлены в очередь на аудит.');
-            },
-            error: function(){
-                $.pjax.reload({container:"#sitePjax"});
-                alert('Error!');
-            }
-        });
-    });
-});
+//копирование домена в буфер
+function CopyToClipboard(containerid) {
+    try {
+        window.getSelection().removeAllRanges();
+    } catch (e) {
+        document.selection.empty();
+    }
 
-$(document).ready(function() {
+    if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(document.getElementById(containerid));
+        range.select().createTextRange();
+        document.execCommand("Copy");
+    } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(document.getElementById(containerid));
+        window.getSelection().addRange(range);
+        document.execCommand("Copy");
+    }
+}
 
-    $(".my-img").mouseover(function(event) {
-        let y =  event.pageY - 100;
-        let img = $(this);
-        let src = img.attr('src');
-        $("body").append("<div class='popup' style='position:absolute; left:-27%; top:"+y+"px'><img src='"+src+"' class='popup_img' /></div>");
-        $(".popup").fadeIn(100);
-        $(".popup").mouseout(function() {
-            $(".popup").fadeOut(100);
-            setTimeout(function() { $(".popup").remove(); }, 100);
-        });
-    });
-});
-
-$(document).ready(function() {
-    //$(".graphic" ).hide();
-    $(".target").mouseover(function(event) {
-        // $.ajax({
-        //     url: '/api/api/chart',
-        //     type: 'POST',
-        //     data: {
-        //         event:target
-        //     },
-        //     dataType: "json",
-        //     success: function(res){
-        //         console.log(res);
-        //
-        //     },
-        //     error: function(){
-        //       console.log('error');
-        //     }
-        // });
-    });
-    $(".target").mouseout(function(event) {
-        //$(".graphic" ).hide();
-    });
-});
-
+//вывод графика
 function darwChart() {
     let chart = new Highcharts.chart('container', {
         chart: {
@@ -127,7 +87,72 @@ function darwChart() {
     });
 }
 
-$('.indexing').on('click', function(){
+//график
+$(document).ready(function() {
+    $(".graphic" ).hide();
+    $(".target").mouseover(function(event) {
+        $.ajax({
+            url: '/api/api/chart',
+            type: 'POST',
+            data: {
+                event:target
+            },
+            dataType: "json",
+            success: function(res){
+                console.log(res);
+
+            },
+            error: function(){
+                console.log('error');
+            }
+        });
+    });
+    $(".target").mouseout(function(event) {
+        $(".graphic" ).hide();
+    });
+});
+
+//аудит
+$(document).ready(function() {
+    $('.audit').on('click', function(){
+        let keys = $('#grid').yiiGridView('getSelectedRows');
+        $.ajax({
+            url: '/api/api/audit',
+            type: 'POST',
+            data: {
+                keys:keys
+            },
+            success: function(res){
+                $.pjax.reload({container:"#sitePjax"});
+                console.log(res);
+                alert('Сайты добавлены в очередь на аудит.');
+            },
+            error: function(){
+                $.pjax.reload({container:"#sitePjax"});
+                alert('Error!');
+            }
+        });
+    });
+});
+
+//картинки
+$(document).ready(function() {
+
+    $(".my-img").mouseover(function(event) {
+        let y =  event.pageY - 100;
+        let img = $(this);
+        let src = img.attr('src');
+        $("body").append("<div class='popup' style='position:absolute; left:-27%; top:"+y+"px'><img src='"+src+"' class='popup_img' /></div>");
+        $(".popup").fadeIn(100);
+        $(".popup").mouseout(function() {
+            $(".popup").fadeOut(100);
+            setTimeout(function() { $(".popup").remove(); }, 100);
+        });
+    });
+});
+
+//индексация
+$('.indexing').on('click', function() {
     let keys = $('#grid').yiiGridView('getSelectedRows');
     $.ajax({
         url: '/api/api/indexing',
@@ -146,12 +171,14 @@ $('.indexing').on('click', function(){
     });
 });
 
-$('.comment').on('click', function(){
+//модальное окно комментария
+$('.comment').on('click', function() {
     let site_id = $(this).data("id");
     $("#exampleModal").attr("data-site-id", site_id);
 });
 
-$('#commentAjax').on('click', function(){
+//комментарий
+$('#commentAjax').on('click', function() {
     let comment = document.getElementById('comments-comment').value;
     let destination_id = document.getElementById('comments-destination_id').value;
     let site_id = document.getElementById('exampleModal').getAttribute("data-site-id");

@@ -91,13 +91,18 @@ a.desc:after {
 }
 
 .custom-grid-view {
-    height: 40px;
+    height: 24px;
     overflow-y: auto;
     word-wrap: break-word;
     white-space: nowrap;
 }
 
 .states {
+    height: 24px;
+    overflow: hidden;
+}
+
+.states-header {
     height: 40px;
     overflow: hidden;
 }
@@ -293,4 +298,8 @@ body * {
 .custom-ddl {
     width: 18px;
     height: 18px;
+}
+
+.custom-drop-down {
+    width: 85px;
 }

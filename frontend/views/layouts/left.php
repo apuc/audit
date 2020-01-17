@@ -31,13 +31,13 @@
                     ],
                     [
                         'label' => 'Ссылки',
-                        'icon' => 'th-list',
+                        'icon' => 'share-alt',
                         'url' => ['/links/links'],
                         'active' => \Yii::$app->controller->id == 'links',
                     ],
                     [
                         'label' => 'Темы сайтов',
-                        'icon' => 'th-list',
+                        'icon' => 'tags',
                         'url' => ['/theme/theme'],
                         'active' => \Yii::$app->controller->id == 'theme',
                     ],
@@ -49,7 +49,7 @@
                     ],
                     [
                         'label' => 'История аудитов',
-                        'icon' => 'th-list',
+                        'icon' => 'folder',
                         'url' => ['/audit/audit'],
                         'active' => \Yii::$app->controller->id == 'audit',
                     ],

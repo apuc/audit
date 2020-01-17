@@ -31,7 +31,7 @@ class SizerGridView extends GridView
         ];
 
         return 'Количество записей на странице:<br>' . Html::dropDownList('size', SizerGridView::getSize(), $items,
-                ['class' => 'btn btn-secondary dropdown-toggle', 'onchange' => 'sizer(this.value);']);
+                ['class' => 'btn btn-secondary dropdown-toggle custom-drop-down', 'onchange' => 'sizer(this.value);']);
     }
 
     public static function getSize()

@@ -3,6 +3,7 @@
 
 namespace frontend\modules\api\controllers;
 
+use common\classes\ChartData;
 use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
@@ -64,10 +65,9 @@ class ApiController extends Controller
     public function actionIndexing()
     {
         if(Yii::$app->request->isAjax) {
-            $keys = Yii::$app->request->post();
-
+            $keys = $_POST['keys'];
             if($keys)
-                foreach ($keys['keys'] as $key) {
+                foreach ($keys as $key) {
                     $indexing = new IndexingPending();
                     $indexing->site_id = $key;
                     $indexing->save();
@@ -79,9 +79,9 @@ class ApiController extends Controller
     {
         Yii::info('start', 'audit');
         if(Yii::$app->request->isAjax) {
-            $keys = Yii::$app->request->post();
+            $keys = $_POST['keys'];
             if($keys)
-                foreach ($keys['keys'] as $key) {
+                foreach ($keys as $key) {
                     $audit = new AuditPending();
                     $audit->site_id = $key;
                     $audit->save();
@@ -106,31 +106,37 @@ class ApiController extends Controller
     public function actionRedirect()
     {
         if(Yii::$app->request->isAjax) {
-            $link = $_POST['value'];
-            $domain  =$_POST['domain'];
-            $links = Links::findOne(['name' => $link]);
-            if($link != $domain)
-                return $links->link . $domain;
-            else return 'http://webcache.googleusercontent.com/search?q=cache:' . $domain;
+            try {
+                $links_array = array();
+                $link = $_POST['value'];
+                $links = Links::findOne(['name' => $link]);
+                $keys = $_POST['keys'];
+                if ($keys)
+                    foreach ($keys as $key) {
+                        $site = Site::findOne($key);
+                        if($link != 'cache')
+                            array_push($links_array, $links->link . $site->name);
+                        else array_push($links_array, 'http://webcache.googleusercontent.com/search?q=cache:' . $site->name);
+                    }
+                return json_encode($links_array);
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
         }
     }
 
     public function actionChart()
     {
         if(Yii::$app->request->isAjax) {
-            $event = $_POST['event'];
-            $id = preg_replace('~\D~','', $event);
+            $id = $_POST['id'];
             $site = Site::findOne($id);
             if($site) {
                 $size = \frontend\modules\site\models\Site::getChart($site, 'size');
                 $loading_time = \frontend\modules\site\models\Site::getChart($site, 'loading_time');
                 $server_response_code = \frontend\modules\site\models\Site::getChart($site, 'server_response_code');
                 $created_at = \frontend\modules\site\models\Site::getChart($site, 'created_at');
-                $result = json_encode($size);
-                $result .= json_encode($loading_time);
-                $result .= json_encode($server_response_code);
-                $result .= json_encode($created_at);
-                return $result;
+                $result = new ChartData($size, $loading_time, $server_response_code, $created_at);
+                return json_encode($result);
             } else {
                 return false;
             }

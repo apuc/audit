@@ -137,13 +137,23 @@ a.desc:after {
     margin:1% 0 0 0;
 }
 
-.graphic {
+.graphic_size {
     position: fixed;
-    /*height:100%;*/
-    /*width:100%;*/
     z-index:2;
-    top:7%;
-    left:25%;
+    top:10%;
+    left:450px;
+}
+.graphic_loading_time {
+    position: fixed;
+    z-index:2;
+    top:10%;
+    left:800px;
+}
+.graphic_server_response_code {
+    position: fixed;
+    z-index:2;
+    top:10%;
+    left:1150px;
 }
 
 .popup_bg {

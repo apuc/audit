@@ -1,19 +1,20 @@
 //редирект
-function jsFunction(e, value) {
-    let domain = e.getAttribute('data-domain-name');
-    console.log(e);
+function redirect(e, value) {
+    let keys = $('#grid').yiiGridView('getSelectedRows');
+    console.log(keys);
     $.ajax({
         url: '/api/api/redirect',
         type: 'POST',
         data: {
-            domain:domain,
-            value:value
+            keys: keys,
+            value: value,
         },
-        success: function(res){
-            console.log(res);
-            window.open(res, "_blank");
+        success: function (res) {
+            res = JSON.parse(res);
+            for (let i = 0; i < res.length; i++)
+                window.open(res[i], "_blank");
         },
-        error: function(){
+        error: function () {
             alert('Error!');
         }
     });
@@ -25,27 +26,26 @@ function sizer(value) {
         url: '/domain/site/index',
         type: 'GET',
         data: {
-            value:value
+            value: value
         },
-        success: function(res){
-            $.pjax.reload({container:"#sitePjax"});
+        success: function (res) {
+            $.pjax.reload({container: "#sitePjax"});
             console.log(res);
         },
-        error: function(){
-            $.pjax.reload({container:"#sitePjax"});
+        error: function () {
+            $.pjax.reload({container: "#sitePjax"});
             alert('Error!');
         }
     });
 }
 
 //копирование домена в буфер
-function CopyToClipboard(containerid) {
+function copyToClipboard(containerid) {
     try {
         window.getSelection().removeAllRanges();
     } catch (e) {
         document.selection.empty();
     }
-
     if (document.selection) {
         var range = document.body.createTextRange();
         range.moveToElementText(document.getElementById(containerid));
@@ -60,75 +60,77 @@ function CopyToClipboard(containerid) {
 }
 
 //вывод графика
-function darwChart() {
-    let chart = new Highcharts.chart('container', {
+function darwChart(name, container, data, created_at) {
+    return new Highcharts.chart(container, {
         chart: {
             type: 'spline',
-            scrollablePlotArea: {
-                width: 250,
-                height: 250,
-                scrollPositionX: 1
-            }
+            width: 350,
+            height: 300,
         },
-        title: { text: 'Размер' },
-        xAxis: { type: 'date', labels: { overflow: 'justify' } },
-        yAxis: { title: { text: 'Number of Employees' } },
-        legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
-        plotOptions: {
-            series: {
-                label: { connectorAllowed: false },
-                pointStart: 2010
-            },
-        },
-        series: [{
-            name: 'Размер',
-            data: [43934, 52503, 57177, 69658, 97031, 119931]
-        }],
+        title: {text: name},
+        xAxis: {categories: created_at},
+        yAxis: {title: ''},
+        series: [{name: name, data: data}],
     });
 }
 
 //график
-$(document).ready(function() {
-    $(".graphic" ).hide();
-    $(".target").mouseover(function(event) {
+$(document).ready(function () {
+    $(".graphic_size").hide();
+    $(".graphic_loading_time").hide();
+    $(".graphic_server_response_code").hide();
+    $(".target").mouseover(function (event) {
+        let target = event.target.getAttribute('class');
+        target = target.toString();
+        let id = target.replace('glyphicon glyphicon-signal target ', '');
         $.ajax({
             url: '/api/api/chart',
             type: 'POST',
             data: {
-                event:target
+                id: id
             },
-            dataType: "json",
-            success: function(res){
-                console.log(res);
-
+            success: function (res) {
+                res = JSON.parse(res);
+                let size = res['size'];
+                let loading_time = res['loading_time'];
+                let server_response_code = res['server_response_code'];
+                let created_at = res['created_at'];
+                darwChart('Размер', 'size', size, created_at);
+                darwChart('Время загрузки', 'loading_time', loading_time, created_at);
+                darwChart('Код ответа сервера', 'server_response_code', server_response_code, created_at);
+                $(".graphic_size").show();
+                $(".graphic_loading_time").show();
+                $(".graphic_server_response_code").show();
             },
-            error: function(){
-                console.log('error');
+            error: function () {
+                console.log('Chart Error');
             }
         });
     });
-    $(".target").mouseout(function(event) {
-        $(".graphic" ).hide();
+    $(".target").mouseout(function (event) {
+        $(".graphic_size").hide();
+        $(".graphic_loading_time").hide();
+        $(".graphic_server_response_code").hide();
     });
 });
 
 //аудит
-$(document).ready(function() {
-    $('.audit').on('click', function(){
+$(document).ready(function () {
+    $('.audit').on('click', function () {
         let keys = $('#grid').yiiGridView('getSelectedRows');
         $.ajax({
             url: '/api/api/audit',
             type: 'POST',
             data: {
-                keys:keys
+                keys: keys
             },
-            success: function(res){
-                $.pjax.reload({container:"#sitePjax"});
+            success: function (res) {
+                $.pjax.reload({container: "#sitePjax"});
                 console.log(res);
                 alert('Сайты добавлены в очередь на аудит.');
             },
-            error: function(){
-                $.pjax.reload({container:"#sitePjax"});
+            error: function () {
+                $.pjax.reload({container: "#sitePjax"});
                 alert('Error!');
             }
         });
@@ -136,49 +138,52 @@ $(document).ready(function() {
 });
 
 //картинки
-$(document).ready(function() {
+$(document).ready(function () {
 
-    $(".my-img").mouseover(function(event) {
-        let y =  event.pageY - 100;
+    $(".my-img").mouseover(function (event) {
+        let y = event.pageY - 100;
         let img = $(this);
         let src = img.attr('src');
-        $("body").append("<div class='popup' style='position:absolute; left:-27%; top:"+y+"px'><img src='"+src+"' class='popup_img' /></div>");
+        $("body").append("<div class='popup' style='position:absolute; left:-27%; top:" + y + "px'><img src='" + src + "' class='popup_img' /></div>");
         $(".popup").fadeIn(100);
-        $(".popup").mouseout(function() {
+        $(".popup").mouseout(function () {
             $(".popup").fadeOut(100);
-            setTimeout(function() { $(".popup").remove(); }, 100);
+            setTimeout(function () {
+                $(".popup").remove();
+            }, 100);
         });
     });
 });
 
 //индексация
-$('.indexing').on('click', function() {
+$('.indexing').on('click', function () {
     let keys = $('#grid').yiiGridView('getSelectedRows');
+    console.log(keys);
     $.ajax({
         url: '/api/api/indexing',
         type: 'POST',
         data: {
-            keys:keys
+            keys: keys
         },
-        success: function(res){
-            $.pjax.reload({container:"#sitePjax"});
+        success: function (res) {
+            $.pjax.reload({container: "#sitePjax"});
             alert('Сайты добавлены в очередь на индексацию.');
         },
-        error: function(){
-            $.pjax.reload({container:"#sitePjax"});
+        error: function () {
+            $.pjax.reload({container: "#sitePjax"});
             alert('Error!');
         }
     });
 });
 
 //модальное окно комментария
-$('.comment').on('click', function() {
+$('.comment').on('click', function () {
     let site_id = $(this).data("id");
     $("#exampleModal").attr("data-site-id", site_id);
 });
 
 //комментарий
-$('#commentAjax').on('click', function() {
+$('#commentAjax').on('click', function () {
     let comment = document.getElementById('comments-comment').value;
     let destination_id = document.getElementById('comments-destination_id').value;
     let site_id = document.getElementById('exampleModal').getAttribute("data-site-id");
@@ -187,14 +192,14 @@ $('#commentAjax').on('click', function() {
         url: '/api/api/comment',
         type: 'POST',
         data: {
-            comment:comment,
-            destination_id:destination_id,
-            site_id:site_id
+            comment: comment,
+            destination_id: destination_id,
+            site_id: site_id
         },
-        success: function(res){
+        success: function (res) {
             console.log(res);
-            },
-        error: function(){
+        },
+        error: function () {
             alert('Error!');
         }
     });

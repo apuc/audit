@@ -31,6 +31,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
         <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) ?>
+        <?php
+        $links = new \common\models\Links();
+        $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
+        $array['cache'] = 'Кэш Google';
+        echo Html::activeDropDownList($links, 'id', $array, [
+            'onchange' => 'redirect(this, this.value);',
+            'prompt' => 'Выберите ссылку',
+            'class' => 'btn btn-primary'
+        ]);
+        ?>
 
         <?php
         Pjax::begin(['id' => 'sitePjax']);
@@ -62,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         if(Site::getAudit($data, 'icon') != 'error.jpg')
                             return Html::tag('img', null, ['src' => Url::to('@web/i/'
-                                . Site::getAudit($data, 'icon')), 'width' => '16px', 'onclick' => "CopyToClipboard('domain-".$data->name."')"]);
+                                . Site::getAudit($data, 'icon')), 'width' => '16px', 'onclick' => "copyToClipboard('domain-".$data->name."')"]);
                         else return '';
                     }
                 ],
@@ -77,42 +87,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         else return '';
                     }
                 ],
-//                [
-//                    'attribute' => '',
-//                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="График" class="states"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
-//                    'format' => 'raw',
-//                    'value' => function ($data) {
-//
-//                        return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span><div class='graphic'><div id='container'></div></div>";
-//                            ."<div class='graphic'>"
-//                            . HighCharts::widget([
-//                                'clientOptions' => [
-//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
-//                                    'title' => ['text' => ''],
-//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
-//                                    'yAxis' => ['title' => ['text' => '']],
-//                                    'series' => [['name' => 'Размер', 'data' => Site::getChart($data, 'size')]]
-//                                ]
-//                            ]) . HighCharts::widget([
-//                                'clientOptions' => [
-//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
-//                                    'title' => ['text' => ''],
-//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
-//                                    'yAxis' => ['title' => ['text' => '']],
-//                                    'series' => [['name' => 'Время загрузки', 'data' => Site::getChart($data, 'loading_time')]]
-//                                ]
-//                            ]) . HighCharts::widget([
-//                                'clientOptions' => [
-//                                    'chart' => ['type' => 'spline', 'width' => 250, 'height' => 250],
-//                                    'title' => ['text' => ''],
-//                                    'xAxis' => ['categories' => Site::getChart($data, 'created_at')],
-//                                    'yAxis' => ['title' => ['text' => '']],
-//                                    'series' => [['name' => 'Код ответа сервера', 'data' => Site::getChart($data, 'server_response_code')]]
-//                                ]
-//                            ])
-////                            . "</div>";
-//                    },
-//                ],
+                [
+                    'attribute' => '',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="График" class="states"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
+                    'format' => 'raw',
+                    'value' => function ($data) {
+                        return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span>
+                            <div class='graphic_size'><div id='size'></div></div>
+                            <div class='graphic_loading_time'><div id='loading_time'></div></div>
+                            <div class='graphic_server_response_code'><div id='server_response_code'></div></div>";
+                    },
+                ],
                 [
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
@@ -144,23 +129,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                 ],
-                [
-                    'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
-                                    title="Ссылки" class="states-header"><span class="glyphicon glyphicon-link"
-                        aria-hidden="true"></span></div>',
-                    'format' => 'raw',
-                    'value' => function ($data) {
-                        $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
-                        $array[$data->name] = $data->name;
-                        return Html::activeDropDownList($data, 'id', $array, [
-                                'onchange' => 'jsFunction(this, this.value);',
-                                'prompt' => '...',
-                                'class' => 'custom-ddl',
-                                'data-domain-name' => $data->name
-                        ]);
-                    },
-                ],
+//               [
+//                    'attribute' => '',
+//                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
+//                                    title="Ссылки" class="states-header"><span class="glyphicon glyphicon-link"
+//                        aria-hidden="true"></span></div>',
+//                    'format' => 'raw',
+//                    'value' => function ($data) {
+//                        $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
+//                        $array['cache'] = 'Кэш Google';
+//                        return Html::activeDropDownList($data, 'id', $array, [
+//                                'onchange' => 'redirect(this, this.value);',
+//                                'prompt' => '...',
+//                                'class' => 'custom-ddl',
+//                                'data-domain-name' => $data->name
+//                        ]);
+//                    },
+//                ],
                 [
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
@@ -420,3 +405,5 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>

@@ -140,6 +140,7 @@ class AuditService
             $site->registrar = $registrar;
             $site->states = implode(", ", $states);
             $site->title = '';
+            $site->user_id = Yii::$app->user->identity->id;
             $site->save();
         } else {
             $site->name = $domain;
@@ -212,7 +213,6 @@ class AuditService
            }
        }
     }
-
 
     public static function getTitle($domain)
     {

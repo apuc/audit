@@ -270,6 +270,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return Site::getIndex($data, 'google_indexing');
                     },
+                    'contentOptions' => function ($data) {
+                        return ['class' => (Site::getIndex($data, 'status_google') == 1 ? 'danger' : '')];
+                    },
                 ],
                 [
                     'attribute' => '',
@@ -278,6 +281,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return Site::getIndex($data, 'google_indexed_pages');
                     },
+                    'contentOptions' => function ($data) {
+                        return ['class' => (Site::getIndex($data, 'status_indexing_pages') == 1 ? 'danger' : '')];
+                    },
                 ],
                 [
                     'attribute' => '',
@@ -285,6 +291,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         title="Дата кэша" class="states-header">Дата&nbspкэша</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'date_cache');
+                    },
+                    'contentOptions' => function ($data) {
+                        return ['class' => (Site::getIndex($data, 'status_date_cache') == 1 ? 'danger' : '')];
                     },
                 ],
                 [
@@ -296,6 +305,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return Site::getIndex($data, 'yandex_indexing');
                     },
+                    'contentOptions' => function ($data) {
+                        return ['class' => (Site::getIndex($data, 'status_yandex') == 1 ? 'danger' : '')];
+                    },
                 ],
                 [
                     'attribute' => '',
@@ -303,6 +315,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         title="ИКС" class="states-header">ИКС</div>',
                     'value' => function ($data) {
                         return Site::getIndex($data, 'iks');
+                    },
+                    'contentOptions' => function ($data) {
+                        return ['class' => (Site::getIndex($data, 'status_iks') == 1 ? 'danger' : '')];
                     },
                 ],
                 [
@@ -317,7 +332,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                     'contentOptions' => function ($data) {
-                        return ['class' => (count(Site::getIp($data, 2)) > 2 ? 'warning' : '')];
+                        return ['class' => (count(Site::getIp($data, 2)) > 1 ? 'warning' : '')];
                     },
                     'filter' => Html::activeTextInput($searchModel, 'ip', ['class' => 'form-control']),
                 ],
@@ -333,7 +348,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                     'contentOptions' => function ($data) {
-                        return ['class' => (count(Site::getDnsServer($data, 2)) > 2 ? 'warning' : '')];
+                        return ['class' => (count(Site::getDnsServer($data, 2)) > 1 ? 'warning' : '')];
                     },
                     'filter' => Html::activeTextInput($searchModel, 'dns', ['class' => 'form-control']),
                 ],
@@ -350,7 +365,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'filter' => Html::activeTextInput($searchModel,'external_links', ['class' => 'form-control']),
                     'contentOptions' => function ($data) {
-                        return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
+                        return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')];
                     },
                 ],
                 [
@@ -365,7 +380,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             . Site::getAnchor($data, 1) . '</div>';
                     },
                     'contentOptions' => function ($data) {
-                        return ['class' => (count(Site::getAcceptor($data, 2)) > 2 ? 'warning' : '')];
+                        return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')];
                     },
                     'filter' => Html::activeTextInput($searchModel, 'anchor', ['class' => 'form-control']),
                 ],

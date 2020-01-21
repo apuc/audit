@@ -17,15 +17,13 @@ class IndexingController extends Controller
     public function actionRun()
     {
         $audit_pending = IndexingPending::find()->limit(1)->all();
-        echo var_dump($audit_pending);
         if($audit_pending)
             foreach ($audit_pending as $value) {
                 $site = Site::findOne($value->site_id);
                 $indexing = new Indexing();
-                $old_indexing = Indexing::find()->where(['site_id' => $site->id])->limit(1)->orderBy('id desc');
                 $result = Search::check($site->name);
-
-               try {
+                try {
+                    $old_indexing = Indexing::find()->where(['site_id' => $site->id])->orderBy('id desc')->limit(1)->all();
                     self::setData($result['ya'], $indexing, $old_indexing, 'yandex_indexing', 'status_yandex');
                     self::setData($result['google'], $indexing, $old_indexing, 'google_indexing', 'status_google');
                     self::setData(Search::getCount($site->name), $indexing, $old_indexing, 'google_indexed_pages', 'status_indexing_pages');
@@ -34,12 +32,13 @@ class IndexingController extends Controller
                 } catch (\Exception $e) {
                     $result['ya'] ? $indexing->yandex_indexing = 1 : false;
                     $result['google'] ? $indexing->google_indexing = 1 : false;
-                    $indexing->google_indexed_pages = Search::getCount($site->name);
+                    $indexing->google_indexed_pages = (int)Search::getCount($site->name);
                     $indexing->date_cache = Search::cache($site->name, 'date');
-                    $indexing->iks = YandexIks::getValueFromImage($site->name);
+                    $indexing->iks = (int)YandexIks::getValueFromImage($site->name);
                 }
                 $indexing->site_id = $site->id;
                 $indexing->save();
+                print_r($indexing->errors);
                 IndexingPending::deleteAll(['id' => $value->id]);
             }
     }
@@ -54,9 +53,9 @@ class IndexingController extends Controller
                 if($old->$key_field) {
                     $indexing->$key_field = $old->$key_field;
                     $indexing->$key_status = 1;
-                    echo "Set old" . $key_field . "value\n";
+                    echo "Set old " . $key_field . " value\n";
                 } else {
-                    $indexing->$key_field = false;
+                    $indexing->$key_field = 0;
                     $indexing->$key_status = 0;
                 }
     }

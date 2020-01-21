@@ -161,25 +161,20 @@ class Site extends \common\models\Site
     {
         $result = 0;
         if($data->urls) {
-            foreach ($data->urls[0]->audits as $value) {
+            foreach ($data->urls[0]->audits as $value)
                 $result = $value->$key;
-            }
         }
         return $result;
     }
 
     public static function getIndex($data, $key)
     {
-
-            $result = 0;
-            if($data->indexing) {
-                foreach ($data->indexing as $value) {
-                    $result = $value->$key;
-                }
-            }
-            return $result;
-
-
+        $result = 0;
+        if($data->indexing) {
+            foreach ($data->indexing as $value)
+                $result = $value->$key;
+        }
+        return $result;
     }
 
     public static function getAuditID($model, $key)
@@ -188,11 +183,10 @@ class Site extends \common\models\Site
         $site = Site::findOne(['id' => $id]);
         $audit_id = 0;
 
-        if($site->urls) {
-            foreach ($site->urls[0]->audits as $value) {
+        if($site->urls)
+            foreach ($site->urls[0]->audits as $value)
                 $audit_id = $value->id;
-            }
-        }
+
         return $audit_id;
     }
 
@@ -200,19 +194,16 @@ class Site extends \common\models\Site
     {
         $n = 1;
         $external_links_array = array();
-        if($data->urls) {
+        if($data->urls)
             if($data->urls[0]->audits) {
                 $n = count($data->urls[0]->audits);
                 if($n <= 0) $n = 1;
             }
-        }
-
         if($data)
             if($data->urls)
                 if($data->urls[0]->audits)
                     foreach ($data->urls[0]->audits[$n-1]->externalLinks as $value)
                         array_push($external_links_array, $value->acceptor);
-
         if($fl == 1)
             return implode("<br>", $external_links_array);
         elseif($fl == 0)
@@ -225,61 +216,49 @@ class Site extends \common\models\Site
     {
         $n = 1;
         $external_links_array = array();
-        if($data->urls) {
+        if($data->urls)
             if($data->urls[0]->audits) {
                 $n = count($data->urls[0]->audits);
                 if($n <= 0) $n = 1;
             }
-        }
-
-        if($data) {
-            if ($data->urls) {
-                if ($data->urls[0]->audits) {
+        if($data)
+            if ($data->urls)
+                if ($data->urls[0]->audits)
                     foreach ($data->urls[0]->audits[$n-1]->externalLinks as $value) {
                         $val = trim(self::clearstr($value->anchor));
                         $val = trim(str_replace(array("\r\n", "\r", "\n", "<br>"), "", $val));
-
-                        if (!empty($val)) {
+                        if (!empty($val))
                             array_push($external_links_array, $val);
-                        } else {
-                            array_push($external_links_array, ' - анкор не задан');
-                        }
+                        else array_push($external_links_array, ' - анкор не задан');
                     }
-                }
-            }
-        }
-
-        if($fl == 1) {
+        if($fl == 1)
             return implode("<br>", $external_links_array);
-        } elseif($fl == 0) {
+        elseif($fl == 0)
             return implode("\n", $external_links_array);
-        } elseif ($fl == 2) {
+        elseif ($fl == 2)
             return $external_links_array;
-        }
     }
 
     /**
      * Функция была взята с php.net
      **/
     public static function utf8_str_split($str) {
-        $split=1;
+        $split = 1;
         $array = array();
-        for ( $i=0; $i < strlen( $str ); ){
+        for ($i = 0; $i < strlen($str); ) {
             $value = ord($str[$i]);
-            if($value > 127){
+            if($value > 127) {
                 if($value >= 192 && $value <= 223)
-                    $split=2;
+                    $split = 2;
                 elseif($value >= 224 && $value <= 239)
-                    $split=3;
+                    $split = 3;
                 elseif($value >= 240 && $value <= 247)
-                    $split=4;
-            }else{
-                $split=1;
-            }
+                    $split = 4;
+            } else $split = 1;
+
             $key = NULL;
-            for ( $j = 0; $j < $split; $j++, $i++ ) {
+            for ( $j = 0; $j < $split; $j++, $i++ )
                 $key .= $str[$i];
-            }
             array_push( $array, $key );
         }
         return $array;
@@ -293,11 +272,11 @@ class Site extends \common\models\Site
         $sru = 'ёйцукенгшщзхъфывапролджэячсмитьбю';
         $s1 = array_merge(self::utf8_str_split($sru), self::utf8_str_split(strtoupper($sru)), range('A', 'Z'), range('a','z'), range('0', '9'), array('&',' ','#',';','%','?',':','(',')','-','_','=','+','[',']',',','.','/','\\'));
         $codes = array();
-        for ($i=0; $i<count($s1); $i++){
+        for ($i = 0; $i < count($s1); $i++){
             $codes[] = ord($s1[$i]);
         }
         $str_s = self::utf8_str_split($str);
-        for ($i=0; $i<count($str_s); $i++){
+        for ($i = 0; $i < count($str_s); $i++){
             if (!in_array(ord($str_s[$i]), $codes)){
                 $str = str_replace($str_s[$i], '', $str);
             }

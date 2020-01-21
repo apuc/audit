@@ -210,11 +210,9 @@ class SiteController extends Controller
         AuditService::addAudit($domain, $url->id);
     }
 
-    public function actionTest($domain)
+    public function actionTest($id)
     {
-        $Punycode = new Punycode();
-        $html = file_get_contents('http://' . $Punycode->encode($domain));
-        $document = phpQuery::newDocument($html);
-        Debug::dd($document);
+        $old_indexing = Indexing::find()->where(['site_id' => $id])->orderBy('id desc')->limit(1)->all();
+        Debug::dd($old_indexing);
     }
 }

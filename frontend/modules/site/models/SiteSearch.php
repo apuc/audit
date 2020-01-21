@@ -3,6 +3,7 @@
 namespace frontend\modules\site\models;
 
 use common\classes\Debug;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Site;
@@ -80,6 +81,7 @@ class SiteSearch extends Site
             'creation_date' => $this->creation_date,
             'expiration_date' => $this->expiration_date,
             'theme_id' => $this->theme_id,
+            'user_id' => Yii::$app->user->identity->id,
         ]);
 
         $query->andFilterWhere(['like', 'site.name', $this->name])

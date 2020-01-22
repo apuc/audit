@@ -59,17 +59,19 @@ class Site extends \common\models\Site
             foreach ($site->dns as $dns) {
                 Dns::deleteAll(['id' => $dns->id]);
             }
-            foreach ($site->auditPendings as $auditPendings) {
-                AuditPending::deleteAll(['id' => $auditPendings->id]);
+            foreach ($site->auditPending as $auditPending) {
+                AuditPending::deleteAll(['id' => $auditPending->id]);
             }
-            foreach ($site->indexingPendings as $indexingPendings) {
-                IndexingPending::deleteAll(['id' => $indexingPendings->id]);
+            foreach ($site->indexingPending as $indexingPending) {
+                IndexingPending::deleteAll(['id' => $indexingPending->id]);
             }
             foreach ($site->dns as $dns) {
                 Dns::deleteAll(['id' => $dns->id]);
             }
             Site::deleteAll(['id' => $site->id]);
-        } catch (\Exception $e) { }
+        } catch (\Exception $e) {
+            //Debug::dd($e->getMessage());
+        }
     }
 
     public static function getDate($date, $fl=0)

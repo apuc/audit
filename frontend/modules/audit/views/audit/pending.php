@@ -5,7 +5,9 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 
 echo "<h3>Сайты в очереди на аудит</h3><br>";
-$dataProvider = new ActiveDataProvider(['query' => \common\models\AuditPending::find()]);
+$dataProvider = new ActiveDataProvider(['query' => \common\models\AuditPending::find()
+    ->where(['site.user_id' => Yii::$app->user->identity->id])
+    ->innerJoin('site', 'audit_pending.site_id=site.id')]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
@@ -24,7 +26,9 @@ echo GridView::widget([
 ]);
 
 echo "<br><br><h3>Сайты в очереди на индексацию</h3><br>";
-$dataProvider = new ActiveDataProvider(['query' => \common\models\IndexingPending::find()]);
+$dataProvider = new ActiveDataProvider(['query' => \common\models\IndexingPending::find()
+    ->where(['site.user_id' => Yii::$app->user->identity->id])
+    ->innerJoin('site', 'indexing_pending.site_id=site.id')]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [

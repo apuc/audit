@@ -12,6 +12,7 @@ use common\models\Indexing;
 use common\models\IndexingPending;
 use common\models\Links;
 use common\models\Search;
+use common\models\Settings;
 use common\models\Site;
 use common\models\User;
 use common\models\Url;
@@ -65,6 +66,7 @@ class ApiController extends Controller
     public function actionIndexing()
     {
         if(Yii::$app->request->isAjax) {
+            $settings = Settings::findOne(1);
             $keys = $_POST['keys'];
             if($keys)
                 foreach ($keys as $key) {
@@ -77,7 +79,6 @@ class ApiController extends Controller
 
     public function actionAudit()
     {
-        Yii::info('start', 'audit');
         if(Yii::$app->request->isAjax) {
             $keys = $_POST['keys'];
             if($keys)
@@ -93,7 +94,6 @@ class ApiController extends Controller
     {
         if(Yii::$app->request->isAjax) {
             $keys = Yii::$app->request->post();
-
             if($keys)
                 foreach ($keys['keys'] as $key) {
                     $user = User::findOne(['id' => $key]);

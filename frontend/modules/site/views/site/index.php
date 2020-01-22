@@ -2,6 +2,7 @@
 
 use common\models\Links;
 //use dosamigos\highcharts\HighCharts;
+use frontend\modules\settings\models\Settings;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -21,6 +22,7 @@ use \common\classes\Debug;
 /* @var $searchModel frontend\modules\site\models\SiteSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $model common\models\Comments */
+/* @var $settings common\models\Settings */
 
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
@@ -67,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 ['class' => 'yii\grid\CheckboxColumn'],
                 [
+                    'visible' => Settings::getMode($settings, 'icon'),
                     'attribute' => '',
                     'format' => 'raw',
                     'value' => function ($data) {
@@ -77,6 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'screenshot'),
                     'attribute' => '',
                     'format' => 'raw',
                     'value' => function ($data) {
@@ -88,6 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'chart'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="График" class="states"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
                     'format' => 'raw',
@@ -99,6 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'domain'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Домен" class="states-header">Домен</div>',
@@ -110,6 +116,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'redirect'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Редирект" class="states-header">Редирект</div>',
@@ -120,6 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'title'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Тайтл" class="states-header">Тайтл</div>',
@@ -147,6 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    },
 //                ],
                 [
+                    'visible' => Settings::getMode($settings,'theme'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Тема" class="states-header">Тема</div>',
@@ -173,6 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'comment'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Комментарий" class="states-header"><span class="glyphicon glyphicon-comment "
@@ -189,6 +199,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'server_response_code'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Код ответа сервера" class="states-header">Код</div>',
@@ -198,6 +209,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => Html::activeTextInput($searchModel, 'server_response_code', ['class' => 'form-control']),
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'size'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Размер (байт)" class="states-header">Байт</div>',
@@ -206,6 +218,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'loading_time'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Время загрузки (мс)" class="states-header">Мс</div>',
@@ -214,6 +227,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'registrar'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Регистратор" class="states-header">Регистратор</div>',
@@ -226,6 +240,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => Html::activeTextInput($searchModel, 'registrar', ['class' => 'form-control']),
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'states'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Состояния" class="states-header">Состояния</div>',
@@ -242,6 +257,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => Html::activeTextInput($searchModel, 'states', ['class' => 'form-control']),
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'created_at'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Дата создания" class="states-header">Создан</div>',
@@ -251,6 +267,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'days_left'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
                         title="Дней до окончания регистрации" class="states-header">Дни</div>',
@@ -263,6 +280,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'google_indexing'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Индексация главной страницы в Google" class="states-header">'.
@@ -275,6 +293,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'google_pages'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Количество проиндексированных страниц" class="states-header">N</div>',
@@ -286,6 +305,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'google_date_cache'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Дата кэша" class="states-header">Дата&nbspкэша</div>',
@@ -297,6 +317,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'yandex_indexing'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Индексация главной страницы в Yandex" class="states-header">'
@@ -310,6 +331,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'iks'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="ИКС" class="states-header">ИКС</div>',
@@ -321,6 +343,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'ip'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="IP" class="states-header">IP</div>',
@@ -337,6 +360,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => Html::activeTextInput($searchModel, 'ip', ['class' => 'form-control']),
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'dns'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="DNS" class="states-header">DNS</div>',
@@ -353,6 +377,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => Html::activeTextInput($searchModel, 'dns', ['class' => 'form-control']),
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'acceptor'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Акцептор" class="states-header">Акцептор</div>',
@@ -369,6 +394,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'anchor'),
                     'attribute' => 'Анкор',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
                         title="Анкор" class="states-header">Анкор</div>',

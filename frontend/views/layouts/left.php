@@ -12,11 +12,11 @@
                         'icon' => 'pencil',
                         'url' => ['/url/url/urls'],
                     ],
-                    [
-                        'label' => 'Добавить ссылки',
-                        'icon' => 'pencil',
-                        'url' => ['/links/links/links'],
-                    ],
+//                    [
+//                        'label' => 'Добавить ссылки',
+//                        'icon' => 'pencil',
+//                        'url' => ['/links/links/links'],
+//                    ],
                     [
                         'label' => 'Сайты',
                         'icon' => 'list-alt',
@@ -41,18 +41,18 @@
                         'url' => ['/theme/theme'],
                         'active' => \Yii::$app->controller->id == 'theme',
                     ],
-                    [
-                        'label' => 'Список URL',
-                        'icon' => 'th-list',
-                        'url' => ['/url/url'],
-                        'active' => \Yii::$app->controller->id == 'url',
-                    ],
-                    [
-                        'label' => 'История аудитов',
-                        'icon' => 'folder',
-                        'url' => ['/audit/audit'],
-                        'active' => \Yii::$app->controller->id == 'audit',
-                    ],
+//                    [
+//                        'label' => 'Список URL',
+//                        'icon' => 'th-list',
+//                        'url' => ['/url/url'],
+//                        'active' => \Yii::$app->controller->id == 'url',
+//                    ],
+//                    [
+//                        'label' => 'История аудитов',
+//                        'icon' => 'folder',
+//                        'url' => ['/audit/audit'],
+//                        'active' => \Yii::$app->controller->id == 'audit',
+//                    ],
                     [
                         'label' => 'Комментарии',
                         'icon' => 'comment',
@@ -64,6 +64,12 @@
                         'icon' => 'user',
                         'url' => ['/user/user'],
                         'active' => \Yii::$app->controller->id == 'user',
+                    ],
+                    [
+                        'label' => 'Настройки',
+                        'icon' => 'cog',
+                        'url' => ['/settings/settings/view?id=1'],
+                        'active' => \Yii::$app->controller->id == 'settings',
                     ],
 //                    [
 //                        'label' => 'Инструкция',

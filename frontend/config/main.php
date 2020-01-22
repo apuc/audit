@@ -72,6 +72,9 @@ return [
         'audit' => [
             'class' => 'frontend\modules\audit\Audit',
         ],
+        'indexing' => [
+            'class' => 'frontend\modules\indexing\Indexing',
+        ],
         'externallinks' => [
             'class' => 'frontend\modules\externallinks\Externallinks',
         ],
@@ -92,6 +95,9 @@ return [
         ],
         'indexingpending' => [
             'class' => 'frontend\modules\indexingpending\Indexingpending',
+        ],
+        'settings' => [
+            'class' => 'frontend\modules\settings\Settings',
         ],
     ],
 ];

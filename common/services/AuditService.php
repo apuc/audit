@@ -4,14 +4,11 @@ namespace common\services;
 
 use common\classes\CurlHelper;
 use common\classes\Debug;
-use common\classes\ForceCharsetPlugin;
-use common\classes\ProxyListArray;
-use common\classes\UserAgentArray;
 use common\models\Audit;
+use common\models\AuditPending;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Site;
-use DOMDocument;
 use frontend\modules\url\models\DataForm;
 use frontend\modules\url\models\Url;
 use Iodev\Whois\Whois;
@@ -20,21 +17,17 @@ use TrueBV\Punycode;
 use Yii;
 use DateTime;
 use Exception;
-use GuzzleHttp;
 
 
 class AuditService
 {
-    const IS_PROXY = 1;
-
     public static function addData($data_array, $report)
     {
         foreach ($data_array as $data) {
-            if (!$data->isSiteExist() && !$data->isUrlExist()) {
+            if (!$data->isSiteExist() && !$data->isUrlExist())
                 self::insertSiteAndUrl($data, $report);
-            } elseif ($data->isSiteExist() && !$data->isUrlExist()) {
+            elseif ($data->isSiteExist() && !$data->isUrlExist())
                 self::insertUrl($data, $report);
-            }
         }
         return true;
     }
@@ -68,9 +61,8 @@ class AuditService
         try {
             $whois = Whois::create();
             $info = $whois->loadDomainInfo($domain);
-            if ($info) {
-                return self::createSite($info, $domain);
-            } else {
+            if ($info) return self::createSite($info, $domain);
+            else {
                 $host_names = explode(".", $domain);
                 $bottom_host_name = $host_names[count($host_names) - 2] . "." . $host_names[count($host_names) - 1];
                 $domain = $bottom_host_name;
@@ -88,39 +80,34 @@ class AuditService
         }
     }
 
-    public static function addAudit($domain, $url_id)
+    public static function addAudit($domain, $url_id, $pending_id)
     {
+        AuditPending::deleteAll(['id' => $pending_id]);
         $server_response_code = 0;
         $size = 0;
         $loading_time = 0;
-        $fl = 0;
         $count = 0;
         $domain = self::cutDomain($domain);
 
-        while($fl == 0 && $count <= 10) {
+        $curl = new CurlHelper($domain);
+        while($server_response_code == 0 && $count <= 10) {
             $curl = new CurlHelper($domain);
             if(!$curl->getError()) {
                 $server_response_code = $curl->getServerResponseCode();
                 $size = $curl->getSize();
                 $loading_time = $curl->getLoadingTime();
-                $fl = 1;
-            } else {
-                echo $curl->getError();
-                $fl = 0;
-            }
+            } else echo $curl->getError() . "\n";
             $count++;
         }
+        $site = Site::findOne(['name' => $domain]);
+        $site->title = self::getTitle($domain);
+        $site->redirect = $curl->getRedirect();
+        $site->save();
 
         $screenshot = self::getScreen('http://' . $domain, false);
         $icon = self::getIconPicture($domain);
 
-        $site = Site::findOne(['name' => $domain]);
-        $site->title = self::getTitle($domain);
-        //$site->redirect = self::getRedirect($domain, $response);
-        $site->save();
-
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
-
         self::createExternalLinks($domain, $audit->id);
     }
 
@@ -146,7 +133,6 @@ class AuditService
             $site->name = $domain;
             $site->save();
         }
-
         self::createDns($domain, $site->id);
 
         return $site->id;
@@ -168,7 +154,6 @@ class AuditService
     {
         try {
             $records = dns_get_record($domain);
-
             foreach ($records as $record) {
                 $dns = new Dns();
                 $dns->class = $record['class'];
@@ -182,7 +167,7 @@ class AuditService
                 $dns->save();
             }
         } catch (Exception $e) {
-           Debug::prn($e->getMessage());
+           echo $e->getMessage() . "\n";
         }
     }
 
@@ -203,7 +188,7 @@ class AuditService
     public static function createExternalLinks($domain, $audit_id)
     {
        $result_array = self::getExternalLinks($domain);
-       if($result_array) {
+       if($result_array)
            for ($i = 0; $i < count($result_array[0]); $i++) {
                $ext_links = new ExternalLinks();
                $ext_links->acceptor = $result_array[0][$i];
@@ -211,26 +196,10 @@ class AuditService
                $ext_links->audit_id = $audit_id;
                $ext_links->save();
            }
-       }
     }
 
     public static function getTitle($domain)
     {
-//        $html = file_get_contents('http://' . $domain);
-//        $document = phpQuery::newDocument($html);
-//        if($document) {
-//            try {
-//                $links = $document->find('title')->get();
-//                return $links ? $links[0]->nodeValue : null;
-//            } catch (Exception $e) {
-//                Debug::prn($e->getMessage());
-//                return null;
-//            }
-//        } else {
-//            Debug::prn('title error');
-//            return null;
-//        }
-
         try {
             $Punycode = new Punycode();
             $page_content = file_get_contents('http://' . $Punycode->encode($domain));
@@ -240,24 +209,6 @@ class AuditService
             else return '';
         } catch (Exception $e) {
             return str_replace('file_get_contents(): php_network_getaddresses: getaddrinfo failed:', '', $e->getMessage());
-        }
-    }
-
-    public static function getRedirect($domain, $response)
-    {
-        if($response) {
-            try {
-                $redirect = $response->getHeader(\GuzzleHttp\RedirectMiddleware::HISTORY_HEADER)[0];
-                $cut_redirect = self::cutDomain(self::cutUrl($redirect));
-                return ($cut_redirect == $domain) ? '' : $cut_redirect;
-            }
-            catch (Exception $e) {
-                Debug::prn($e->getMessage());
-                return null;
-            }
-        } else {
-            Debug::prn('redirect error');
-            return null;
         }
     }
 
@@ -368,16 +319,14 @@ class AuditService
             $data = new DataForm();
             $data->setSite($value);
             $data->setSiteUrl($value);
-            foreach ($all_site_array as $all_site_value) {
-                if ($all_site_value == $data->getSite()) {
+            foreach ($all_site_array as $all_site_value)
+                if ($all_site_value == $data->getSite())
                     $data->setSiteExist(1);
-                }
-            }
-            foreach ($all_url_array as $all_url_value) {
-                if ($all_url_value == $data->getSiteUrl()) {
+
+            foreach ($all_url_array as $all_url_value)
+                if ($all_url_value == $data->getSiteUrl())
                     $data->setUrlExist(1);
-                }
-            }
+
             array_push($data_array, $data);
         }
         return $data_array;
@@ -387,9 +336,9 @@ class AuditService
     {
         $all_url = Url::find()->all();
         $all_url_array = array();
-        foreach ($all_url as $value) {
+        foreach ($all_url as $value)
             array_push($all_url_array, $value->url);
-        }
+
         return $all_url_array;
     }
 
@@ -397,9 +346,9 @@ class AuditService
     {
         $all_site = Site::find()->all();
         $all_site_array = array();
-        foreach ($all_site as $value) {
+        foreach ($all_site as $value)
             array_push($all_site_array, $value->name);
-        }
+
         return $all_site_array;
     }
 
@@ -412,9 +361,8 @@ class AuditService
         $formatting_urls = array();
         foreach ($exploded_urls as $exploded_url) {
             $trim_url = trim($exploded_url);
-            if ($trim_url) {
+            if ($trim_url)
                 array_push($formatting_urls, $trim_url);
-            }
         }
         return $formatting_urls;
     }

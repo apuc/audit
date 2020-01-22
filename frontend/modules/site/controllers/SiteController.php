@@ -8,8 +8,10 @@ use common\classes\UserAgentArray;
 use common\models\Indexing;
 use common\models\Links;
 use common\models\Search;
+use common\models\Settings;
 use common\models\Theme;
 use common\services\AuditService;
+use DateTime;
 use frontend\modules\url\models\Url;
 use http\Exception;
 use GuzzleHttp;
@@ -65,12 +67,14 @@ class SiteController extends Controller
         if(Yii::$app->request->isAjax) {
             SizerGridView::setSize($_GET['value']);
         }
+        $settings = Settings::findOne(1);
 
         $dataProvider->pagination->pageSize = SizerGridView::getSize();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'settings' => $settings,
         ]);
     }
 
@@ -210,9 +214,9 @@ class SiteController extends Controller
         AuditService::addAudit($domain, $url->id);
     }
 
-    public function actionTest($id)
+    public function actionTest()
     {
-        $old_indexing = Indexing::find()->where(['site_id' => $id])->orderBy('id desc')->limit(1)->all();
-        Debug::dd($old_indexing);
+        $str = 'http://1dvernoy.by/product-category/interior-doors/';
+        Debug::dd(AuditService::cutDomain(AuditService::cutUrl($str)));
     }
 }

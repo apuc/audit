@@ -70,7 +70,7 @@ class Site extends \common\models\Site
             }
             Site::deleteAll(['id' => $site->id]);
         } catch (\Exception $e) {
-            Debug::dd($e->getMessage());
+            //Debug::dd($e->getMessage());
         }
     }
 

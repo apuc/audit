@@ -200,23 +200,11 @@ class SiteController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionAudit($domain)
-    {
-        $site = Site::findOne(['name' => $domain]);
-        $url = \common\models\Url::findOne(['site_id' => $site->id]);
-        AuditService::addAudit($domain, $url->id);
-    }
 
-    public function actionIndexing($domain)
+    public function actionTest($domain)
     {
-        $site = Site::findOne(['name' => $domain]);
-        $url = \common\models\Url::findOne(['site_id' => $site->id]);
-        AuditService::addAudit($domain, $url->id);
-    }
-
-    public function actionTest()
-    {
-        $str = 'http://1dvernoy.by/product-category/interior-doors/';
-        Debug::dd(AuditService::cutDomain(AuditService::cutUrl($str)));
+        $site = Site::find()->where(['name' => $domain])->all();
+        foreach ($site as $value)
+        Debug::dd($value->id);
     }
 }

@@ -65,12 +65,12 @@ class Site extends \common\models\Site
             foreach ($site->indexingPending as $indexingPending) {
                 IndexingPending::deleteAll(['id' => $indexingPending->id]);
             }
-            foreach ($site->dns as $dns) {
-                Dns::deleteAll(['id' => $dns->id]);
+            foreach ($site->indexing as $indexing) {
+                Dns::deleteAll(['id' => $indexing->id]);
             }
             Site::deleteAll(['id' => $site->id]);
         } catch (\Exception $e) {
-            Debug::dd($e->getMessage());
+            //Debug::dd($e->getMessage());
         }
     }
 

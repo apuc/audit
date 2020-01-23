@@ -66,7 +66,6 @@ class ApiController extends Controller
     public function actionIndexing()
     {
         if(Yii::$app->request->isAjax) {
-            $settings = Settings::findOne(1);
             $keys = $_POST['keys'];
             if($keys)
                 foreach ($keys as $key) {

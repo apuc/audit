@@ -2,6 +2,7 @@
 
 namespace frontend\modules\comments\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Comments;
@@ -65,10 +66,11 @@ class CommentsSearch extends Comments
         $query->andFilterWhere([
             'id' => $this->id,
             'site_id' => $this->site_id,
-            'owner_id' => $this->owner_id,
-            'destination_id' => $this->destination_id,
             'created_at' => $this->created_at,
         ]);
+
+        $query->orFilterWhere(['owner_id' => Yii::$app->user->identity->id]);
+        $query->orFilterWhere(['destination_id' => Yii::$app->user->identity->id]);
 
         $query->andFilterWhere(['like', 'comment', $this->comment]);
 

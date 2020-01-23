@@ -125,12 +125,9 @@ $(document).ready(function () {
                 keys: keys
             },
             success: function (res) {
-                $.pjax.reload({container: "#sitePjax"});
-                console.log(res);
                 alert('Сайты добавлены в очередь на аудит.');
             },
             error: function () {
-                $.pjax.reload({container: "#sitePjax"});
                 alert('Error!');
             }
         });
@@ -166,11 +163,9 @@ $('.indexing').on('click', function () {
             keys: keys
         },
         success: function (res) {
-            $.pjax.reload({container: "#sitePjax"});
             alert('Сайты добавлены в очередь на индексацию.');
         },
         error: function () {
-            $.pjax.reload({container: "#sitePjax"});
             alert('Error!');
         }
     });

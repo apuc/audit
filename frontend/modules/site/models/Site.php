@@ -3,22 +3,14 @@
 
 namespace frontend\modules\site\models;
 
-use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
+use common\models\Comments;
 use common\models\Dns;
 use common\models\ExternalLinks;
+use common\models\Indexing;
 use common\models\IndexingPending;
-use common\models\Links;
-use common\models\Theme;
 use common\models\Url;
-use DOMDocument;
-use dosamigos\highcharts\HighCharts;
-use GuzzleHttp;
-use http\Env\Request;
-use yii\helpers\ArrayHelper;
-
-//use GuzzleHttp\Psr7\Request;
 
 class Site extends \common\models\Site
 {
@@ -33,11 +25,9 @@ class Site extends \common\models\Site
         if($data->urls) {
             foreach ($data->urls[0]->audits as $value) {
                 if($value->created_at >= strtotime("-3 month")){
-                    if($key == "created_at") {
+                    if($key == "created_at")
                         array_push($result, self::getDate($value->$key));
-                    } else {
-                        array_push($result, (int)$value->$key);
-                    }
+                    else array_push($result, (int)$value->$key);
                 }
             }
         }
@@ -49,29 +39,30 @@ class Site extends \common\models\Site
         try {
             foreach($site->urls as $url) {
                 foreach ($url->audits as $audit) {
-                    foreach ($audit->externalLinks as $link) {
+                    foreach ($audit->externalLinks as $link)
                         ExternalLinks::deleteAll(['id' => $link->id]);
-                    }
+
                     Audit::deleteAll(['id' => $audit->id]);
                 }
                 Url::deleteAll(['id' => $url->id]);
             }
-            foreach ($site->dns as $dns) {
+            foreach ($site->dns as $dns)
                 Dns::deleteAll(['id' => $dns->id]);
-            }
-            foreach ($site->auditPending as $auditPending) {
+
+            foreach ($site->comments as $comment)
+                Comments::deleteAll(['id' => $comment->id]);
+
+            foreach ($site->auditPending as $auditPending)
                 AuditPending::deleteAll(['id' => $auditPending->id]);
-            }
-            foreach ($site->indexingPending as $indexingPending) {
+
+            foreach ($site->indexingPending as $indexingPending)
                 IndexingPending::deleteAll(['id' => $indexingPending->id]);
-            }
-            foreach ($site->indexing as $indexing) {
-                Dns::deleteAll(['id' => $indexing->id]);
-            }
+
+            foreach ($site->indexing as $indexing)
+                Indexing::deleteAll(['id' => $indexing->id]);
+
             Site::deleteAll(['id' => $site->id]);
-        } catch (\Exception $e) {
-            //Debug::dd($e->getMessage());
-        }
+        } catch (\Exception $e) { }
     }
 
     public static function getDate($date, $fl=0)
@@ -81,11 +72,10 @@ class Site extends \common\models\Site
             $month = idate('m', $date);
             $year = idate('Y', $date);
 
-            if(!$fl) {
+            if(!$fl)
                 return $day.".".$month.".".$year;
-            } else {
+            else
                 return strtotime($year."-".$month."-".$day);
-            }
         }
     }
 
@@ -99,11 +89,10 @@ class Site extends \common\models\Site
     {
         $arr =  explode(", ", $data->registrar);
 
-        if($fl) {
+        if($fl)
             return $data->registrar;
-        } else {
+        else
             return implode("\n", $arr);
-        }
     }
 
     public static function getStates($data, $fl)

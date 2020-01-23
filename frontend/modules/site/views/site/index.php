@@ -1,20 +1,17 @@
 <?php
 
 use common\models\Links;
-//use dosamigos\highcharts\HighCharts;
 use frontend\modules\settings\models\Settings;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\classes\SizerGridView;
-use common\services\AuditService;
 use \frontend\modules\site\models\Site;
 use \common\models\Theme;
 use \common\models\Comments;
 use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
-use \common\classes\Debug;
 
 
 /* @var $form yii\bootstrap\ActiveForm */
@@ -29,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
     <div class="site-index">
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <?= Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) ?>
         <?= Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) ?>
@@ -56,11 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',
                     'buttons' => [
-//                        'show' => function ($data) {
-//                            return Html::a(
-//                                "<span class='glyphicon glyphicon-eye-open' aria-hidden='true'></span>",
-//                                ['/audit/audit/view', 'id' => Site::getAuditID($data, 'id')]);
-//                        },
                         'delete' => function ($data) {
                             return Html::a("<span class='glyphicon glyphicon-trash' aria-hidden='true'></span>",
                                 ['/domain/site/customdelete', 'id' => $data]);
@@ -137,23 +128,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                 ],
-//               [
-//                    'attribute' => '',
-//                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true"
-//                                    title="Ссылки" class="states-header"><span class="glyphicon glyphicon-link"
-//                        aria-hidden="true"></span></div>',
-//                    'format' => 'raw',
-//                    'value' => function ($data) {
-//                        $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
-//                        $array['cache'] = 'Кэш Google';
-//                        return Html::activeDropDownList($data, 'id', $array, [
-//                                'onchange' => 'redirect(this, this.value);',
-//                                'prompt' => '...',
-//                                'class' => 'custom-ddl',
-//                                'data-domain-name' => $data->name
-//                        ]);
-//                    },
-//                ],
                 [
                     'visible' => Settings::getMode($settings,'theme'),
                     'attribute' => '',

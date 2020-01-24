@@ -103,8 +103,7 @@ a.desc:after {
 }
 
 .states-header {
-    height: 40px;
-    overflow: hidden;
+    height: 20px;
 }
 
 .count {

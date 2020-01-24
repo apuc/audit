@@ -69,8 +69,8 @@ class CommentsSearch extends Comments
             'created_at' => $this->created_at,
         ]);
 
-        $query->orFilterWhere(['owner_id' => Yii::$app->user->identity->id]);
-        $query->orFilterWhere(['destination_id' => Yii::$app->user->identity->id]);
+//        $query->orFilterWhere(['owner_id' => Yii::$app->user->identity->id]);
+//        $query->orFilterWhere(['destination_id' => Yii::$app->user->identity->id]);
 
         $query->andFilterWhere(['like', 'comment', $this->comment]);
 

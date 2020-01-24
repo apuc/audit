@@ -85,7 +85,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'visible' => Settings::getMode($settings,'chart'),
                     'attribute' => '',
-                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="График" class="states"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
+                    'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
+                        title="График" class="states-header">
+                        <span class="glyphicon glyphicon-signal" aria-hidden="true"></span></div>',
                     'format' => 'raw',
                     'value' => function ($data) {
                         return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span>
@@ -159,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'visible' => Settings::getMode($settings,'comment'),
                     'attribute' => '',
                     'header' => '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" 
-                        title="Комментарий" class="states-header"><span class="glyphicon glyphicon-comment "
+                        title="Комментарий" class="states-header"><span class="glyphicon glyphicon-comment"
                         aria-hidden="true"></span></div>',
                     'format' => 'raw',
                     'value' => function ($data) {

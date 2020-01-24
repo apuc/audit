@@ -1,5 +1,6 @@
 <?php
 
+use common\classes\Debug;
 use common\models\Links;
 use frontend\modules\settings\models\Settings;
 use yii\helpers\ArrayHelper;

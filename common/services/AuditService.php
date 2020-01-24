@@ -87,7 +87,22 @@ class AuditService
         $size = 0;
         $loading_time = 0;
         $count = 0;
-        $domain = self::cutDomain($domain);
+        $expirationDate = null;
+
+        try {
+            $whois = Whois::create();
+            $info = $whois->loadDomainInfo($domain);
+            if ($info) $expirationDate = $info->getExpirationDate();
+            else {
+                $host_names = explode(".", $domain);
+                $bottom_host_name = $host_names[count($host_names) - 2] . "." . $host_names[count($host_names) - 1];
+                $domain = $bottom_host_name;
+                try {
+                    $info = $whois->loadDomainInfo($domain);
+                    if ($info) $expirationDate = $info->getExpirationDate();
+                } catch (Exception $e) { }
+            }
+        } catch (Exception $e) { }
 
         $curl = new CurlHelper($domain);
         while($server_response_code == 0 && $count <= 10) {
@@ -102,6 +117,7 @@ class AuditService
         $site = Site::findOne(['name' => $domain]);
         $site->title = self::getTitle($domain);
         $site->redirect = $curl->getRedirect();
+        $site->expiration_date = $expirationDate;
         $site->save();
 
         $screenshot = self::getScreen('http://' . $domain, false);

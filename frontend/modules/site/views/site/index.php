@@ -357,10 +357,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         title="Акцептор" class="states-header">Акцептор</div>',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getAcceptor($data, 2))
-                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                            . Site::getAcceptor($data, 0) . '" class="states">'
-                            . Site::getAcceptor($data, 1) . '</div>';
+                        $arr = Site::getAcceptor($data, 2);
+                        $links = array();
+                        for($i = 0; $i < count($arr); $i++)
+                            array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
+                        $str = implode("<br>", $links);
+                        return
+                            '<div class="count">'
+                                . count(Site::getAcceptor($data, 2))
+                            . '</div>'
+                            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                            . Site::getAcceptor($data, 0)
+                            . '" class="states">'
+                                . $str
+                            . '</div>';
                     },
                     'filter' => Html::activeTextInput($searchModel,'external_links', ['class' => 'form-control']),
                     'contentOptions' => function ($data) {
@@ -374,10 +384,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         title="Анкор" class="states-header">Анкор</div>',
                     'format' => 'raw',
                     'value' => function ($data) {
-                        return '<div class="count">' . count(Site::getAnchor($data, 2))
-                            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
-                            . Site::getAnchor($data, 0) . '" class="states">'
-                            . Site::getAnchor($data, 1) . '</div>';
+                        $arr = Site::getAnchor($data, 2);
+                        $links = array();
+                        for($i = 0; $i < count($arr); $i++)
+                            array_push($links, Html::a($arr[$i], 'https://www.google.ru/search?q=' . $arr[$i], ['target' => '_blank']));
+                        $str = implode("<br>", $links);
+                        return
+                            '<div class="count">'
+                            . count(Site::getAnchor($data, 2))
+                            . '</div>'
+                            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+                            . Site::getAnchor($data, 0)
+                            . '" class="states">'
+                            . $str
+                            . '</div>';
                     },
                     'contentOptions' => function ($data) {
                         return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')];

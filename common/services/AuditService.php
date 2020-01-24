@@ -334,7 +334,7 @@ class AuditService
 
     public static function allUrlArray()
     {
-        $all_url = Url::find()->all();
+        $all_url = Url::find()->where(['site.user_id' => Yii::$app->user->identity->id])->innerJoin('site', 'site.id = url.site_id')->all();
         $all_url_array = array();
         foreach ($all_url as $value)
             array_push($all_url_array, $value->url);
@@ -344,7 +344,7 @@ class AuditService
 
     public static function allSiteArray()
     {
-        $all_site = Site::find()->all();
+        $all_site = Site::find()->where(['user_id' => Yii::$app->user->identity->id])->all();
         $all_site_array = array();
         foreach ($all_site as $value)
             array_push($all_site_array, $value->name);

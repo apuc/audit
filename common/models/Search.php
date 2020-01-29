@@ -27,6 +27,7 @@ class Search
 
     public function getDateCache($link)
     {
+        //setlocale(LC_ALL, 'en_EN.UTF-8');
         try {
             $client = new GuzzleHttp\Client(['User-Agent' => UserAgentArray::getRandom(),]);
             $response = $client->get('http://webcache.googleusercontent.com/search?q=cache:'.$link);
@@ -82,7 +83,7 @@ class Search
 
     public function checkGoogle($link)
     {
-        $res = $this->parse('https://www.google.ru/search', [
+        $res = $this->parse('https://www.google.com/search', [
             'q' => 'site:' . $link,
         ]);
 
@@ -100,7 +101,7 @@ class Search
 
     public function getCountIndexedPagesGoogle($link)
     {
-        $res = $this->parse('https://www.google.ru/search', ['q' => 'site:' . $link,]);
+        $res = $this->parse('https://www.google.com/search', ['q' => 'site:' . $link,]);
 
         $document = \phpQuery::newDocument($res);
         $text = $document->find('#resultStats')->text();

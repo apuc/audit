@@ -231,7 +231,15 @@ body * {
     z-index: 9999;
     transform: scale(10); /* Увеличиваем масштаб */
 }
-
 .settings-view {
     width: 50%;
+}
+
+table {
+    width: 100%;
+    position: relative;
+}
+table thead th {
+    position: sticky;
+    top: 0;
 }

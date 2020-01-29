@@ -54,6 +54,7 @@ class SiteSearch extends Site
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
             ->leftJoin('dns', 'site.id = dns.site_id')
+            ->leftJoin('site_themes', 'site.id = site_themes.site_id')
             ->leftJoin('indexing', 'site.id = indexing.site_id')
             ->orderBy('site.id desc')
             ->groupBy('site.name');

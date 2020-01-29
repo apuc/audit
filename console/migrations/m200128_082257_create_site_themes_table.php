@@ -14,14 +14,8 @@ class m200128_082257_create_site_themes_table extends Migration
     {
         $this->createTable('{{%site_themes}}', [
             'id' => $this->primaryKey(),
+            'site_id'=> 'integer NOT NULL REFERENCES site(id)',
+            'theme_id'=> 'integer NOT NULL REFERENCES theme(id)'
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
-    {
-        $this->dropTable('{{%site_themes}}');
     }
 }

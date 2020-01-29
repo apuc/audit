@@ -199,3 +199,49 @@ $('#commentAjax').on('click', function () {
         }
     });
 });
+
+// $(function() {
+//     $("table").stickyTableHeaders();
+// });
+
+$('.theme').on('click', function () {
+    let site_id = $(this).data("id");
+    let modal = $("#modalTheme");
+    let select2 = $('#theme_ids');
+    modal.attr("data-site-id", site_id);
+
+    $.ajax({
+        url: '/api/api/selected',
+        type: 'POST',
+        data: {
+            id: site_id,
+        },
+        success: function (res) {
+           let value = JSON.parse(res);
+            select2.val(value);
+            select2.trigger('change')
+        },
+        error: function () { }
+    });
+});
+
+$(document).on("click", "#modalThemeButton", function (e) {
+    let site_id = document.getElementById('modalTheme').getAttribute("data-site-id");
+    let theme_ids = $('#theme_ids').select2('data');
+    theme_ids = JSON.stringify(theme_ids);
+
+    $.ajax({
+        url: '/api/api/theme',
+        type: 'POST',
+         data: {
+             theme_ids: theme_ids,
+             site_id: site_id
+         },
+        success: function (res) {
+            $.pjax.reload({container:"#reload"});
+        },
+        error: function () {
+            $.pjax.reload({container:"#reload"});
+        }
+    });
+});

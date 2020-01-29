@@ -25,6 +25,7 @@ use Yii;
  * @property IndexingPending[] $indexingPending
  * @property User $user
  * @property Theme $theme
+ * @property SiteThemes[] $siteThemes
  * @property Url[] $urls
  */
 class Site extends \yii\db\ActiveRecord
@@ -125,6 +126,14 @@ class Site extends \yii\db\ActiveRecord
     public function getTheme()
     {
         return $this->hasOne(Theme::className(), ['id' => 'theme_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSiteThemes()
+    {
+        return $this->hasMany(SiteThemes::className(), ['site_id' => 'id']);
     }
 
     /**

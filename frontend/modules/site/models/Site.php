@@ -3,6 +3,7 @@
 
 namespace frontend\modules\site\models;
 
+use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
 use common\models\Comments;
@@ -10,13 +11,127 @@ use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Indexing;
 use common\models\IndexingPending;
-use common\models\Url;
+use common\models\SiteThemes;
+use common\models\Theme;
+
+use DateTime;
+
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 class Site extends \common\models\Site
 {
+    public $theme;
+
     public function init()
     {
         parent::init();
+    }
+
+    public static function getIconOutput($data)
+    {
+        if(Site::getAudit($data, 'icon') != 'error.jpg')
+            return Html::tag('img', null, ['src' => Url::to('@web/i/'
+                . Site::getAudit($data, 'icon')), 'width' => '16px', 'onclick' => "copyToClipboard('domain-".$data->name."')"]);
+        else return '';
+    }
+
+    public static function getScreenshotOutput($data)
+    {
+        if(Site::getAudit($data, 'screenshot') != 'error.jpg')
+            return Html::tag('img', null, [
+                'src' => Url::to('@web/screenshots/' . Site::getAudit($data, 'screenshot')),
+                'width' => '32px', 'class' => 'scale']);
+        else return '';
+    }
+
+    public static function getChartOutput($data)
+    {
+        return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span>
+                            <div class='graphic_size'><div id='size'></div></div>
+                            <div class='graphic_loading_time'><div id='loading_time'></div></div>
+                            <div class='graphic_server_response_code'><div id='server_response_code'></div></div>";
+    }
+
+    public static function getItemOutput($title, $value, $count = null)
+    {
+        if($count) return '<div class="count">' . count($count)
+            . '</div><div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+            . $title . '" class="states">' . $value . '</div';
+        else return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'
+            . $title . '" class="states">' . $value . '</div';
+    }
+
+    public static function getSitesTheme($data)
+    {
+        return '<a type="button" data-toggle="modal" data-target="#modalTheme" data-id="' . $data->id
+            . '" class="theme" title="Темы"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>' . "<br>"
+            . self::getItemOutput(self::getSiteTheme($data), self::getSiteTheme($data));
+    }
+
+    public static function getComment($data)
+    {
+        return '<a type="button" data-toggle="modal" data-target="#exampleModal" data-id="' . $data->id
+            . '" class="comment" title="Добавить комментарий"><span class="glyphicon glyphicon-pencil" 
+                            aria-hidden="true"></span></a>' . "<br>" .
+            Html::a("<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>",
+                ['/comments/comments/?CommentsSearch[site_id]=' . $data->id],
+                ['title' => 'Посмотреть комментарии к сайту']);
+    }
+
+    public static function getGoogleLinks($data)
+    {
+        return Html::a(Site::getIndex($data, 'google_indexed_pages'),
+            'https://www.google.com/search?q=' . $data->name, ['target' => '_blank'],
+            ['title' => 'Количество проиндексированных страниц']
+        );
+    }
+
+    public static function formatAnchor($data)
+    {
+        $arr = self::getAcceptor($data, 2);
+        $links = array();
+        for($i = 0; $i < count($arr); $i++)
+            array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
+        $str = implode("<br>", $links);
+        return
+            '<div class="count">' . count(Site::getAcceptor($data, 2)) . '</div>'
+            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAcceptor($data, 0)
+            . '" class="states">' . $str . '</div>';
+    }
+
+    public static function formatAcceptor($data)
+    {
+        $arr = Site::getAnchor($data, 2);
+        $links = array();
+        for($i = 0; $i < count($arr); $i++)
+            array_push($links, Html::a($arr[$i], 'https://www.google.com/search?q=' . $arr[$i], ['target' => '_blank']));
+        $str = implode("<br>", $links);
+        return
+            '<div class="count">' . count(Site::getAnchor($data, 2)) . '</div>'
+            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAnchor($data, 0)
+            . '" class="states">' . $str . '</div>';
+    }
+
+    public static function getHeader($value, $title = 0)
+    {
+        if(!$title)
+            return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.$value.'" class="states-header">'.$value.'</div>';
+        else return '<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="'.$title.'" class="states-header">'.$value.'</div>';
+    }
+
+    public static function getSiteTheme($data)
+    {
+        $result = '';
+        if($data->siteThemes) {
+            foreach ($data->siteThemes as $value) {
+                $theme = Theme::findOne($value->theme_id);
+                $result .= $theme->name . ', ';
+            }
+        }
+        $result = substr($result, 0, strlen($result)-2);
+        return $result;
     }
 
     public static function getChart($data, $key)
@@ -44,7 +159,7 @@ class Site extends \common\models\Site
 
                     Audit::deleteAll(['id' => $audit->id]);
                 }
-                Url::deleteAll(['id' => $url->id]);
+                \common\models\Url::deleteAll(['id' => $url->id]);
             }
             foreach ($site->dns as $dns)
                 Dns::deleteAll(['id' => $dns->id]);
@@ -62,7 +177,7 @@ class Site extends \common\models\Site
                 Indexing::deleteAll(['id' => $indexing->id]);
 
             Site::deleteAll(['id' => $site->id]);
-        } catch (\Exception $e) { }
+        } catch (\Exception $e) { Debug::dd($e->getMessage());}
     }
 
     public static function getDate($date, $fl=0)
@@ -106,8 +221,7 @@ class Site extends \common\models\Site
         } elseif ($fl == 2) {
             if(count($arr) == 1 && $arr[0] == "")
                 return 0;
-            else
-                return count($arr);
+            else return $arr;
         }
     }
 
@@ -155,6 +269,42 @@ class Site extends \common\models\Site
             foreach ($data->urls[0]->audits as $value)
                 $result = $value->$key;
         }
+        return $result;
+    }
+
+    public static function formatDate($data, $key)
+    {
+        $result = 0;
+        if($data->indexing) {
+            foreach ($data->indexing as $value)
+                $result = $value->$key;
+        }
+        $month = trim(preg_replace('/\d/', '', $result));
+        if($month == 'січ.' || $month == 'янв.')
+            $result = str_replace(' '.$month.' ', '.01.', $result);
+        elseif($month == 'лют.' || $month == 'фев.')
+            $result = str_replace(' '.$month.' ', '.02.', $result);
+        elseif($month == 'бер.' || $month == 'мар.')
+            $result = str_replace(' '.$month.' ', '.03.', $result);
+        elseif($month == 'квiт.' || $month == 'апр.')
+            $result = str_replace(' '.$month.' ', '.04.', $result);
+        elseif($month == 'трав.' || $month == 'май')
+            $result = str_replace(' '.$month.' ', '.05.', $result);
+        elseif($month == 'черв.' || $month == 'июн.')
+            $result = str_replace(' '.$month.' ', '.06.', $result);
+        elseif($month == 'лип.' || $month == 'июл.')
+            $result = str_replace(' '.$month.' ', '.07.', $result);
+        elseif($month == 'серп.' || $month == 'авг.')
+            $result = str_replace(' '.$month.' ', '.08.', $result);
+        elseif($month == 'вер.' || $month == 'сен.')
+            $result = str_replace(' '.$month.' ', '.09.', $result);
+        elseif($month == 'жовт.' || $month == 'окт.')
+            $result = str_replace(' '.$month.' ', '.10.', $result);
+        elseif($month == 'лист.' || $month == 'ноя.')
+            $result = str_replace(' '.$month.' ', '.11.', $result);
+        elseif($month == 'груд.' || $month == 'дек.')
+            $result = str_replace(' '.$month.' ', '.12.', $result);
+
         return $result;
     }
 

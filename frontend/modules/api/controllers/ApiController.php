@@ -14,6 +14,8 @@ use common\models\Links;
 use common\models\Search;
 use common\models\Settings;
 use common\models\Site;
+use common\models\SiteThemes;
+use common\models\Theme;
 use common\models\User;
 use common\models\Url;
 use common\services\AuditService;
@@ -36,19 +38,47 @@ class ApiController extends Controller
     public function actionTheme()
     {
         if(Yii::$app->request->isAjax) {
-            $data = str_replace('theme', "", Yii::$app->request->post());
-            $pattern = "/^[^A-z]*/";
+            $theme_ids = json_decode($_POST['theme_ids']);
+            $selected_themes = SiteThemes::find()->where(['site_id' => $_POST['site_id']])->all();
+            $new = array();
+            $old = array();
 
-            $site_id_encoded = implode(preg_replace($pattern, "", $data));
-            $theme_id = implode(str_replace($site_id_encoded, "", $data));
-            $site_id_decoded = base64_decode($site_id_encoded);
-            $site_id = str_replace(array("i:", ";"), "", $site_id_decoded);
+            foreach ($theme_ids as $val)
+                array_push($new, $val->id);
 
-            if (($site = Site::findOne($site_id)) !== null) {
-                $site->theme_id = $theme_id;
-                $site->save();
+            foreach ($selected_themes as $selected_theme)
+                array_push($old, $selected_theme->theme_id);
+
+            $add = array_diff($new, $old);
+            $del = array_diff($old, $new);
+
+            if($add)
+            foreach ($add as $item) {
+                $site_theme  = new SiteThemes();
+                $site_theme->site_id = $_POST['site_id'];
+                $site_theme->theme_id = $item;
+                $site_theme->save();
+            }
+
+            if($del)
+            foreach ($del as $item) {
+                SiteThemes::deleteAll(['site_id' => $_POST['site_id'], 'theme_id' => $item]);
             }
         }
+    }
+
+    public function actionSelected()
+    {
+        $themes = array();
+        if(Yii::$app->request->isAjax) {
+            $site = Site::findOne($_POST['id']);
+            if (isset($site->siteThemes)) {
+                foreach ($site->siteThemes as $val) {
+                    array_push($themes, $val->theme_id);
+                }
+            }
+        }
+        return json_encode($themes);
     }
 
     public function actionComment()

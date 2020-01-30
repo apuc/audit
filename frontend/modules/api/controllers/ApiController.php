@@ -8,6 +8,7 @@ use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
 use common\models\Comments;
+use common\models\ExternalLinks;
 use common\models\Indexing;
 use common\models\IndexingPending;
 use common\models\Links;
@@ -175,7 +176,17 @@ class ApiController extends Controller
     public function actionLinks()
     {
         if(Yii::$app->request->isAjax) {
-            $site_id = $_POST['site_id'];
+            $sql = 'SELECT external_links.acceptor, external_links.anchor 
+                    FROM site, url, audit, external_links 
+                    WHERE site.id = ' . $_POST['site_id'] . '
+                        AND url.site_id = site.id 
+                        AND audit.url_id = url.id 
+                        AND external_links.audit_id = audit.id 
+                    GROUP BY external_links.acceptor 
+                    ORDER BY audit.id DESC';
+            $links = ExternalLinks::findBySql($sql)->asArray()->all();
+            $links = json_encode($links);
+            return $links;
         }
 
         // return json with arrays of anchors and acceptors

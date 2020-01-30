@@ -257,8 +257,14 @@ $('.links').on('click', function () {
         },
         success: function (res) {
             let value = JSON.parse(res);
-            document.getElementById('anchorModal').innerHTML = value[0];
-            document.getElementById('acceptorModal').innerHTML = value[1];
+            console.log(value);
+            document.getElementById('acceptorModal').innerHTML = "";
+            document.getElementById('anchorModal').innerHTML = "";
+
+            for(let i = 0; i < value.length; i++) {
+                document.getElementById('acceptorModal').innerHTML += '<a href="http://' + value[i]['acceptor'] + '" target="_blank">' + value[i]['acceptor'] + '</a><br>';
+                document.getElementById('anchorModal').innerHTML += '<a href="https://www.google.com/search?q=' + value[i]['anchor'] + '" target="_blank">' + value[i]['anchor'] + '</a><br>';
+            }
         },
         error: function () { }
     });

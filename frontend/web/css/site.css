@@ -98,7 +98,7 @@ a.desc:after {
 }
 
 .states {
-    height: 24px;
+    height: 20px;
     overflow: hidden;
 }
 
@@ -243,3 +243,14 @@ table thead th {
     position: sticky;
     top: 0;
 }
+
+#acceptorModal {
+    width: 70%;
+    float: left;
+    white-space: nowrap;
+}
+
+#anchorModal {
+
+}
+

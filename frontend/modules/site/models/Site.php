@@ -96,8 +96,9 @@ class Site extends \common\models\Site
             array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
-            '<div class="count">' . count(Site::getAnchor($data, 2)) . '</div>'
-            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAnchor($data, 0)
+            '<a type="button" data-toggle="modal" data-target="#linksModal" data-id="' . $data->id
+            . '" class="links"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                <div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAnchor($data, 0)
             . '" class="states">' . $str . '</div>';
     }
 
@@ -109,8 +110,9 @@ class Site extends \common\models\Site
             array_push($links, Html::a($arr[$i], 'https://www.google.com/search?q=' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
-            '<div class="count">' . count(Site::getAcceptor($data, 2)) . '</div>'
-            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAcceptor($data, 0)
+            '<a type="button" data-toggle="modal" data-target="#linksModal" data-id="' . $data->id
+            . '" class="links"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                <div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAcceptor($data, 0)
             . '" class="states">' . $str . '</div>';
     }
 

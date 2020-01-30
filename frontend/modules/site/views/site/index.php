@@ -1,5 +1,6 @@
 <?php
 
+use common\models\ExternalLinks;
 use common\models\Links;
 use common\models\SiteThemes;
 use frontend\modules\settings\models\Settings;
@@ -274,15 +275,15 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <div class="modal fade" id="linksModal" tabindex="-1" role="dialog" aria-labelledby="linksModalLabel" aria-hidden="true" data-site-id="">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="linksModalLabel">Комментарий</h5>
+                <h5 class="modal-title" id="linksModalLabel">Внешние ссылки</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <div id="anchorModal"></div>
                 <div id="acceptorModal"></div>
+                <div id="anchorModal"></div>
             </div>
         </div>
     </div>

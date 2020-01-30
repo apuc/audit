@@ -33,7 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
         $array['cache'] = 'Кэш Google';
         echo Html::activeDropDownList($links, 'id', $array, ['onchange' => 'redirect(this, this.value);', 'prompt' => 'Выберите ссылку', 'class' => 'btn btn-primary']);
 
-        \bluezed\floatThead\FloatThead::widget(['tableId' => 'mainTable']);
+        \bluezed\floatThead\FloatThead::widget([
+                'tableId' => 'mainTable',
+                'options' => [
+                        'zIndex' => 1,
+                    'position' => 'absolute'
+                ]
+        ]);
 
         Pjax::begin(['id' => 'reload']);
         echo SizerGridView::widget([

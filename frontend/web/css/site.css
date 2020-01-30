@@ -138,20 +138,20 @@ a.desc:after {
 
 .graphic_size {
     position: fixed;
-    z-index:2;
-    top:10%;
+    z-index:1000;
+    top:30%;
     left:450px;
 }
 .graphic_loading_time {
     position: fixed;
-    z-index:2;
-    top:10%;
+    z-index:10;
+    top:30%;
     left:800px;
 }
 .graphic_server_response_code {
     position: fixed;
-    z-index:2;
-    top:10%;
+    z-index:10;
+    top:30%;
     left:1150px;
 }
 
@@ -235,14 +235,8 @@ body * {
     width: 50%;
 }
 
-table {
-    width: 100%;
-    position: relative;
-}
-
-table thead th {
-    position: sticky;
-    top: 0;
+thead {
+    background-color: #EBEDF5;
 }
 
 #acceptorModal {

@@ -1,17 +1,13 @@
 <?php
 
-use common\models\ExternalLinks;
 use common\models\Links;
-use common\models\SiteThemes;
 use frontend\modules\settings\models\Settings;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\classes\SizerGridView;
 use \frontend\modules\site\models\Site;
-use \common\models\Theme;
 use \common\models\Comments;
-use dosamigos\editable\Editable;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use kartik\select2\Select2;
@@ -37,10 +33,16 @@ $this->params['breadcrumbs'][] = $this->title;
         $array['cache'] = 'Кэш Google';
         echo Html::activeDropDownList($links, 'id', $array, ['onchange' => 'redirect(this, this.value);', 'prompt' => 'Выберите ссылку', 'class' => 'btn btn-primary']);
 
+        \bluezed\floatThead\FloatThead::widget(['tableId' => 'mainTable']);
+
         Pjax::begin(['id' => 'reload']);
         echo SizerGridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
+            'tableOptions' => [
+                'id' => 'mainTable',
+                'class' => 'table table-striped table-bordered',
+            ],
             'id' => 'grid',
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],

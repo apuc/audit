@@ -33,7 +33,8 @@
         "2amigos/yii2-highcharts-widget": "~1.0",
         "slavkovrn/yii2-googlechart": "dev-master",
         "true/punycode": "~2.0",
-        "kartik-v/yii2-widget-select2": "dev-master"
+        "kartik-v/yii2-widget-select2": "dev-master",
+        "bluezed/yii2-float-thead": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

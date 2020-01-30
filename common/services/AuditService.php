@@ -219,13 +219,29 @@ class AuditService
         try {
             $Punycode = new Punycode();
             $page_content = file_get_contents('http://' . $Punycode->encode($domain));
-            preg_match_all( "|<title>(.*)</title>|sUSi", $page_content, $titles);
-            if(count($titles[1]))
-                return $titles[1][0];
-            else return '';
+            $document = phpQuery::newDocument($page_content);
+            if ($document) {
+                try {
+                    $links = $document->find('title')->get();
+                    return $links ? $links[0]->nodeValue : null;
+                } catch (Exception $e) {
+                    return $e->getMessage();
+                }
+            } else return null;
         } catch (Exception $e) {
-            return str_replace('file_get_contents(): php_network_getaddresses: getaddrinfo failed:', '', $e->getMessage());
+            return $e->getMessage();
         }
+
+//        try {
+//            $Punycode = new Punycode();
+//            $page_content = file_get_contents('http://' . $Punycode->encode($domain));
+//            preg_match_all( "|<title>(.*)</title>|sUSi", $page_content, $titles);
+//            if(count($titles[1]))
+//                return $titles[1][0];
+//            else return '';
+//        } catch (Exception $e) {
+//            return str_replace('file_get_contents(): php_network_getaddresses: getaddrinfo failed:', '', $e->getMessage());
+//        }
     }
 
     public static function getExternalLinks($domain)

@@ -11,12 +11,9 @@ use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Indexing;
 use common\models\IndexingPending;
-use common\models\SiteThemes;
 use common\models\Theme;
 
-use DateTime;
-
-use yii\helpers\ArrayHelper;
+use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -156,9 +153,12 @@ class Site extends \common\models\Site
         try {
             foreach($site->urls as $url) {
                 foreach ($url->audits as $audit) {
-                    foreach ($audit->externalLinks as $link)
+                    foreach ($audit->externalLinks as $link) {
                         ExternalLinks::deleteAll(['id' => $link->id]);
-
+                    }
+                    $audit = Audit::findOne($audit->id);
+                    unlink(Yii::getAlias('@frontend/web/i/') . $audit->icon);
+                    unlink(Yii::getAlias('@frontend/web/screenshots/') . $audit->screenshot);
                     Audit::deleteAll(['id' => $audit->id]);
                 }
                 \common\models\Url::deleteAll(['id' => $url->id]);

@@ -171,4 +171,13 @@ class ApiController extends Controller
             }
         }
     }
+
+    public function actionLinks()
+    {
+        if(Yii::$app->request->isAjax) {
+            $site_id = $_POST['site_id'];
+        }
+
+        // return json with arrays of anchors and acceptors
+    }
 }

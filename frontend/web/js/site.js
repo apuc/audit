@@ -245,3 +245,21 @@ $(document).on("click", "#modalThemeButton", function (e) {
         }
     });
 });
+
+$('.links').on('click', function () {
+    let site_id = $(this).data("id");
+
+    $.ajax({
+        url: '/api/api/links',
+        type: 'POST',
+        data: {
+            site_id: site_id
+        },
+        success: function (res) {
+            let value = JSON.parse(res);
+            document.getElementById('anchorModal').innerHTML = value[0];
+            document.getElementById('acceptorModal').innerHTML = value[1];
+        },
+        error: function () { }
+    });
+});

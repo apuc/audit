@@ -90,27 +90,27 @@ class Site extends \common\models\Site
 
     public static function formatAnchor($data)
     {
-        $arr = self::getAcceptor($data, 2);
+        $arr = self::getAnchor($data, 2);
         $links = array();
         for($i = 0; $i < count($arr); $i++)
             array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
-            '<div class="count">' . count(Site::getAcceptor($data, 2)) . '</div>'
-            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAcceptor($data, 0)
+            '<div class="count">' . count(Site::getAnchor($data, 2)) . '</div>'
+            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAnchor($data, 0)
             . '" class="states">' . $str . '</div>';
     }
 
     public static function formatAcceptor($data)
     {
-        $arr = Site::getAnchor($data, 2);
+        $arr = Site::getAcceptor($data, 2);
         $links = array();
         for($i = 0; $i < count($arr); $i++)
             array_push($links, Html::a($arr[$i], 'https://www.google.com/search?q=' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
-            '<div class="count">' . count(Site::getAnchor($data, 2)) . '</div>'
-            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAnchor($data, 0)
+            '<div class="count">' . count(Site::getAcceptor($data, 2)) . '</div>'
+            .'<div type="button" data-toggle="tooltip" data-placement="top" data-html="true" title="' . Site::getAcceptor($data, 0)
             . '" class="states">' . $str . '</div>';
     }
 

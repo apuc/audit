@@ -207,7 +207,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => Site::getHeader('Акцептор'),
                     'filter' => Html::activeTextInput($searchModel,'external_links', ['class' => 'form-control']),
                     'contentOptions' => function ($data) { return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')]; },
-                    'value' => function ($data) { return Site::formatAnchor($data); },
+                    'value' => function ($data) { return Site::formatAcceptor($data); },
                 ],
                 [
                     'visible' => Settings::getMode($settings,'anchor'),
@@ -215,7 +215,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => Site::getHeader('Анкор'),
                     'filter' => Html::activeTextInput($searchModel, 'anchor', ['class' => 'form-control']),
                     'contentOptions' => function ($data) { return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')]; },
-                    'value' => function ($data) { return Site::formatAcceptor($data); },
+                    'value' => function ($data) { return Site::formatAnchor($data); },
                 ],
             ],
         ]);

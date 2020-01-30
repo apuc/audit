@@ -9,7 +9,7 @@ use yii\web\Cookie;
 
 class SizerGridView extends GridView
 {
-    public $layout = "{summary}\n{items}\n{pager}";
+    public $layout = "{sizer}{summary}\n{items}\n{pager}";
 
     public function renderSection($name)
     {

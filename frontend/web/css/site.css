@@ -239,6 +239,7 @@ table {
     width: 100%;
     position: relative;
 }
+
 table thead th {
     position: sticky;
     top: 0;
@@ -249,8 +250,3 @@ table thead th {
     float: left;
     white-space: nowrap;
 }
-
-#anchorModal {
-
-}
-

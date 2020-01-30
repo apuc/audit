@@ -18,15 +18,23 @@ class SiteSearch extends Site
     public $ip;
     public $dns;
     public $server_response_code;
+    public $size;
+    public $loading_time;
     public $anchor;
+    public $comment;
+    public $google_indexing;
+    public $yandex_indexing;
+    public $google_indexed_pages;
+    public $iks;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'creation_date', 'expiration_date', 'theme_id', 'server_response_code'], 'integer'],
-            [['name', 'registrar', 'states', 'theme', 'external_links', 'ip', 'dns', 'anchor', 'redirect'], 'safe'],
+            [['id', 'creation_date', 'expiration_date', 'theme_id', 'server_response_code', 'size', 'loading_time', 'google_indexed_pages', 'iks'], 'integer'],
+            [['google_indexing', 'yandex_indexing'], 'boolean'],
+            [['name', 'registrar', 'states', 'theme', 'external_links', 'ip', 'dns', 'anchor', 'redirect', 'comment', 'title'], 'safe'],
         ];
     }
 
@@ -49,12 +57,13 @@ class SiteSearch extends Site
     public function search($params)
     {
         $query = Site::find()
-            ->leftJoin('theme', 'site.theme_id = theme.id')
+            ->leftJoin('site_themes', 'site.id = site_themes.site_id')
+            ->leftJoin('theme', 'site_themes.theme_id = theme.id')
+            ->leftJoin('comments', 'site.id = comments.site_id')
             ->leftJoin('url', 'site.id = url.site_id')
             ->leftJoin('audit', 'url.id = audit.url_id')
             ->leftJoin('external_links', 'audit.id = external_links.audit_id')
             ->leftJoin('dns', 'site.id = dns.site_id')
-            ->leftJoin('site_themes', 'site.id = site_themes.site_id')
             ->leftJoin('indexing', 'site.id = indexing.site_id')
             ->orderBy('site.id desc')
             ->groupBy('site.name');
@@ -83,6 +92,13 @@ class SiteSearch extends Site
             'expiration_date' => $this->expiration_date,
             'theme_id' => $this->theme_id,
             'user_id' => Yii::$app->user->identity->id,
+            'size' => $this->size,
+            'loading_time' => $this->loading_time,
+            'server_response_code' => $this->server_response_code,
+            'indexing.google_indexed_pages' => $this->google_indexed_pages,
+            'indexing.iks' => $this->iks,
+            'indexing.google_indexing' => $this->google_indexing,
+            'indexing.yandex_indexing' => $this->yandex_indexing
         ]);
 
         $query->andFilterWhere(['like', 'site.name', $this->name])
@@ -94,7 +110,8 @@ class SiteSearch extends Site
             ->andFilterWhere(['like', 'external_links.anchor', $this->anchor])
             ->andFilterWhere(['like', 'dns.ip', $this->ip])
             ->andFilterWhere(['like', 'dns.target', $this->dns])
-            ->andFilterWhere(['like', 'audit.server_response_code', $this->server_response_code]);
+            ->andFilterWhere(['like', 'comments.comment', $this->comment])
+            ->andFilterWhere(['like', 'site.title', $this->title]);
 
         return $dataProvider;
     }

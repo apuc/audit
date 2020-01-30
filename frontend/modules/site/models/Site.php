@@ -90,7 +90,7 @@ class Site extends \common\models\Site
         $arr = self::getAnchor($data, 2);
         $links = array();
         for($i = 0; $i < count($arr); $i++)
-            array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
+            array_push($links, Html::a($arr[$i], 'https://www.google.com/search?q=' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
             '<a type="button" data-toggle="modal" data-target="#linksModal" data-id="' . $data->id
@@ -104,7 +104,7 @@ class Site extends \common\models\Site
         $arr = Site::getAcceptor($data, 2);
         $links = array();
         for($i = 0; $i < count($arr); $i++)
-            array_push($links, Html::a($arr[$i], 'https://www.google.com/search?q=' . $arr[$i], ['target' => '_blank']));
+            array_push($links, Html::a($arr[$i], 'http://' . $arr[$i], ['target' => '_blank']));
         $str = implode("<br>", $links);
         return
             '<a type="button" data-toggle="modal" data-target="#linksModal" data-id="' . $data->id

@@ -232,7 +232,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'header' => Site::getHeader('Анкор'),
                     'filter' => Html::activeTextInput($searchModel, 'anchor', ['class' => 'form-control']),
-                    'contentOptions' => function ($data) { return ['class' => (count(Site::getAcceptor($data, 2)) > 1 ? 'warning' : '')]; },
+                    'contentOptions' => function ($data) { return ['class' => (count(Site::getAnchor($data, 2)) > 1 ? 'warning' : '')]; },
                     'value' => function ($data) { return Site::formatAnchor($data); },
                 ],
             ],

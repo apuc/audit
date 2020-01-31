@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '</div>';
 
         Pjax::begin(['id' => 'reload']);
-        echo GridView::widget([
+        echo SizerGridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'tableOptions' => [

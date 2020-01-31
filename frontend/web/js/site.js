@@ -60,7 +60,8 @@ function copyToClipboard(containerid) {
 }
 
 //вывод графика
-function darwChart(domain, name, container, data, created_at) {
+function darwChart(domain, name, container, data, created_at, $mode = 0) {
+    if(!$mode)
     return new Highcharts.chart(container, {
         chart: {
             type: 'spline',
@@ -72,6 +73,20 @@ function darwChart(domain, name, container, data, created_at) {
         yAxis: {title: ''},
         series: [{name: name, data: data}],
     });
+    else {
+        // добавить кнопку
+        return new Highcharts.chart(container, {
+            chart: {
+                type: 'spline',
+                width: 350,
+                height: 300,
+            },
+            title: {text: domain + '<br>' + name},
+            xAxis: {categories: created_at},
+            yAxis: {title: ''},
+            series: [{name: name, data: data}],
+        });
+    }
 }
 
 //график
@@ -98,7 +113,7 @@ $(document).ready(function () {
                 let domain = res['domain'];
                 darwChart(domain,'Размер', 'size', size, created_at);
                 darwChart(domain,'Время загрузки', 'loading_time', loading_time, created_at);
-                darwChart(domain,'Код ответа сервера', 'server_response_code', server_response_code, created_at);
+                darwChart(domain,'Код ответа сервера', 'server_response_code', server_response_code, created_at, 1);
                 $(".graphic_size").show();
                 $(".graphic_loading_time").show();
                 $(".graphic_server_response_code").show();
@@ -265,6 +280,8 @@ $('.links').on('click', function () {
                     document.getElementById('acceptorModal').innerHTML += '<a href="http://' + value[i]['acceptor'] + '" target="_blank">' + value[i]['acceptor'] + '</a><br>';
                 if(value[i]['anchor'] != undefined)
                     document.getElementById('anchorModal').innerHTML += '<a href="https://www.google.com/search?q=' + value[i]['anchor'] + '" target="_blank">' + value[i]['anchor'] + '</a><br>';
+                // if(value[i]['screenshot'] != undefined)
+                //     document.getElementById('screenshotModal').innerHTML += value[i]['screenshot'] + '<br>';
             }
         },
         error: function () { }

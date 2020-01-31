@@ -12,6 +12,17 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="settings-view">
+    <p>
+        <?= Html::a('Изменить количество', ['update2', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+    </p>
+
+    <div class="settings-view">
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+               'sizer'
+            ]
+        ]) ?>
 
     <p>
         <?= Html::a('Изменить задержку', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>

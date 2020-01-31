@@ -64,12 +64,12 @@ class SiteController extends Controller
     {
         $searchModel = new SiteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if(Yii::$app->request->isAjax) {
-            SizerGridView::setSize($_GET['value']);
-        }
+//        if(Yii::$app->request->isAjax) {
+//            SizerGridView::setSize($_GET['value']);
+//        }
         $settings = Settings::findOne(1);
 
-        $dataProvider->pagination->pageSize = SizerGridView::getSize();
+        $dataProvider->pagination->pageSize = $settings->sizer;
 
         return $this->render('index', [
             'searchModel' => $searchModel,

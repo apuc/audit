@@ -108,6 +108,19 @@ class SettingsController extends Controller
         ]);
     }
 
+    public function actionUpdate2($id)
+    {
+        $model = Settings::findOne($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update2', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Deletes an existing Settings model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

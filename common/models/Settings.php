@@ -36,6 +36,7 @@ use Yii;
  * @property bool|null $dns
  * @property bool|null $acceptor
  * @property bool|null $anchor
+ * @property int|null $sizer
  */
 class Settings extends \yii\db\ActiveRecord
 {
@@ -53,7 +54,7 @@ class Settings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['audit_delay', 'indexing_delay', 'available_audit_time', 'available_indexing_time'], 'integer'],
+            [['audit_delay', 'indexing_delay', 'available_audit_time', 'available_indexing_time', 'sizer'], 'integer'],
             [['icon', 'screenshot', 'chart', 'domain', 'redirect', 'title', 'theme', 'comment', 'server_response_code', 'size', 'loading_time', 'registrar', 'states', 'created_at', 'days_left', 'google_indexing', 'yandex_indexing', 'google_pages', 'google_date_cache', 'iks', 'ip', 'dns', 'acceptor', 'anchor'], 'boolean'],
         ];
     }
@@ -93,6 +94,7 @@ class Settings extends \yii\db\ActiveRecord
             'dns' => 'Dns',
             'acceptor' => 'Акцептор',
             'anchor' => 'Анкор',
+            'sizer' => 'Количество записей на странице'
         ];
     }
 }

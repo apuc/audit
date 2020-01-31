@@ -60,14 +60,14 @@ function copyToClipboard(containerid) {
 }
 
 //вывод графика
-function darwChart(name, container, data, created_at) {
+function darwChart(domain, name, container, data, created_at) {
     return new Highcharts.chart(container, {
         chart: {
             type: 'spline',
             width: 350,
             height: 300,
         },
-        title: {text: name},
+        title: {text: domain + '<br>' + name},
         xAxis: {categories: created_at},
         yAxis: {title: ''},
         series: [{name: name, data: data}],
@@ -95,9 +95,10 @@ $(document).ready(function () {
                 let loading_time = res['loading_time'];
                 let server_response_code = res['server_response_code'];
                 let created_at = res['created_at'];
-                darwChart('Размер', 'size', size, created_at);
-                darwChart('Время загрузки', 'loading_time', loading_time, created_at);
-                darwChart('Код ответа сервера', 'server_response_code', server_response_code, created_at);
+                let domain = res['domain'];
+                darwChart(domain,'Размер', 'size', size, created_at);
+                darwChart(domain,'Время загрузки', 'loading_time', loading_time, created_at);
+                darwChart(domain,'Код ответа сервера', 'server_response_code', server_response_code, created_at);
                 $(".graphic_size").show();
                 $(".graphic_loading_time").show();
                 $(".graphic_server_response_code").show();
@@ -200,10 +201,6 @@ $('#commentAjax').on('click', function () {
     });
 });
 
-// $(function() {
-//     $("table").stickyTableHeaders();
-// });
-
 $('.theme').on('click', function () {
     let site_id = $(this).data("id");
     let modal = $("#modalTheme");
@@ -260,10 +257,14 @@ $('.links').on('click', function () {
             console.log(value);
             document.getElementById('acceptorModal').innerHTML = "";
             document.getElementById('anchorModal').innerHTML = "";
+            document.getElementById('site-name').innerHTML = "";
+            document.getElementById('site-name').innerHTML = value[0]['name'];
 
             for(let i = 0; i < value.length; i++) {
-                document.getElementById('acceptorModal').innerHTML += '<a href="http://' + value[i]['acceptor'] + '" target="_blank">' + value[i]['acceptor'] + '</a><br>';
-                document.getElementById('anchorModal').innerHTML += '<a href="https://www.google.com/search?q=' + value[i]['anchor'] + '" target="_blank">' + value[i]['anchor'] + '</a><br>';
+                if(value[i]['acceptor'] != undefined)
+                    document.getElementById('acceptorModal').innerHTML += '<a href="http://' + value[i]['acceptor'] + '" target="_blank">' + value[i]['acceptor'] + '</a><br>';
+                if(value[i]['anchor'] != undefined)
+                    document.getElementById('anchorModal').innerHTML += '<a href="https://www.google.com/search?q=' + value[i]['anchor'] + '" target="_blank">' + value[i]['anchor'] + '</a><br>';
             }
         },
         error: function () { }

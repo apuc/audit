@@ -1,8 +1,9 @@
 <?php
 
-use common\models\Audit;
+use bluezed\floatThead\FloatThead;
 use common\models\Links;
 use frontend\modules\settings\models\Settings;
+use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -26,24 +27,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="site-index">
         <?php
+        echo '<div class="sticky">';
         echo Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) . '&nbsp';
         echo Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) . '&nbsp';
-
         $links = new \common\models\Links();
         $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
         $array['cache'] = 'Кэш Google';
         echo Html::activeDropDownList($links, 'id', $array, ['onchange' => 'redirect(this, this.value);', 'prompt' => 'Выберите ссылку', 'class' => 'btn btn-primary']);
 
-        \bluezed\floatThead\FloatThead::widget([
-                'tableId' => 'mainTable',
-                'options' => [
-                        'zIndex' => 1,
-                    'position' => 'absolute'
-                ]
+        FloatThead::widget([
+            'tableId' => 'mainTable',
+            'options' => [
+                'top' => 33,
+                'zIndex' => 1,
+                'position' => 'absolute'
+            ]
         ]);
+        echo '</div>';
 
         Pjax::begin(['id' => 'reload']);
-        echo SizerGridView::widget([
+        echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'tableOptions' => [
@@ -295,7 +298,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="linksModalLabel">Внешние ссылки</h5>
+                <h5 class="modal-title" id="linksModalLabel">Внешние ссылки <span id="site-name"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">

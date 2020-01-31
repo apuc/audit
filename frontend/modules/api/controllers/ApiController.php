@@ -165,7 +165,7 @@ class ApiController extends Controller
                 $loading_time = \frontend\modules\site\models\Site::getChart($site, 'loading_time');
                 $server_response_code = \frontend\modules\site\models\Site::getChart($site, 'server_response_code');
                 $created_at = \frontend\modules\site\models\Site::getChart($site, 'created_at');
-                $result = new ChartData($size, $loading_time, $server_response_code, $created_at);
+                $result = new ChartData($site->name, $size, $loading_time, $server_response_code, $created_at);
                 return json_encode($result);
             } else {
                 return false;
@@ -176,7 +176,7 @@ class ApiController extends Controller
     public function actionLinks()
     {
         if(Yii::$app->request->isAjax) {
-            $sql = 'SELECT external_links.acceptor, external_links.anchor 
+            $sql = 'SELECT site.name, external_links.acceptor, external_links.anchor 
                     FROM site, url, audit, external_links 
                     WHERE site.id = ' . $_POST['site_id'] . '
                         AND url.site_id = site.id 
@@ -185,10 +185,13 @@ class ApiController extends Controller
                     GROUP BY external_links.acceptor 
                     ORDER BY audit.id DESC';
             $links = ExternalLinks::findBySql($sql)->asArray()->all();
+
+            if(!$links) {
+                $site = Site::findOne($_POST['site_id']);
+                $links[0]['name'] = $site->name;
+            }
             $links = json_encode($links);
             return $links;
         }
-
-        // return json with arrays of anchors and acceptors
     }
 }

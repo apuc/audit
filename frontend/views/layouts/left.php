@@ -2,6 +2,11 @@
 
     <section class="sidebar">
 
+        <?php
+        use yii\helpers\Html;
+
+        echo '<h4 class="white">&nbsp&nbsp&nbsp<img src="'.$directoryAsset.'/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>&nbsp' . Yii::$app->user->identity->username . '</h4>'
+        ?>
         <?= dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
@@ -41,18 +46,6 @@
                         'url' => ['/theme/theme'],
                         'active' => \Yii::$app->controller->id == 'theme',
                     ],
-//                    [
-//                        'label' => 'Список URL',
-//                        'icon' => 'th-list',
-//                        'url' => ['/url/url'],
-//                        'active' => \Yii::$app->controller->id == 'url',
-//                    ],
-//                    [
-//                        'label' => 'История аудитов',
-//                        'icon' => 'folder',
-//                        'url' => ['/audit/audit'],
-//                        'active' => \Yii::$app->controller->id == 'audit',
-//                    ],
                     [
                         'label' => 'Комментарии',
                         'icon' => 'comment',
@@ -71,15 +64,15 @@
                         'url' => ['/settings/settings/view?id=1'],
                         'active' => \Yii::$app->controller->id == 'settings',
                     ],
-//                    [
-//                        'label' => 'Инструкция',
-//                        'icon' => 'info',
-//                        'url' => ['/site/info'],
-//                        'active' => \Yii::$app->controller->id == 'site',
-//                    ],
                 ],
             ]
         ) ?>
+
+        <?php
+        echo Html::beginForm(['/site/logout'], 'post');
+        echo Html::submitButton('Выйти', ['class'=> 'btn btn-secondary btn-custom']);
+        echo Html::endForm();
+        ?>
 
     </section>
 

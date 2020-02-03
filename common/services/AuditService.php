@@ -228,7 +228,7 @@ class AuditService
                $ext_links->acceptor = $result_array[0][$i];
                $ext_links->anchor = $result_array[1][$i];
                $ext_links->audit_id = $audit_id;
-               $ext_links->screenshot = $result_array[2][$i];
+               //$ext_links->screenshot = $result_array[2][$i];
                $ext_links->save();
            }
     }
@@ -259,7 +259,7 @@ class AuditService
                     $links = $document->find('a')->get();
                     $host_path_array = array();
                     $anchor_array = array();
-                    $elscreen_array = array();
+                    //$elscreen_array = array();
                     $result_array = array();
                     foreach ($links as $link) {
                         if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
@@ -271,13 +271,13 @@ class AuditService
                                     if (!in_array($host_path, $host_path_array)) {
                                         array_push($host_path_array, $host_path);
                                         array_push($anchor_array, $link->nodeValue);
-                                        array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
+                                        //array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 } else {
                                     if (!in_array($clean_url, $host_path_array)) {
                                         array_push($host_path_array, $clean_url);
                                         array_push($anchor_array, $link->nodeValue);
-                                        array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
+                                        //array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 }
                             }
@@ -285,7 +285,7 @@ class AuditService
                     }
                     array_push($result_array, $host_path_array);
                     array_push($result_array, $anchor_array);
-                    array_push($result_array, $elscreen_array);
+                    //array_push($result_array, $elscreen_array);
                     return $result_array;
                 } catch (Exception $e) {
                     echo $e->getMessage() . "\n";

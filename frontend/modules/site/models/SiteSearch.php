@@ -3,6 +3,7 @@
 namespace frontend\modules\site\models;
 
 use common\classes\Debug;
+use common\models\Settings;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

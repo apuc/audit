@@ -1,13 +1,13 @@
 <?php
 
 use bluezed\floatThead\FloatThead;
+use common\classes\SizerGridView;
 use common\models\Links;
 use frontend\modules\settings\models\Settings;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use common\classes\SizerGridView;
 use \frontend\modules\site\models\Site;
 use \common\models\Comments;
 use yii\widgets\ActiveForm;
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '</div>';
 
         Pjax::begin(['id' => 'reload']);
-        echo SizerGridView::widget([
+        echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'tableOptions' => [

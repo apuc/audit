@@ -48,7 +48,8 @@ class Site extends \common\models\Site
         return "<span class='glyphicon glyphicon-signal target ".$data->id."' aria-hidden='true'></span>
                             <div class='graphic_size'><div id='size'></div></div>
                             <div class='graphic_loading_time'><div id='loading_time'></div></div>
-                            <div class='graphic_server_response_code'><div id='server_response_code'></div></div>";
+                            <div class='graphic_server_response_code'><div id='server_response_code'></div></div>
+                            <div id='close-chart'></div>";
     }
 
     public static function getItemOutput($title, $value, $count = null)

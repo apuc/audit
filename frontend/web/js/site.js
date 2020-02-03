@@ -60,8 +60,7 @@ function copyToClipboard(containerid) {
 }
 
 //вывод графика
-function darwChart(domain, name, container, data, created_at, $mode = 0) {
-    if(!$mode)
+function darwChart(domain, name, container, data, created_at) {
     return new Highcharts.chart(container, {
         chart: {
             type: 'spline',
@@ -73,20 +72,6 @@ function darwChart(domain, name, container, data, created_at, $mode = 0) {
         yAxis: {title: ''},
         series: [{name: name, data: data}],
     });
-    else {
-        // добавить кнопку
-        return new Highcharts.chart(container, {
-            chart: {
-                type: 'spline',
-                width: 350,
-                height: 300,
-            },
-            title: {text: domain + '<br>' + name},
-            xAxis: {categories: created_at},
-            yAxis: {title: ''},
-            series: [{name: name, data: data}],
-        });
-    }
 }
 
 //график
@@ -113,10 +98,11 @@ $(document).ready(function () {
                 let domain = res['domain'];
                 darwChart(domain,'Размер', 'size', size, created_at);
                 darwChart(domain,'Время загрузки', 'loading_time', loading_time, created_at);
-                darwChart(domain,'Код ответа сервера', 'server_response_code', server_response_code, created_at, 1);
+                darwChart(domain,'Код ответа сервера', 'server_response_code', server_response_code, created_at);
                 $(".graphic_size").show();
                 $(".graphic_loading_time").show();
                 $(".graphic_server_response_code").show();
+                //document.getElementById('close-chart').innerHTML = '<button>x</button>';
             },
             error: function () {
                 console.log('Chart Error');
@@ -129,6 +115,11 @@ $(document).ready(function () {
         $(".graphic_server_response_code").hide();
     });
 });
+
+// $('#close-chart').click(function () {
+//     chart.destroy();
+//     $(this).attr('disabled', true);
+// });
 
 //аудит
 $(document).ready(function () {

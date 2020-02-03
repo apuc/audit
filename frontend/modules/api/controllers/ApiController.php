@@ -176,7 +176,7 @@ class ApiController extends Controller
     public function actionLinks()
     {
         if(Yii::$app->request->isAjax) {
-            $sql = 'SELECT site.name, external_links.acceptor, external_links.anchor 
+            $sql = 'SELECT site.name, external_links.acceptor, external_links.anchor, external_links.screenshot 
                     FROM site, url, audit, external_links 
                     WHERE site.id = ' . $_POST['site_id'] . '
                         AND url.site_id = site.id 

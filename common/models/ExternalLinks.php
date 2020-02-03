@@ -11,6 +11,7 @@ use Yii;
  * @property string|null $acceptor
  * @property string|null $anchor
  * @property int $audit_id
+ * @property string|null $screenshot
  *
  * @property Audit $audit
  */
@@ -33,7 +34,7 @@ class ExternalLinks extends \yii\db\ActiveRecord
             [['audit_id'], 'required'],
             [['audit_id'], 'integer'],
             [['acceptor'], 'string', 'max' => 100],
-            [['anchor'], 'string', 'max' => 255],
+            [['anchor', 'screenshot'], 'string', 'max' => 255],
             [['audit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Audit::className(), 'targetAttribute' => ['audit_id' => 'id']],
         ];
     }
@@ -48,6 +49,7 @@ class ExternalLinks extends \yii\db\ActiveRecord
             'acceptor' => 'Акцептор',
             'anchor' => 'Анкор',
             'audit_id' => 'Аудит ID',
+            'screenshot' => 'Скриншот'
         ];
     }
 

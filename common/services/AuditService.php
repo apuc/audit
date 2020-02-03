@@ -8,6 +8,7 @@ use common\models\Audit;
 use common\models\AuditPending;
 use common\models\Dns;
 use common\models\ExternalLinks;
+use common\models\Indexing;
 use common\models\Site;
 use frontend\modules\url\models\DataForm;
 use frontend\modules\url\models\Url;
@@ -37,6 +38,7 @@ class AuditService
         try {
             $site_id = self::addSite($data->getSite());
             self::createUrl($data->getSiteUrl(), $site_id);
+            self::addIndexing($site_id);
             $report->newSite++;
             $report->newUrl++;
         } catch (Exception $e) {
@@ -52,6 +54,22 @@ class AuditService
         self::createUrl($data->getSiteUrl(), $site_id);
 
         $report->newUrl++;
+    }
+
+    public static function addIndexing($site_id)
+    {
+        $indexing = new Indexing();
+        $indexing->google_indexing = 0;
+        $indexing->yandex_indexing = 0;
+        $indexing->google_indexed_pages = 0;
+        $indexing->iks = 0;
+        $indexing->status_google = 0;
+        $indexing->status_yandex = 0;
+        $indexing->status_indexing_pages = 0;
+        $indexing->status_iks = 0;
+        $indexing->status_date_cache = 0;
+        $indexing->site_id = $site_id;
+        $indexing->save();
     }
 
 
@@ -120,7 +138,7 @@ class AuditService
         $site->expiration_date = $expirationDate;
         $site->save();
 
-        $screenshot = self::getScreen('http://' . $domain, false);
+        $screenshot = self::getScreen('http://' . $domain, 'screenshots',false);
         $icon = self::getIconPicture($domain);
 
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
@@ -210,6 +228,7 @@ class AuditService
                $ext_links->acceptor = $result_array[0][$i];
                $ext_links->anchor = $result_array[1][$i];
                $ext_links->audit_id = $audit_id;
+               $ext_links->screenshot = $result_array[2][$i];
                $ext_links->save();
            }
     }
@@ -240,6 +259,7 @@ class AuditService
                     $links = $document->find('a')->get();
                     $host_path_array = array();
                     $anchor_array = array();
+                    $elscreen_array = array();
                     $result_array = array();
                     foreach ($links as $link) {
                         if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
@@ -251,11 +271,13 @@ class AuditService
                                     if (!in_array($host_path, $host_path_array)) {
                                         array_push($host_path_array, $host_path);
                                         array_push($anchor_array, $link->nodeValue);
+                                        array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 } else {
                                     if (!in_array($clean_url, $host_path_array)) {
                                         array_push($host_path_array, $clean_url);
                                         array_push($anchor_array, $link->nodeValue);
+                                        array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 }
                             }
@@ -263,6 +285,7 @@ class AuditService
                     }
                     array_push($result_array, $host_path_array);
                     array_push($result_array, $anchor_array);
+                    array_push($result_array, $elscreen_array);
                     return $result_array;
                 } catch (Exception $e) {
                     echo $e->getMessage() . "\n";
@@ -277,12 +300,12 @@ class AuditService
         }
     }
 
-    public static function getScreen($url, $mobile = true)
+    public static function getScreen($url, $folder, $mobile = true)
     {
         try {
             $date = new DateTime();
             $file_name = $date->getTimestamp() . '.jpg';
-            $path = Yii::getAlias('@frontend/web/screenshots/') . $file_name;
+            $path = Yii::getAlias('@frontend/web/' . $folder . '/') . $file_name;
 
             $query = http_build_query(array_filter([
                 'strategy' => $mobile ? 'mobile' : null,

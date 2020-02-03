@@ -34,6 +34,15 @@ class IndexingController extends Controller
                 foreach ($audit_pending as $value) {
                     $site = Site::findOne($value->site_id);
                     $indexing = new Indexing();
+                    $indexing->google_indexing = 0;
+                    $indexing->yandex_indexing = 0;
+                    $indexing->google_indexed_pages = 0;
+                    $indexing->iks = 0;
+                    $indexing->status_google = 0;
+                    $indexing->status_yandex = 0;
+                    $indexing->status_indexing_pages = 0;
+                    $indexing->status_iks = 0;
+                    $indexing->status_date_cache = 0;
                     $result = Search::check($site->name);
                     $old_indexing = Indexing::find()->where(['site_id' => $site->id])->orderBy('id desc')->limit(1)->all();
                     self::setData($result['ya'], $indexing, $old_indexing, 'yandex_indexing', 'status_yandex');

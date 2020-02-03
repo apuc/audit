@@ -58,6 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'registrar',
                 'states',
                 'created_at',
+                'domain_age',
                 'days_left',
                 'google_indexing',
                 'yandex_indexing',

@@ -37,6 +37,7 @@ use Yii;
  * @property bool|null $acceptor
  * @property bool|null $anchor
  * @property int|null $sizer
+ * @property bool|null $domain_age
  */
 class Settings extends \yii\db\ActiveRecord
 {
@@ -55,7 +56,7 @@ class Settings extends \yii\db\ActiveRecord
     {
         return [
             [['audit_delay', 'indexing_delay', 'available_audit_time', 'available_indexing_time', 'sizer'], 'integer'],
-            [['icon', 'screenshot', 'chart', 'domain', 'redirect', 'title', 'theme', 'comment', 'server_response_code', 'size', 'loading_time', 'registrar', 'states', 'created_at', 'days_left', 'google_indexing', 'yandex_indexing', 'google_pages', 'google_date_cache', 'iks', 'ip', 'dns', 'acceptor', 'anchor'], 'boolean'],
+            [['icon', 'screenshot', 'chart', 'domain', 'redirect', 'title', 'theme', 'comment', 'server_response_code', 'size', 'loading_time', 'registrar', 'states', 'created_at', 'days_left', 'google_indexing', 'yandex_indexing', 'google_pages', 'google_date_cache', 'iks', 'ip', 'dns', 'acceptor', 'anchor', 'domain_age'], 'boolean'],
         ];
     }
 
@@ -94,7 +95,8 @@ class Settings extends \yii\db\ActiveRecord
             'dns' => 'Dns',
             'acceptor' => 'Акцептор',
             'anchor' => 'Анкор',
-            'sizer' => 'Количество записей на странице'
+            'sizer' => 'Количество записей на странице',
+            'domain_age' => 'Возраст домена'
         ];
     }
 }

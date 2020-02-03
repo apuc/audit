@@ -35,15 +35,6 @@ class IndexingController extends Controller
                     $site = Site::findOne($value->site_id);
                     IndexingPending::deleteAll(['id' => $value->id]);
                     $indexing = new Indexing();
-                    $indexing->google_indexing = 0;
-                    $indexing->yandex_indexing = 0;
-                    $indexing->google_indexed_pages = 0;
-                    $indexing->iks = 0;
-                    $indexing->status_google = 0;
-                    $indexing->status_yandex = 0;
-                    $indexing->status_indexing_pages = 0;
-                    $indexing->status_iks = 0;
-                    $indexing->status_date_cache = 0;
                     $result = Search::check($site->name);
                     $old_indexing = Indexing::find()->where(['site_id' => $site->id])->orderBy('id desc')->limit(1)->all();
                     self::setData($result['ya'], $indexing, $old_indexing, 'yandex_indexing', 'status_yandex');
@@ -71,12 +62,12 @@ class IndexingController extends Controller
             $indexing->$key_status = 0;
         } else
             foreach ($old_indexing as $old)
-                if($old->$key_field) {
+                if($old->$key_field != -1) {
                     $indexing->$key_field = $old->$key_field;
                     $indexing->$key_status = 1;
                     echo "Set old " . $key_field . " value\n";
                 } else {
-                    $indexing->$key_field = 0;
+                    $indexing->$key_field = -1;
                     $indexing->$key_status = 0;
                 }
     }

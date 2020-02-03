@@ -116,11 +116,6 @@ $(document).ready(function () {
     });
 });
 
-// $('#close-chart').click(function () {
-//     chart.destroy();
-//     $(this).attr('disabled', true);
-// });
-
 //аудит
 $(document).ready(function () {
     $('.audit').on('click', function () {
@@ -185,7 +180,7 @@ $('.comment').on('click', function () {
 });
 
 //комментарий
-$('#commentAjax').on('click', function () {
+$('#commentAjaxButton').on('click', function () {
     let comment = document.getElementById('comments-comment').value;
     let destination_id = document.getElementById('comments-destination_id').value;
     let site_id = document.getElementById('exampleModal').getAttribute("data-site-id");
@@ -199,7 +194,7 @@ $('#commentAjax').on('click', function () {
             site_id: site_id
         },
         success: function (res) {
-            console.log(res);
+           console.log(res);
         },
         error: function () {
             alert('Error!');
@@ -264,15 +259,13 @@ $('.links').on('click', function () {
             document.getElementById('acceptorModal').innerHTML = "";
             document.getElementById('anchorModal').innerHTML = "";
             document.getElementById('site-name').innerHTML = "";
-            document.getElementById('site-name').innerHTML = value[0]['name'];
+            document.getElementById('site-name').innerHTML = '<a href="http://' + value[0]['name'] + '" target="_blank">' + value[0]['name'] + '</a>';
 
             for(let i = 0; i < value.length; i++) {
                 if(value[i]['acceptor'] != undefined)
                     document.getElementById('acceptorModal').innerHTML += '<a href="http://' + value[i]['acceptor'] + '" target="_blank">' + value[i]['acceptor'] + '</a><br>';
                 if(value[i]['anchor'] != undefined)
                     document.getElementById('anchorModal').innerHTML += '<a href="https://www.google.com/search?q=' + value[i]['anchor'] + '" target="_blank">' + value[i]['anchor'] + '</a><br>';
-                // if(value[i]['screenshot'] != undefined)
-                //     document.getElementById('screenshotModal').innerHTML += value[i]['screenshot'] + '<br>';
             }
         },
         error: function () { }

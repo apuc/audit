@@ -32,6 +32,7 @@ use yii\widgets\ActiveForm;
     echo $form->field($model, 'registrar')->dropDownList($items, ['class' => 'custom-drop-down']);
     echo $form->field($model, 'states')->dropDownList($items, ['class' => 'custom-drop-down']);
     echo $form->field($model, 'created_at')->dropDownList($items, ['class' => 'custom-drop-down']);
+    echo $form->field($model, 'domain_age')->dropDownList($items, ['class' => 'custom-drop-down']);
     echo $form->field($model, 'days_left')->dropDownList($items, ['class' => 'custom-drop-down']);
     echo $form->field($model, 'google_indexing')->dropDownList($items, ['class' => 'custom-drop-down']);
     echo $form->field($model, 'google_pages')->dropDownList($items, ['class' => 'custom-drop-down']);

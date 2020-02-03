@@ -81,7 +81,7 @@ class Site extends \common\models\Site
     public static function getGoogleLinks($data)
     {
         return Html::a(Site::getIndex($data, 'google_indexed_pages'),
-            'https://www.google.com/search?q=' . $data->name, ['target' => '_blank'],
+            'https://www.google.com/search?q=site:' . $data->name, ['target' => '_blank'],
             ['title' => 'Количество проиндексированных страниц']
         );
     }
@@ -201,6 +201,13 @@ class Site extends \common\models\Site
         $now = time();
         $expiration_date = self::getDate($date, 1);
         return floor(($expiration_date-$now)/ (60 * 60 * 24));
+    }
+
+    public static function getDomainsAge($date) {
+        $datetime1 = date_create(date('Y').'-'.date('m').'-'.date('d'));
+        $datetime2 = date_create(idate('Y', $date).'-'.idate('m', $date).'-'.idate('d', $date));
+        $diff =  date_diff($datetime1, $datetime2);
+        return $diff->y;
     }
 
     public static function getRegistrar($data, $fl)

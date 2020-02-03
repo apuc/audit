@@ -161,6 +161,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) { return Site::getDate($data->creation_date); },
                 ],
                 [
+                    'visible' => Settings::getMode($settings,'domain_age'),
+                    'format' => 'raw',
+                    'header' => Site::getHeader('Лет', 'Возраст домена (лет)'),
+                    'value' => function ($data) { return Site::getDomainsAge($data->creation_date); },
+                ],
+                [
                     'visible' => Settings::getMode($settings,'days_left'),
                     'format' => 'raw',
                     'header' => Site::getHeader('Дни', 'Дней до окончания регистрации'),
@@ -248,7 +254,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Комментарий</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Комментарий <span id="site-name-comment"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -263,7 +269,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
                 <div class="form-group">
-                    <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjax', 'data-dismiss' => "modal"]) ?>
+                    <?= Html::button('Сохранить', ['class' => 'btn btn-success', 'id' => 'commentAjaxButton', 'data-dismiss' => "modal"]) ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>

@@ -33,6 +33,7 @@ class IndexingController extends Controller
 
                 foreach ($audit_pending as $value) {
                     $site = Site::findOne($value->site_id);
+                    IndexingPending::deleteAll(['id' => $value->id]);
                     $indexing = new Indexing();
                     $indexing->google_indexing = 0;
                     $indexing->yandex_indexing = 0;
@@ -49,10 +50,15 @@ class IndexingController extends Controller
                     self::setData($result['google'], $indexing, $old_indexing, 'google_indexing', 'status_google');
                     self::setData(Search::getCount($site->name), $indexing, $old_indexing, 'google_indexed_pages', 'status_indexing_pages');
                     self::setData(Search::cache($site->name, 'date'), $indexing, $old_indexing, 'date_cache', 'status_date_cache');
-                    self::setData(YandexIks::getValueFromImage($site->name), $indexing, $old_indexing, 'iks', 'status_iks');
+                    $iks = YandexIks::getValueFromImage($site->name);
+                    self::setData($iks, $indexing, $old_indexing, 'iks', 'status_iks');
                     $indexing->site_id = $site->id;
                     $indexing->save();
-                    IndexingPending::deleteAll(['id' => $value->id]);
+                    if(!$iks) {
+                        $indexing_pending = new IndexingPending();
+                        $indexing_pending->site_id = $value->site_id;
+                        $indexing_pending->save();
+                    }
                 }
             }
         }

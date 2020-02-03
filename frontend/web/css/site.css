@@ -140,19 +140,19 @@ a.desc:after {
     position: fixed;
     z-index:1000;
     top:30%;
-    left:450px;
+    left:550px;
 }
 .graphic_loading_time {
     position: fixed;
     z-index:10;
     top:30%;
-    left:800px;
+    left:900px;
 }
 .graphic_server_response_code {
     position: fixed;
     z-index:10;
     top:30%;
-    left:1150px;
+    left:1250px;
 }
 
 .popup_bg {

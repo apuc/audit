@@ -37,8 +37,8 @@ class IndexingController extends Controller
                     $indexing = new Indexing();
                     $result = Search::check($site->name);
                     $old_indexing = Indexing::find()->where(['site_id' => $site->id])->orderBy('id desc')->limit(1)->all();
-                    self::setData($result['ya'], $indexing, $old_indexing, 'yandex_indexing', 'status_yandex');
-                    self::setData($result['google'], $indexing, $old_indexing, 'google_indexing', 'status_google');
+                    self::setData($result['ya'], $indexing, $old_indexing, 'yandex_indexing', 'status_yandex', 'bool');
+                    self::setData($result['google'], $indexing, $old_indexing, 'google_indexing', 'status_google', 'bool');
                     self::setData(Search::getCount($site->name), $indexing, $old_indexing, 'google_indexed_pages', 'status_indexing_pages');
                     self::setData(Search::cache($site->name, 'date'), $indexing, $old_indexing, 'date_cache', 'status_date_cache');
                     $iks = YandexIks::getValueFromImage($site->name);
@@ -55,7 +55,7 @@ class IndexingController extends Controller
         }
     }
 
-    public function setData($value, $indexing, $old_indexing, $key_field, $key_status)
+    public function setData($value, $indexing, $old_indexing, $key_field, $key_status, $mode = 'int')
     {
         if($value) {
             $indexing->$key_field = $value;
@@ -67,8 +67,13 @@ class IndexingController extends Controller
                     $indexing->$key_status = 1;
                     echo "Set old " . $key_field . " value\n";
                 } else {
-                    $indexing->$key_field = -1;
-                    $indexing->$key_status = 0;
+                    if($mode == 'int') {
+                        $indexing->$key_field = -1;
+                        $indexing->$key_status = 0;
+                    } else {
+                        $indexing->$key_field = 0;
+                        $indexing->$key_status = 0;
+                    }
                 }
     }
 }

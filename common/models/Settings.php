@@ -70,8 +70,8 @@ class Settings extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'audit_delay' => 'Задержка аудита',
-            'indexing_delay' => 'Задержка проверки индексации',
+            'audit_delay' => 'Задержка аудита (мин)',
+            'indexing_delay' => 'Задержка проверки индексации (мин)',
             'available_audit_time' => 'Available Audit Time',
             'available_indexing_time' => 'Available Indexing Time',
             'icon' => 'Иконка',
@@ -100,7 +100,7 @@ class Settings extends \yii\db\ActiveRecord
             'anchor' => 'Анкор',
             'sizer' => 'Количество записей на странице',
             'domain_age' => 'Возраст домена',
-            'chart_audit_delay' => 'Задержка проверки данных для графика',
+            'chart_audit_delay' => 'Задержка проверки данных для графика (мин)',
             'chart_audit_time_available' => 'Chart audit time available',
             'available_audit_time_all' => 'Available audit time all'
         ];

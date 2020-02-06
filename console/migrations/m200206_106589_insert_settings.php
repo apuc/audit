@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m200122_106589_insert_settings extends Migration
+class m200206_106589_insert_settings extends Migration
 {
     public function safeUp()
     {
@@ -12,8 +12,12 @@ class m200122_106589_insert_settings extends Migration
         $this->insert('settings', [
             'audit_delay' => 1,
             'indexing_delay' => 3,
+            'chart_audit_delay' => 1440,
             'available_audit_time' => $date,
             'available_indexing_time' => $date,
+            'chart_audit_time_available' => $date,
+            'available_audit_time_all' => $date,
+            'sizer' => 500,
             'icon' => true,
             'screenshot' => true,
             'chart' => true,
@@ -28,6 +32,7 @@ class m200122_106589_insert_settings extends Migration
             'registrar' => true,
             'states' => true,
             'created_at' => true,
+            'domain_age' => true,
             'days_left' => true,
             'google_indexing' => true,
             'yandex_indexing' => true,

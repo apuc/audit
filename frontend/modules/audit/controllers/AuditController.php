@@ -66,9 +66,19 @@ class AuditController extends Controller
      * Lists all Audit models.
      * @return mixed
      */
-    public function actionPending()
+    public function actionAuditqueue()
     {
-        return $this->render('pending');
+        return $this->render('auditqueue');
+    }
+
+    public function actionIndexingqueue()
+    {
+        return $this->render('indexingqueue');
+    }
+
+    public function actionChartqueue()
+    {
+        return $this->render('chartqueue');
     }
 
     /**

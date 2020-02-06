@@ -38,6 +38,9 @@ use Yii;
  * @property bool|null $anchor
  * @property int|null $sizer
  * @property bool|null $domain_age
+ * @property int|null $chart_audit_time_available
+ * @property int|null $chart_audit_delay
+ * @property int|null $available_audit_time_all
  */
 class Settings extends \yii\db\ActiveRecord
 {
@@ -55,7 +58,7 @@ class Settings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['audit_delay', 'indexing_delay', 'available_audit_time', 'available_indexing_time', 'sizer'], 'integer'],
+            [['audit_delay', 'indexing_delay', 'available_audit_time', 'available_indexing_time', 'sizer', 'chart_audit_time_available', 'chart_audit_delay', 'available_audit_time_all'], 'integer'],
             [['icon', 'screenshot', 'chart', 'domain', 'redirect', 'title', 'theme', 'comment', 'server_response_code', 'size', 'loading_time', 'registrar', 'states', 'created_at', 'days_left', 'google_indexing', 'yandex_indexing', 'google_pages', 'google_date_cache', 'iks', 'ip', 'dns', 'acceptor', 'anchor', 'domain_age'], 'boolean'],
         ];
     }
@@ -96,7 +99,10 @@ class Settings extends \yii\db\ActiveRecord
             'acceptor' => 'Акцептор',
             'anchor' => 'Анкор',
             'sizer' => 'Количество записей на странице',
-            'domain_age' => 'Возраст домена'
+            'domain_age' => 'Возраст домена',
+            'chart_audit_delay' => 'Задержка проверки данных для графика',
+            'chart_audit_time_available' => 'Chart audit time available',
+            'available_audit_time_all' => 'Available audit time all'
         ];
     }
 }

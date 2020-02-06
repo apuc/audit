@@ -99,5 +99,8 @@ return [
         'settings' => [
             'class' => 'frontend\modules\settings\Settings',
         ],
+        'chartaudit' => [
+            'class' => 'frontend\modules\chartaudit\Chartaudit',
+        ],
     ],
 ];

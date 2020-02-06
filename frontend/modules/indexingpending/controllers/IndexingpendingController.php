@@ -116,7 +116,7 @@ class IndexingpendingController extends Controller
 
         IndexingPending::deleteAll(['id' => $pending->id]);
 
-        return $this->redirect(['/audit/audit/pending']);
+        return $this->redirect(['/audit/audit/indexingqueue']);
     }
 
     /**

@@ -17,11 +17,6 @@
                         'icon' => 'pencil',
                         'url' => ['/url/url/urls'],
                     ],
-//                    [
-//                        'label' => 'Добавить ссылки',
-//                        'icon' => 'pencil',
-//                        'url' => ['/links/links/links'],
-//                    ],
                     [
                         'label' => 'Сайты',
                         'icon' => 'list-alt',
@@ -31,8 +26,12 @@
                     [
                         'label' => 'Очередь',
                         'icon' => 'hourglass',
-                        'url' => ['/audit/audit/pending'],
                         'active' => \Yii::$app->controller->id == 'audit',
+                        'items' => [
+                            ['label' => 'аудит', 'icon' => 'hourglass', 'url' => ['/audit/audit/auditqueue'],],
+                            ['label' => 'проверка индексации', 'icon' => 'hourglass', 'url' => ['/audit/audit/indexingqueue'],],
+                            ['label' => 'данные для графика', 'icon' => 'hourglass', 'url' => ['/audit/audit/chartqueue'],],
+                        ]
                     ],
                     [
                         'label' => 'Ссылки',

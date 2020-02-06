@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                     'audit_delay',
                     'indexing_delay',
+                    'chart_audit_delay'
             ]
         ]) ?>
 

@@ -1,7 +1,6 @@
 <?php
 
 use bluezed\floatThead\FloatThead;
-use common\classes\SizerGridView;
 use common\models\Links;
 use frontend\modules\settings\models\Settings;
 use yii\grid\GridView;

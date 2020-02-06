@@ -6,6 +6,7 @@ use common\classes\CurlHelper;
 use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
+use common\models\ChartAuditQueue;
 use common\models\Dns;
 use common\models\ExternalLinks;
 use common\models\Indexing;
@@ -143,6 +144,49 @@ class AuditService
 
         $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $screenshot, $icon);
         self::createExternalLinks($domain, $audit->id);
+    }
+
+    public static function addChartAudit($site, $url_id, $pending_id)
+    {
+        ChartAuditQueue::deleteAll(['id' => $pending_id]);
+        $server_response_code = 0;
+        $size = 0;
+        $loading_time = 0;
+        $count = 0;
+        $domain = $site->name;
+
+        $curl = new CurlHelper($domain);
+        while($server_response_code == 0 && $count <= 10) {
+            $curl = new CurlHelper($domain);
+            if(!$curl->getError()) {
+                $server_response_code = $curl->getServerResponseCode();
+                $size = $curl->getSize();
+                $loading_time = $curl->getLoadingTime();
+            } else echo $curl->getError() . "\n";
+            $count++;
+        }
+
+        $old_audit = new Audit();
+        foreach ($site->urls as $url) {
+            foreach ($url->audits as $audit) {
+                $old_audit = $audit;
+            }
+        }
+        if($old_audit->id) {
+            $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $old_audit->screenshot, $old_audit->icon);
+            $links = ExternalLinks::find()->where(['audit_id' => $old_audit->id])->all();
+            if($links) {
+                foreach ($links as $link) {
+                    $external_link = new ExternalLinks();
+                    $external_link->audit_id = $audit->id;
+                    $external_link->acceptor = $link->acceptor;
+                    $external_link->anchor = $link->anchor;
+                    $external_link->save();
+                }
+            }
+        } else {
+            self::createAudit($url_id, $server_response_code, $loading_time, $size, '', '');
+        }
     }
 
     public static function createSite($info, $domain)

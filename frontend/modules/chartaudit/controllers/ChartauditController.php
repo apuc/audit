@@ -1,19 +1,19 @@
 <?php
 
-namespace frontend\modules\auditpending\controllers;
+namespace frontend\modules\chartaudit\controllers;
 
-use common\classes\Debug;
+use common\models\IndexingPending;
 use Yii;
-use common\models\AuditPending;
-use yii\data\ActiveDataProvider;
+use common\models\ChartAuditQueue;
+use frontend\modules\chartaudit\models\ChartauditSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * AuditpendingController implements the CRUD actions for AuditPending model.
+ * ChartauditController implements the CRUD actions for ChartAuditQueue model.
  */
-class AuditpendingController extends Controller
+class ChartauditController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,22 +31,22 @@ class AuditpendingController extends Controller
     }
 
     /**
-     * Lists all AuditPending models.
+     * Lists all ChartAuditQueue models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => AuditPending::find(),
-        ]);
+        $searchModel = new ChartauditSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single AuditPending model.
+     * Displays a single ChartAuditQueue model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,13 +59,13 @@ class AuditpendingController extends Controller
     }
 
     /**
-     * Creates a new AuditPending model.
+     * Creates a new ChartAuditQueue model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new AuditPending();
+        $model = new ChartAuditQueue();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -77,7 +77,7 @@ class AuditpendingController extends Controller
     }
 
     /**
-     * Updates an existing AuditPending model.
+     * Updates an existing ChartAuditQueue model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -97,7 +97,7 @@ class AuditpendingController extends Controller
     }
 
     /**
-     * Deletes an existing AuditPending model.
+     * Deletes an existing ChartAuditQueue model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -113,23 +113,23 @@ class AuditpendingController extends Controller
     public function actionCustomdelete($id)
     {
         $clean_id = str_replace('=', "", stristr($id, '='));
-        $pending = AuditPending::findOne(['id' => $clean_id]);
+        $pending = ChartAuditQueue::findOne(['id' => $clean_id]);
 
-        AuditPending::deleteAll(['id' => $pending->id]);
+        ChartAuditQueue::deleteAll(['id' => $pending->id]);
 
-        return $this->redirect(['/audit/audit/auditqueue']);
+        return $this->redirect(['/audit/audit/chartqueue']);
     }
 
     /**
-     * Finds the AuditPending model based on its primary key value.
+     * Finds the ChartAuditQueue model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return AuditPending the loaded model
+     * @return ChartAuditQueue the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = AuditPending::findOne($id)) !== null) {
+        if (($model = ChartAuditQueue::findOne($id)) !== null) {
             return $model;
         }
 

@@ -76,4 +76,11 @@ class IndexingController extends Controller
                     }
                 }
     }
+
+    public function actionDelete()
+    {
+        $queue = IndexingPending::find()->all();
+        foreach ($queue as $value)
+            IndexingPending::deleteAll(['id' => $value->id]);
+    }
 }

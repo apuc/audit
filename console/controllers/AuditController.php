@@ -37,4 +37,11 @@ class AuditController extends Controller
             return 0;
         }
     }
+
+    public function actionDelete()
+    {
+        $queue = AuditPending::find()->all();
+        foreach ($queue as $value)
+            AuditPending::deleteAll(['id' => $value->id]);
+    }
 }

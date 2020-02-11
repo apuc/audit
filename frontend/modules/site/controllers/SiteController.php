@@ -66,8 +66,7 @@ class SiteController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $settings = Settings::findOne(1);
-//        $dataProvider->pagination->pageSize = $settings->sizer;
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = $settings->sizer;
 
         return $this->render('index', [
             'searchModel' => $searchModel,

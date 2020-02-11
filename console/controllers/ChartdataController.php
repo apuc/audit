@@ -32,4 +32,11 @@ class ChartdataController extends Controller
             }
         }
     }
+
+    public function actionDelete()
+    {
+        $queue = ChartAuditQueue::find()->all();
+        foreach ($queue as $value)
+            ChartAuditQueue::deleteAll(['id' => $value->id]);
+    }
 }

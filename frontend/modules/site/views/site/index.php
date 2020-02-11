@@ -23,7 +23,6 @@ use kartik\select2\Select2;
 $this->title = 'Сайты';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
     <div class="site-index">
         <?php
         echo '<div class="sticky">';
@@ -159,12 +158,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => Site::getHeader('Создан', 'Дата создания'),
                     'value' => function ($data) { return Site::getDate($data->creation_date); },
                 ],
-                [
-                    'visible' => Settings::getMode($settings,'domain_age'),
-                    'format' => 'raw',
-                    'header' => Site::getHeader('Лет', 'Возраст домена (лет)'),
-                    'value' => function ($data) { return Site::getDomainsAge($data->creation_date); },
-                ],
+//                [
+//                    'visible' => Settings::getMode($settings,'domain_age'),
+//                    'format' => 'raw',
+//                    'header' => Site::getHeader('Лет', 'Возраст домена (лет)'),
+//                    'value' => function ($data) { return Site::getDomainsAge($data->creation_date); },
+//                ],
                 [
                     'visible' => Settings::getMode($settings,'days_left'),
                     'format' => 'raw',

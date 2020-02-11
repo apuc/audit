@@ -6,6 +6,7 @@ namespace frontend\modules\site\models;
 use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
+use common\models\ChartAuditQueue;
 use common\models\Comments;
 use common\models\Dns;
 use common\models\ExternalLinks;
@@ -158,8 +159,12 @@ class Site extends \common\models\Site
                         ExternalLinks::deleteAll(['id' => $link->id]);
                     }
                     $audit = Audit::findOne($audit->id);
-                    unlink(Yii::getAlias('@frontend/web/i/') . $audit->icon);
-                    unlink(Yii::getAlias('@frontend/web/screenshots/') . $audit->screenshot);
+
+                    try {
+                        unlink(Yii::getAlias('@frontend/web/i/') . $audit->icon);
+                        unlink(Yii::getAlias('@frontend/web/screenshots/') . $audit->screenshot);
+                    } catch (\Exception $e) { }
+
                     Audit::deleteAll(['id' => $audit->id]);
                 }
                 \common\models\Url::deleteAll(['id' => $url->id]);
@@ -176,11 +181,14 @@ class Site extends \common\models\Site
             foreach ($site->indexingPending as $indexingPending)
                 IndexingPending::deleteAll(['id' => $indexingPending->id]);
 
+            foreach ($site->chartAuditQueue as $chartAuditQueue)
+                ChartAuditQueue::deleteAll(['id' => $chartAuditQueue->id]);
+
             foreach ($site->indexing as $indexing)
                 Indexing::deleteAll(['id' => $indexing->id]);
 
             Site::deleteAll(['id' => $site->id]);
-        } catch (\Exception $e) { Debug::dd($e->getMessage());}
+        } catch (\Exception $e) { /*Debug::dd($e->getMessage());*/}
     }
 
     public static function getDate($date, $fl=0)

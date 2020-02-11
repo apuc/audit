@@ -4,6 +4,7 @@
 namespace console\controllers;
 
 
+use common\classes\Debug;
 use common\models\ChartAuditQueue;
 use common\models\Settings;
 use common\models\Site;

@@ -19,6 +19,7 @@ use Yii;
  * @property int|null $user_id
  *
  * @property AuditPending[] $auditPending
+ * @property ChartAuditQueue[] $chartAuditQueue
  * @property Comments[] $comments
  * @property Dns[] $dns
  * @property Indexing[] $indexing
@@ -78,6 +79,14 @@ class Site extends \yii\db\ActiveRecord
     public function getAuditPending()
     {
         return $this->hasMany(AuditPending::className(), ['site_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChartAuditQueue()
+    {
+        return $this->hasMany(ChartAuditQueue::className(), ['site_id' => 'id']);
     }
 
     /**

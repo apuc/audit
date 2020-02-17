@@ -217,7 +217,7 @@ $('.theme').on('click', function () {
         success: function (res) {
            let value = JSON.parse(res);
             select2.val(value);
-            select2.trigger('change')
+            select2.trigger('change');
         },
         error: function () { }
     });
@@ -236,10 +236,10 @@ $(document).on("click", "#modalThemeButton", function (e) {
              site_id: site_id
          },
         success: function (res) {
-            $.pjax.reload({container:"#reload"});
+            location.reload();
         },
         error: function () {
-            $.pjax.reload({container:"#reload"});
+            location.reload();
         }
     });
 });

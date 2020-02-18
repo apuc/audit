@@ -44,7 +44,7 @@ class ChartdataController extends Controller
     {
         $settings = Settings::findOne(1);
         $date = new DateTime();
-        date_add($date, date_interval_create_from_date_string(3 . ' minutes'));
+        date_add($date, date_interval_create_from_date_string(380 . ' minutes'));
         $date = $date->getTimestamp();
         $settings->available_audit_time_all = $date;
         $settings->save();

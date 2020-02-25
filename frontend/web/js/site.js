@@ -271,3 +271,73 @@ $('.links').on('click', function () {
         error: function () { }
     });
 });
+
+$('.site_delete').on('click', function () {
+    let keys = $('#grid').yiiGridView('getSelectedRows');
+    $.ajax({
+        url: '/api/api/deletesites',
+        type: 'POST',
+        data: {
+            keys: keys
+        },
+        success: function (res) {
+            location.reload();
+        },
+        error: function () {
+            location.reload();
+        }
+    });
+});
+
+$('.indexing_delete').on('click', function () {
+    let keys = $('#grid_indexing').yiiGridView('getSelectedRows');
+    $.ajax({
+        url: '/api/api/deleteindexing',
+        type: 'POST',
+        data: {
+            keys: keys
+        },
+        success: function (res) {
+            location.reload();
+        },
+        error: function () {
+            location.reload();
+        }
+    });
+});
+
+
+$('.audit_delete').on('click', function () {
+    let keys = $('#grid_audit').yiiGridView('getSelectedRows');
+    $.ajax({
+        url: '/api/api/deleteaudit',
+        type: 'POST',
+        data: {
+            keys: keys
+        },
+        success: function (res) {
+            location.reload();
+        },
+        error: function () {
+            location.reload();
+        }
+    });
+});
+
+
+$('.chart_data_delete').on('click', function () {
+    let keys = $('#grid_chart').yiiGridView('getSelectedRows');
+    $.ajax({
+        url: '/api/api/deletechartdata',
+        type: 'POST',
+        data: {
+            keys: keys
+        },
+        success: function (res) {
+            location.reload();
+        },
+        error: function () {
+            location.reload();
+        }
+    });
+});

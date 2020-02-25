@@ -6,11 +6,16 @@ use yii\helpers\Html;
 
 $this->title = 'Сайты в очереди на аудит';
 
+echo '<div class="sticky">';
+echo Html::button('Удалить выделенное', ['class' => 'btn btn-primary audit_delete']) . '&nbsp';
+echo '</div>';
+
 $dataProvider = new ActiveDataProvider(['query' => \common\models\AuditPending::find()
     ->where(['site.user_id' => Yii::$app->user->identity->id])
     ->innerJoin('site', 'audit_pending.site_id=site.id')]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'id' => 'grid_audit',
     'columns' => [
         [
             'class' => 'yii\grid\ActionColumn',
@@ -22,6 +27,7 @@ echo GridView::widget([
                 },
             ],
         ],
+        ['class' => 'yii\grid\CheckboxColumn'],
         'site.name'
     ],
 ]);

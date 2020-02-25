@@ -7,6 +7,7 @@ use common\classes\ChartData;
 use common\classes\Debug;
 use common\models\Audit;
 use common\models\AuditPending;
+use common\models\ChartAuditQueue;
 use common\models\Comments;
 use common\models\ExternalLinks;
 use common\models\Indexing;
@@ -192,6 +193,46 @@ class ApiController extends Controller
             }
             $links = json_encode($links);
             return $links;
+        }
+    }
+
+    public function actionDeleteindexing()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = $_POST['keys'];
+            if($keys)
+                foreach ($keys as $key)
+                    IndexingPending::deleteAll(['id' => $key]);
+        }
+    }
+
+    public function actionDeleteaudit()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = $_POST['keys'];
+            if($keys)
+                foreach ($keys as $key)
+                    AuditPending::deleteAll(['id' => $key]);
+        }
+    }
+
+    public function actionDeletechartdata()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = $_POST['keys'];
+            if($keys)
+                foreach ($keys as $key)
+                    ChartAuditQueue::deleteAll(['id' => $key]);
+        }
+    }
+
+    public function actionDeletesites()
+    {
+        if(Yii::$app->request->isAjax) {
+            $keys = $_POST['keys'];
+            if($keys)
+                foreach ($keys as $key)
+                    Site::deleteAll(['id' => $key]);
         }
     }
 }

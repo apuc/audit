@@ -28,12 +28,11 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '<div class="sticky">';
         echo Html::button('Проверить индексацию', ['class' => 'btn btn-primary indexing']) . '&nbsp';
         echo Html::button('Провести аудит', ['class' => 'btn btn-primary audit']) . '&nbsp';
-        echo Html::button('Удалить выделенное', ['class' => 'btn btn-primary site_delete']) . '&nbsp';
         $links = new \common\models\Links();
         $array = ArrayHelper::map(Links::find()->all(), 'name', 'name');
         $array['cache'] = 'Кэш Google';
         echo Html::activeDropDownList($links, 'id', $array, ['onchange' => 'redirect(this, this.value);', 'prompt' => 'Выберите ссылку', 'class' => 'btn btn-primary']);
-
+        echo Html::button('Удалить выделенное', ['class' => 'btn btn-primary site_delete']) . '&nbsp';
         FloatThead::widget([
             'tableId' => 'mainTable',
             'options' => [

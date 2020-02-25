@@ -115,7 +115,8 @@ class AuditpendingController extends Controller
         $clean_id = str_replace('=', "", stristr($id, '='));
         $pending = AuditPending::findOne(['id' => $clean_id]);
 
-        AuditPending::deleteAll(['id' => $pending->id]);
+        if($pending)
+            AuditPending::deleteAll(['id' => $pending->id]);
 
         return $this->redirect(['/audit/audit/auditqueue']);
     }

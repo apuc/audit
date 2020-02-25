@@ -36,7 +36,9 @@ class IndexingpendingController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => IndexingPending::find(),
+            'query' => IndexingPending::find()
+                ->leftJoin('site', 'indexing_pending.site_id = site.id')
+                ->groupBy(['site.name']),
         ]);
 
         return $this->render('index', [
@@ -114,7 +116,8 @@ class IndexingpendingController extends Controller
         $clean_id = str_replace('=', "", stristr($id, '='));
         $pending = IndexingPending::findOne(['id' => $clean_id]);
 
-        IndexingPending::deleteAll(['id' => $pending->id]);
+        if($pending)
+            IndexingPending::deleteAll(['id' => $pending->id]);
 
         return $this->redirect(['/audit/audit/indexingqueue']);
     }

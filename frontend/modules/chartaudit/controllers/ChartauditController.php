@@ -115,7 +115,8 @@ class ChartauditController extends Controller
         $clean_id = str_replace('=', "", stristr($id, '='));
         $pending = ChartAuditQueue::findOne(['id' => $clean_id]);
 
-        ChartAuditQueue::deleteAll(['id' => $pending->id]);
+        if($pending)
+            ChartAuditQueue::deleteAll(['id' => $pending->id]);
 
         return $this->redirect(['/audit/audit/chartqueue']);
     }

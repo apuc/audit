@@ -6,7 +6,7 @@ namespace frontend\modules\site\models;
 
 use yii\base\Model;
 
-class ThemeForm extends  Model
+class ThemeForm extends Model
 {
     public $theme;
 

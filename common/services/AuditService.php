@@ -155,25 +155,25 @@ class AuditService
         $count = 0;
         $domain = $site->name;
 
-        $curl = new CurlHelper($domain);
         while($server_response_code == 0 && $count <= 10) {
             $curl = new CurlHelper($domain);
             if(!$curl->getError()) {
                 $server_response_code = $curl->getServerResponseCode();
                 $size = $curl->getSize();
                 $loading_time = $curl->getLoadingTime();
-            } else echo $curl->getError() . "\n";
+            } else
+                echo $curl->getError() . "\n";
             $count++;
         }
 
         $old_audit = new Audit();
-        foreach ($site->urls as $url) {
-            foreach ($url->audits as $audit) {
+        foreach ($site->urls as $url)
+            foreach ($url->audits as $audit)
                 $old_audit = $audit;
-            }
-        }
+
         if($old_audit->id) {
-            $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size, $old_audit->screenshot, $old_audit->icon);
+            $audit = self::createAudit($url_id, $server_response_code, $loading_time, $size,
+                $old_audit->screenshot, $old_audit->icon);
             $links = ExternalLinks::find()->where(['audit_id' => $old_audit->id])->all();
             if($links) {
                 foreach ($links as $link) {
@@ -272,7 +272,6 @@ class AuditService
                $ext_links->acceptor = $result_array[0][$i];
                $ext_links->anchor = $result_array[1][$i];
                $ext_links->audit_id = $audit_id;
-               //$ext_links->screenshot = $result_array[2][$i];
                $ext_links->save();
            }
     }
@@ -303,7 +302,6 @@ class AuditService
                     $links = $document->find('a')->get();
                     $host_path_array = array();
                     $anchor_array = array();
-                    //$elscreen_array = array();
                     $result_array = array();
                     foreach ($links as $link) {
                         if (AuditService::isExist(parse_url($link->getAttribute('href')), 'host')) {
@@ -315,13 +313,11 @@ class AuditService
                                     if (!in_array($host_path, $host_path_array)) {
                                         array_push($host_path_array, $host_path);
                                         array_push($anchor_array, $link->nodeValue);
-                                        //array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 } else {
                                     if (!in_array($clean_url, $host_path_array)) {
                                         array_push($host_path_array, $clean_url);
                                         array_push($anchor_array, $link->nodeValue);
-                                        //array_push($elscreen_array, self::getScreen('https://www.google.com/search?q=' . $link->nodeValue, 'elscreen',false));
                                     }
                                 }
                             }
@@ -329,7 +325,6 @@ class AuditService
                     }
                     array_push($result_array, $host_path_array);
                     array_push($result_array, $anchor_array);
-                    //array_push($result_array, $elscreen_array);
                     return $result_array;
                 } catch (Exception $e) {
                     echo $e->getMessage() . "\n";
@@ -417,7 +412,8 @@ class AuditService
 
     public static function allUrlArray()
     {
-        $all_url = Url::find()->where(['site.user_id' => Yii::$app->user->identity->id])->innerJoin('site', 'site.id = url.site_id')->all();
+        $all_url = Url::find()->where(['site.user_id' => Yii::$app->user->identity->id])
+            ->innerJoin('site', 'site.id = url.site_id')->all();
         $all_url_array = array();
         foreach ($all_url as $value)
             array_push($all_url_array, $value->url);
